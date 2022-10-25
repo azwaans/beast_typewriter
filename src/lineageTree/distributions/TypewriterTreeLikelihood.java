@@ -128,7 +128,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
     @Override
     public void initAndValidate() {
-        Log.info.println("INIT and VALIDate of TREE LIKELIHOOD"  );
+        Log.info.println("INIT and VALID of TREE LIKELIHOOD"  );
         // sanity check: alignment should have same #taxa as tree
 		
 		if (dataInput.get().getTaxonCount() != treeInput.get().getLeafNodeCount()) {
