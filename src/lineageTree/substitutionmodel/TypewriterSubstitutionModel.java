@@ -6,6 +6,7 @@ import beast.core.Function;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.EigenDecomposition;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -15,19 +16,20 @@ import beast.util.BEASTClassLoader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
 
 @Description("Specifies transition probability vector for a Typewriter model")
 public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
-    final public Input<List<RealParameter>> ratesInput =
-            new Input<>("rates", "Rate parameter which defines the edit insertion rates. ",new ArrayList<>());
-
+    final public Input<RealParameter> ratesInput = new Input<>("rates",
+            "Rates at which each target is cut in the barcode",
+            (RealParameter) null);
     /**
      * an m_nStates vector current rates  *
      */
-    protected double[] rateVector;
+    protected Double[] rateVector;
 
     /**
      * Used for precalculations, sum of rates
@@ -36,9 +38,19 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     private boolean updateIntermediates = true;
 
     private void calculateIntermediates() {
-        this.q = DoubleStream.of(rateVector).sum();
+        this.q = arraySum(rateVector);
     }
 
+    /**
+     * The sum of the values in the array
+     */
+    public static double arraySum(Double[] xs) {
+        double tmp = 0.0;
+        for (double x : xs) {
+            tmp += x;
+        }
+        return(tmp);
+    }
 
 
 
@@ -47,12 +59,13 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         super.initAndValidate();
         updateMatrix = true;
         nrOfStates = frequencies.getFreqs().length;
-        if (ratesInput.get().toArray().length != nrOfStates ) {
-            throw new IllegalArgumentException("Dimension of input 'rates' is " + ratesInput.get().toArray().length + " but a " +
+        rateVector = ratesInput.get().getValues();
+        Log.info.println("rate vector" + Arrays.asList(rateVector));
+        if (rateVector.length != nrOfStates ) {
+            throw new IllegalArgumentException("Dimension of input 'rates' is " + rateVector.length + " but a " +
                     "rate vector of dimension " + nrOfStates + " was " +
                     "expected");
         }
-        rateVector = new double[nrOfStates];
 
     } // initAndValidate
 
@@ -76,7 +89,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     /**
      * access to (copy of) rate vector *
      */
-    public double[] getrateVector() {
+    public Double[] getrateVector() {
         return rateVector.clone();
     }
 
