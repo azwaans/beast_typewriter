@@ -1,4 +1,4 @@
-package evolution.datatype;
+package test;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
@@ -25,8 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 
 @Description("Datatype test for Typewriter Data")
-
-
 public class TypewriterDataTest {
 
     @Test
@@ -89,6 +87,18 @@ public class TypewriterDataTest {
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "TypewriterData");
         alignment.initByName("sequence", b, "dataType", "TypewriterData");
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        TypewriterSubstitutionModel siteM = new TypewriterSubstitutionModel();
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        likelihood.traverseAncestral(tree1.getRoot());
+        Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+
 
     }
 

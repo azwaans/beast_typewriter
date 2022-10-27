@@ -44,7 +44,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
 
-    protected Hashtable<Integer,List<List<Integer>>> ancestralStates ;
+    public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
 
 
     @Override
@@ -90,8 +90,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     public void traverseAncestral(Node node){
 
-
-
         if (!node.isLeaf()) {
             final Node child1 = node.getLeft();
             final Node child2 = node.getRight();
@@ -122,9 +120,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
         ancestralStates.put(node.getNr(),LeafStates);
-
-
-
 
     }
 
