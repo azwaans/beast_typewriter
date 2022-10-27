@@ -8,6 +8,7 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
+import lineageTree.distributions.TypewriterTreeLikelihood;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
@@ -29,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 public class TypewriterDataTest {
 
+<<<<<<< HEAD
 @Test
 public void test_single_integer(){
 
@@ -52,77 +54,68 @@ public void test_multiple_integer(){
 
     }
 
+
 @Test
 public void test_typewriter_data() {
     Sequence a = new Sequence("sequence1", "02010100");
     Sequence b = new Sequence("sequence2", "01020000");
 
     Alignment alignment = new Alignment();
-    alignment.initByName("sequence", a,"dataType","TypewriterData");
-    alignment.initByName("sequence", b,"dataType","TypewriterData");
+    alignment.initByName("sequence", a, "dataType", "TypewriterData");
+    alignment.initByName("sequence", b, "dataType", "TypewriterData");
 
-    //trying to test how the data is formatted based on this alignment
-    //the pattern implementation reo
-    Log.info.println("alignment taxon count :"+ alignment.getTaxonCount());
-    Log.info.println("alignment as string  " + alignment.toString(true));
 
     RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.5");
     TypewriterSubstitutionModel typewritermodel = new TypewriterSubstitutionModel();
     RealParameter freqs = new RealParameter("1.0 0 0 0");
     Frequencies frequencies = new Frequencies();
     frequencies.initByName("frequencies", freqs,
-            "estimate", false);
-    typewritermodel.initByName("rates", insertrates,"frequencies", frequencies);
+			   "estimate", false);
+    typewritermodel.initByName("rates", insertrates, "frequencies", frequencies);
     //attempt at testing the transition probabilities
     double start_time = 2;
     double end_time = 1;
     double branch_rate = 0.5;
-    Double probability = typewritermodel.getTransitionProbability(1,branch_rate,start_time,end_time);
-    assertEquals(probability,0.15803013970713942, 1e-5);
+
+    //todo formally test that
+    Double probability = typewritermodel.getTransitionProbability(1, branch_rate, start_time, end_time);
+    assertEquals(probability, 0.15803013970713942, 1e-5);
 
     //initial tests for getting the ancestral states
-
-    //array representation of sequence 1:
+    //Integer List representation of sequence 1:
     Log.info.println(alignment.getCounts());
     List<Integer> sequence_a = alignment.getCounts().get(0);
     List<Integer> sequence_b = alignment.getCounts().get(1);
-    List<List<Integer>> ancs_sequence_a = get_possible_ancestors(sequence_a);
-    List<List<Integer>> ancs_sequence_b = get_possible_ancestors(sequence_b);
+    List<List<Integer>> ancs_sequence_a = TypewriterTreeLikelihood.get_possible_ancestors(sequence_a);
+    List<List<Integer>> ancs_sequence_b = TypewriterTreeLikelihood.get_possible_ancestors(sequence_b);
 
     // For a sequence with n sites, there are n_edited_sites + 1 ancestral sequences (all edited position + fully unedited))
-    // our toy sequence has 3 edited sites, so it should have 4 possible ancestor states.
-    assertEquals(ancs_sequence_a.size(),4, 1e-5);
+    // our toy sequence a has 3 edited sites, so it should have 4 possible ancestor states.
+    assertEquals(ancs_sequence_a.size(), 4, 1e-5);
 
-    // our toy sequence has 3 edited sites, so it should have 4 possible ancestor states.
-    //Log.info.println("ancestral states of seq a",ancs_sequence_a);
-    Log.info.println("Sequence a ancestral sequences : " + ancs_sequence_a);
-    Log.info.println("Sequence b ancestral sequences : " + ancs_sequence_b);
-
-    //attempt at the intersection between the two sets:
+    //attempt at the intersection between ancestor sets for a and b:
     ancs_sequence_b.retainAll(ancs_sequence_a);
-    Log.info.println("anc sequences b inter anc sequences a : " + ancs_sequence_b );
-
-
-
-
+    Log.info.println("anc sequences b inter anc sequences a : " + ancs_sequence_b);
+    //that's correct!
 }
 
 
-public List<List<Integer>> get_possible_ancestors(List<Integer> sequence) {
-    // to get all possible ancestors we just remove edits 1 by 1 along the barcode, starting from the last edited position
-    List<List<Integer>> ancestors = new ArrayList();
-    //adding the sequence itself as an ancestor
-    ancestors.add(sequence);
-    List<Integer> ancestor = new ArrayList<>(sequence);
-    for(int i = sequence.size()-1;i >= 0; --i) {
-        if(sequence.get(i) != 0) {
-            //append possible ancestor list
-            ancestor.set(i,0);
-            ancestors.add(new ArrayList<>(ancestor));
-        }
+    @Test
+    public void test_ancestors_tree() {
+
+
+        // Testing the ancestral state reconstruction at internal nodes
+        //tree with 2 tips
+        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
+        Sequence a = new Sequence("CHILD1", "0102030000");
+        Sequence b = new Sequence("CHILD2", "0102000000");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "TypewriterData");
+        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+
     }
-    return ancestors;
-}
 
 
 }
+
