@@ -4,6 +4,7 @@ import beast.core.Description;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.alignment.*;
+import beast.evolution.datatype.DataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -27,6 +28,29 @@ import static org.junit.Assert.assertTrue;
 
 
 public class TypewriterDataTest {
+
+@Test
+public void test_single_integer(){
+
+    DataType typewriter = new TypewriterData();
+
+    assertEquals("1", typewriter.getCharacter(01));
+    assertEquals("11", typewriter.getCharacter(11));
+
+}
+
+@Test
+public void test_multiple_integer(){
+
+        DataType typewriter = new TypewriterData();
+
+        assertEquals("1,11", typewriter.getCharacter(0111));
+        //typewriter.getCharacter(01);
+
+        //Alignment alignment = new Alignment();
+        //alignment.initByName("sequence", a,"dataType", typewriter);
+
+    }
 
 @Test
 public void test_typewriter_data() {
