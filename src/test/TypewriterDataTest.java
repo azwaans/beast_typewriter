@@ -28,30 +28,30 @@ import static org.junit.Assert.assertTrue;
 @Description("Datatype test for Typewriter Data")
 public class TypewriterDataTest {
 
-<<<<<<< HEAD
-@Test
-public void test_single_integer(){
-
-    DataType typewriter = new TypewriterData();
-
-    assertEquals("1", typewriter.getCharacter(01));
-    assertEquals("11", typewriter.getCharacter(11));
-
-}
-
-@Test
-public void test_multiple_integer(){
-
-        DataType typewriter = new TypewriterData();
-
-        assertEquals("1,11", typewriter.getCharacter(0111));
-        //typewriter.getCharacter(01);
-
-        //Alignment alignment = new Alignment();
-        //alignment.initByName("sequence", a,"dataType", typewriter);
-
-    }
-
+//<<<<<<< HEAD
+//@Test
+//public void test_single_integer(){
+//
+//    DataType typewriter = new TypewriterData();
+//
+//    assertEquals("1", typewriter.getCharacter(01));
+//    assertEquals("11", typewriter.getCharacter(11));
+//
+//}
+//
+//@Test
+//public void test_multiple_integer(){
+//
+//        DataType typewriter = new TypewriterData();
+//
+//        assertEquals("1,11", typewriter.getCharacter(0111));
+//        //typewriter.getCharacter(01);
+//
+//        //Alignment alignment = new Alignment();
+//        //alignment.initByName("sequence", a,"dataType", typewriter);
+//
+//    }
+//
 
 @Test
 public void test_typewriter_data() {
@@ -118,11 +118,13 @@ public void test_typewriter_data() {
                 "adjustTipHeights", false, "offset", 0);
 
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
-        TypewriterSubstitutionModel siteM = new TypewriterSubstitutionModel();
+        SubstitutionModel submodel = new TypewriterSubstitutionModel();
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
         likelihood.traverseAncestral(tree1.getRoot());
         Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
-
+        Log.info.println("size ofthe states dictionary" + statesDictionary.size());
 
     }
 
