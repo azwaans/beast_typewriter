@@ -28,30 +28,30 @@ import static org.junit.Assert.assertTrue;
 @Description("Datatype test for Typewriter Data")
 public class TypewriterDataTest {
 
-//<<<<<<< HEAD
-//@Test
-//public void test_single_integer(){
-//
-//    DataType typewriter = new TypewriterData();
-//
-//    assertEquals("1", typewriter.getCharacter(01));
-//    assertEquals("11", typewriter.getCharacter(11));
-//
-//}
-//
-//@Test
-//public void test_multiple_integer(){
-//
-//        DataType typewriter = new TypewriterData();
-//
-//        assertEquals("1,11", typewriter.getCharacter(0111));
-//        //typewriter.getCharacter(01);
-//
-//        //Alignment alignment = new Alignment();
-//        //alignment.initByName("sequence", a,"dataType", typewriter);
-//
-//    }
-//
+<<<<<<< HEAD
+@Test
+public void test_single_integer(){
+
+    DataType typewriter = new TypewriterData();
+
+    assertEquals("1", typewriter.getCharacter(01));
+    assertEquals("11", typewriter.getCharacter(11));
+
+}
+
+@Test
+public void test_multiple_integer(){
+
+        DataType typewriter = new TypewriterData();
+
+        assertEquals("1,11", typewriter.getCharacter(0111));
+        //typewriter.getCharacter(01);
+
+        //Alignment alignment = new Alignment();
+        //alignment.initByName("sequence", a,"dataType", typewriter);
+
+    }
+
 
 @Test
 public void test_typewriter_data() {
@@ -76,7 +76,7 @@ public void test_typewriter_data() {
     double branch_rate = 0.5;
 
     //todo formally test that
-    Double probability = typewritermodel.getTransitionProbability(1, branch_rate, start_time, end_time);
+    Double probability = typewritermodel.getEditTransitionProbability(1, branch_rate, start_time, end_time);
     assertEquals(probability, 0.15803013970713942, 1e-5);
 
     //initial tests for getting the ancestral states
@@ -125,6 +125,15 @@ public void test_typewriter_data() {
         likelihood.traverseAncestral(tree1.getRoot());
         Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
         Log.info.println("size ofthe states dictionary" + statesDictionary.size());
+        for (int i=0;i<statesDictionary.size();++i) {
+            Log.info.println(statesDictionary.get(i));
+        }
+
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+        List<Integer> sequence_b = alignment.getCounts().get(1);
+
+        sequence_a.removeAll(sequence_b);
+        Log.info.println("sequence_a minus b"+ sequence_a);
 
     }
 
