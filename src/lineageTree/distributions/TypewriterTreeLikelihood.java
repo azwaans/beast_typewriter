@@ -11,6 +11,7 @@ import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
+import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -44,7 +45,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
 
-    protected Hashtable<Integer,List<List<Integer>>> ancestralStates ;
+    public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
 
 
     @Override
@@ -83,21 +84,48 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //2nd step : calculate likelihood with these states
         // size of the partial likelihoods at each node = state.
+
         return 0;
 
     }
 
 
-    public void traverseAncestral(Node node){
+    public void traverseAncestral(Node node) {
+
+        Log.info.println(ancestralStates.size());
+        Log.info.println("node ID: " + node.getID() );
+        Log.info.println("node number: " + node.getNr() );
+        Log.info.println("node is root: " + node.isRoot());
 
 
 
-        if (!node.isLeaf()) {
-            final Node child1 = node.getLeft();
-            final Node child2 = node.getRight();
+        if(! (node == null) && !node.isRoot()) {
 
-            if(node.isRoot()) {
-                List<Integer> uneditedState = new ArrayList<Integer>(){{
+
+            if (node.isLeaf()) {
+                List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
+                ancestralStates.put(node.getNr(), LeafStates);
+
+            } else {
+
+                final Node child1 = node.getLeft();
+                final Node child2 = node.getRight();
+
+                traverseAncestral(child1);
+                traverseAncestral(child2);
+
+                List<List<Integer>> AncSetChild1 = ancestralStates.get(child1.getNr());
+                List<List<Integer>> AncSetChild2 = ancestralStates.get(child2.getNr());
+                List<List<Integer>> AncSetNode = new ArrayList<>(AncSetChild1);
+                AncSetNode.retainAll(AncSetChild2);
+                ancestralStates.put(node.getNr(), AncSetNode);
+
+            }
+        }
+
+        else {
+
+                List<Integer> uneditedState = new ArrayList<Integer>() {{
                     add(0);
                     add(0);
                     add(0);
@@ -105,28 +133,31 @@ public class TypewriterTreeLikelihood extends Distribution {
                     add(0);
                 }};
                 List<List<Integer>> unedited = new ArrayList(uneditedState);
-                ancestralStates.put(node.getNr(),unedited);
-            } else {
-
-                List<List<Integer>> AncSetChild1 = ancestralStates.get(child1.getNr());
-                List<List<Integer>> AncSetChild2 = ancestralStates.get(child2.getNr());
-                List<List<Integer>> AncSetNode = new ArrayList<>(AncSetChild1);
-                AncSetNode.retainAll(AncSetChild2);
-                ancestralStates.put(node.getNr(), AncSetNode);
-            }
-
-            traverseAncestral(child1);
-            traverseAncestral(child2);
+                ancestralStates.put(node.getNr(), unedited);
+                //this takes care of the stem != root node
+                final Node child1 = node.getChild(0);
+                traverseAncestral(child1);
 
         }
 
-        List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
-        ancestralStates.put(node.getNr(),LeafStates);
+
+    }
+
+    public void traverseLikelihood(Node node) {
+
+    //needs a function to get transition prob between 2 states (that multiplies probabiliyies for multiple sequential
+    // editing events
+
+
+
 
 
 
 
     }
+
+
+
 
     public static List<List<Integer>> get_possible_ancestors(List<Integer> sequence) {
         // to get all possible ancestors we just remove edits 1 by 1 along the barcode, starting from the last edited position

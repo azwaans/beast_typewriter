@@ -74,6 +74,23 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     protected boolean updateMatrix = true;
     private boolean storedUpdateMatrix = true;
 
+    //This is to get transition probabilities for a single editing event
+    public double getEditTransitionProbability(int edit, double rate, double startTime, double endTime) {
+        if (updateMatrix) {
+            calculateIntermediates();
+            updateMatrix = false;
+        }
+        double distance = (startTime - endTime) * rate;
+        double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * q)) / q;
+        return pb;
+    }
+
+    //This is to get transition probability between sequences (with potentially multiple edits)
+    public double getSequenceTransitionProbability(List<Integer> edita, List<Integer> editb, double rate, double startTime, double endTime) {
+
+
+        return 0.0;
+    }
 
     public double getTransitionProbability(int edit, double rate, double startTime, double endTime) {
         if (updateMatrix) {
@@ -139,6 +156,8 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         matrix = full_transition_probabilities;
 
     }
+
+
 
     @Override
     public EigenDecomposition getEigenDecomposition(Node node) {
