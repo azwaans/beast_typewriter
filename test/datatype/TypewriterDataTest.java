@@ -30,7 +30,6 @@ import static org.junit.Assert.assertTrue;
 
 public class TypewriterDataTest {
 
-<<<<<<< HEAD
 @Test
 public void test_single_integer(){
 
@@ -47,10 +46,6 @@ public void test_multiple_integer(){
         DataType typewriter = new TypewriterData();
 
         assertEquals("1,11", typewriter.getCharacter(0111));
-        //typewriter.getCharacter(01);
-
-        //Alignment alignment = new Alignment();
-        //alignment.initByName("sequence", a,"dataType", typewriter);
 
     }
 
