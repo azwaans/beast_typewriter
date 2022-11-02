@@ -8,6 +8,7 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
+import evolution.datatype.TypewriterData;
 import lineageTree.distributions.TypewriterTreeLikelihood;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import beast.evolution.tree.Tree;
@@ -21,14 +22,12 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @Description("Datatype test for Typewriter Data")
 public class TypewriterDataTest {
 
-<<<<<<< HEAD
 @Test
 public void test_single_integer(){
 
@@ -40,20 +39,6 @@ public void test_single_integer(){
 }
 
 @Test
-public void test_multiple_integer(){
-
-        DataType typewriter = new TypewriterData();
-
-        assertEquals("1,11", typewriter.getCharacter(0111));
-        //typewriter.getCharacter(01);
-
-        //Alignment alignment = new Alignment();
-        //alignment.initByName("sequence", a,"dataType", typewriter);
-
-    }
-
-
-@Test
 public void test_typewriter_data() {
     Sequence a = new Sequence("sequence1", "02010100");
     Sequence b = new Sequence("sequence2", "01020000");
@@ -63,21 +48,6 @@ public void test_typewriter_data() {
     alignment.initByName("sequence", b, "dataType", "TypewriterData");
 
 
-    RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.5");
-    TypewriterSubstitutionModel typewritermodel = new TypewriterSubstitutionModel();
-    RealParameter freqs = new RealParameter("1.0 0 0 0");
-    Frequencies frequencies = new Frequencies();
-    frequencies.initByName("frequencies", freqs,
-			   "estimate", false);
-    typewritermodel.initByName("rates", insertrates, "frequencies", frequencies);
-    //attempt at testing the transition probabilities
-    double start_time = 2;
-    double end_time = 1;
-    double branch_rate = 0.5;
-
-    //todo formally test that
-    Double probability = typewritermodel.getEditTransitionProbability(1, branch_rate, start_time, end_time);
-    assertEquals(probability, 0.15803013970713942, 1e-5);
 
     //initial tests for getting the ancestral states
     //Integer List representation of sequence 1:
