@@ -133,6 +133,7 @@ public void test_typewriter_data() {
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
         sequence_a.removeAll(sequence_b);
+        //attempt at sequence subtraction
         Log.info.println("sequence_a minus b"+ sequence_a);
 
     }
