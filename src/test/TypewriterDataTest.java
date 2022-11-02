@@ -105,6 +105,10 @@ public void test_typewriter_data() {
         sequence_a.removeAll(sequence_b);
         //attempt at sequence subtraction
         Log.info.println("sequence_a minus b"+ sequence_a);
+        //initialise probabilities
+        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        likelihood.traverseLikelihood(tree1.getRoot());
+        Log.info.println("probabilities"+ Arrays.deepToString(likelihood.probabilities));
 
     }
 

@@ -1,10 +1,7 @@
 package lineageTree.distributions;
 
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import beast.core.Description;
 import beast.core.Distribution;
@@ -46,6 +43,8 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected double[] m_branchLengths;
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
+    public double[][] probabilities ;
+
 
 
     @Override
@@ -147,16 +146,53 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     //needs a function to get transition prob between 2 states (that multiplies probabiliyies for multiple sequential
     // editing events
+        Log.info.println("probabilities"+ Arrays.deepToString(probabilities));
 
 
+        if(! (node == null) && !node.isRoot()) {
 
 
+            if (node.isLeaf()) {
+
+                double[] LeafProbabilities = init_probabilities_leaf(ancestralStates.get(node.getNr()).size());
+                probabilities[node.getNr()] = LeafProbabilities;
+
+            } else {
+
+                final Node child1 = node.getLeft();
+                final Node child2 = node.getRight();
+
+                traverseLikelihood(child1);
+                traverseLikelihood(child2);
+
+                probabilities[node.getNr()] = new double[ancestralStates.get(node.getNr()).size()];
+
+            }
+        }
+
+        else {
+
+            //root node!
+
+            //this takes care of the stem != root node
+            final Node child1 = node.getChild(0);
+            traverseLikelihood(child1);
+            double[] probabs = new double[1];
+            probabilities[node.getNr()] = probabs;
+
+        }
 
 
 
     }
 
+   public double[] init_probabilities_leaf(int size) {
 
+        double[] leafproba = new double[size];
+        Arrays.fill(leafproba,0);
+        leafproba[0] = 1;
+        return leafproba;
+   }
 
 
     public static List<List<Integer>> get_possible_ancestors(List<Integer> sequence) {
