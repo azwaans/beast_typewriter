@@ -86,18 +86,25 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     }
 
     //This is to get transition probability between sequences (with potentially multiple edits)
-    public double getSequenceTransitionProbability(List<Integer> edita, List<Integer> editb, double rate, double startTime, double endTime) {
+    public double getSequenceTransitionProbability(List<Integer> sequencea, List<Integer> sequenceb, double distance) {
+        List<Integer> subtracted = new ArrayList<>(sequencea);
+        subtracted.removeAll(sequenceb);
+        double transition_prob = 1;
+        for(Integer edit: subtracted) {
 
-
+            transition_prob = transition_prob * getTransitionProbability(edit, distance);
+        }
+        //attempt at sequence subtraction
+        //need branch length
+        //clock rate
         return 0.0;
     }
 
-    public double getTransitionProbability(int edit, double rate, double startTime, double endTime) {
+    public double getTransitionProbability(Integer edit, double distance) {
         if (updateMatrix) {
             calculateIntermediates();
             updateMatrix = false;
         }
-        double distance = (startTime - endTime) * rate;
         double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * q)) / q;
         return pb;
     }
@@ -150,8 +157,9 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     @Override
     public void getTransitionProbabilities(Node node, double startTime, double endTime, double rate, double[] matrix) {
         double[] full_transition_probabilities = new double[rateVector.length];
+        double branchtime = (endTime - startTime) * rate;
         for(int i=1 ; i<=rateVector.length; i++){
-            full_transition_probabilities[i] = getTransitionProbability(i,rate,startTime,endTime);
+            full_transition_probabilities[i] = getTransitionProbability(i,branchtime);
         }
         matrix = full_transition_probabilities;
 

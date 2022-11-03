@@ -18,9 +18,7 @@ import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
-
-
-
+import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 
 
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
@@ -37,7 +35,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
             "A model describing the rates on the branches of the beast.tree.");
 
-    protected SubstitutionModel substitutionModel;
+    protected TypewriterSubstitutionModel substitutionModel;
     protected BranchRateModel.Base branchRateModel;
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
@@ -53,7 +51,8 @@ public class TypewriterTreeLikelihood extends Distribution {
         int nodeCount = treeInput.get().getNodeCount();
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         m_siteModel.setDataType(dataInput.get().getDataType());
-        substitutionModel = m_siteModel.substModelInput.get();
+
+        substitutionModel = (TypewriterSubstitutionModel)  m_siteModel.substModelInput.get();
         branchRateModel = new StrictClockModel();
         m_branchLengths = new double[nodeCount];
         ancestralStates = new Hashtable<>() ;
@@ -165,6 +164,9 @@ public class TypewriterTreeLikelihood extends Distribution {
                 traverseLikelihood(child1);
                 traverseLikelihood(child2);
 
+                //todo
+
+                double[] partials = calculatePartials(node.getNr(),child1,child2);
                 probabilities[node.getNr()] = new double[ancestralStates.get(node.getNr()).size()];
 
             }
@@ -184,6 +186,33 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
 
+    }
+
+    public double[] calculatePartials(int nodeNr, Node child1Nr, Node child2Nr) {
+        //here. implement felsensteins's pruning algorithm
+
+
+        //initialize an array for the partials
+        double[] partials = new double[ancestralStates.get(nodeNr).size()];
+
+        for(int state_index = 0 ; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
+            List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
+            double product = sum_partial_child(start_state,child1Nr) * sum_partial_child(start_state,child2Nr);
+            partials[state_index] = product;
+        }
+
+        return partials;
+
+    }
+
+    public double sum_partial_child(List<Integer> start_state,Node childNode) {
+        final double branchRate = branchRateModel.getRateForBranch(childNode);
+        final double branchTime = childNode.getLength() * branchRate;
+        double sum = 0;
+        for(List<Integer> end_state : ancestralStates.get(childNode.getNr())) {
+            sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
+        }
+        return sum;
     }
 
    public double[] init_probabilities_leaf(int size) {
