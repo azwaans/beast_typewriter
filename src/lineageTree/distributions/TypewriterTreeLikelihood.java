@@ -82,8 +82,10 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //2nd step : calculate likelihood with these states
         // size of the partial likelihoods at each node = state.
+        traverseLikelihood(tree.getRoot());
 
-        return 0;
+        //the tree log likelihood is the log(p) of unedited state at the root
+        return Math.log(probabilities[probabilities.length - 1][0]);
 
     }
 
@@ -167,7 +169,7 @@ public class TypewriterTreeLikelihood extends Distribution {
                 //todo
 
                 double[] partials = calculatePartials(node.getNr(),child1,child2);
-                probabilities[node.getNr()] = new double[ancestralStates.get(node.getNr()).size()];
+                probabilities[node.getNr()] = partials;
 
             }
         }
@@ -179,8 +181,7 @@ public class TypewriterTreeLikelihood extends Distribution {
             //this takes care of the stem != root node
             final Node child1 = node.getChild(0);
             traverseLikelihood(child1);
-            double[] probabs = new double[1];
-            probabilities[node.getNr()] = probabs;
+            probabilities[node.getNr()] = calculatePartials(node.getNr(),child1);
 
         }
 
@@ -200,6 +201,17 @@ public class TypewriterTreeLikelihood extends Distribution {
             double product = sum_partial_child(start_state,child1Nr) * sum_partial_child(start_state,child2Nr);
             partials[state_index] = product;
         }
+
+        return partials;
+
+    }
+
+    public double[] calculatePartials(int nodeNr, Node child1Nr) {
+        //on the root node!
+        double[] partials = new double[1];
+        List<Integer> start_state = Arrays.asList(0,0,0,0,0);
+        partials[0] = sum_partial_child(start_state,child1Nr);
+
 
         return partials;
 

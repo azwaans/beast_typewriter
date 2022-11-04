@@ -88,27 +88,42 @@ public void test_typewriter_data() {
                 "adjustTipHeights", false, "offset", 0);
 
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
-        SubstitutionModel submodel = new TypewriterSubstitutionModel();
+
+        //create a sub model with values
+        TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
+        RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.5");
+        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName("rates", insertrates, "frequencies", frequencies);
+        submodel.calculateIntermediates();
+
+        //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
-        likelihood.traverseAncestral(tree1.getRoot());
-        Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
-        Log.info.println("size ofthe states dictionary" + statesDictionary.size());
-        for (int i=0;i<statesDictionary.size();++i) {
-            Log.info.println(statesDictionary.get(i));
-        }
-
-        List<Integer> sequence_a = alignment.getCounts().get(0);
-        List<Integer> sequence_b = alignment.getCounts().get(1);
-
-        sequence_a.removeAll(sequence_b);
-        //attempt at sequence subtraction
-        Log.info.println("sequence_a minus b"+ sequence_a);
+//        likelihood.traverseAncestral(tree1.getRoot());
+//        Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+//
+//        //first calculate states dictionary
+//        Log.info.println("size ofthe states dictionary" + statesDictionary.size());
+//        for (int i=0;i<statesDictionary.size();++i) {
+//            Log.info.println(statesDictionary.get(i));
+//        }
+//
+//        List<Integer> sequence_a = alignment.getCounts().get(0);
+//        List<Integer> sequence_b = alignment.getCounts().get(1);
+//
+//        sequence_a.removeAll(sequence_b);
+//        //attempt at sequence subtraction
+//        Log.info.println("sequence_a minus b"+ sequence_a);
         //initialise probabilities
         likelihood.probabilities = new double[tree1.getNodeCount()][];
-        likelihood.traverseLikelihood(tree1.getRoot());
-        Log.info.println("probabilities"+ Arrays.deepToString(likelihood.probabilities));
+
+        Log.info.println("LogP : "+ likelihood.calculateLogP());
+
 
     }
 

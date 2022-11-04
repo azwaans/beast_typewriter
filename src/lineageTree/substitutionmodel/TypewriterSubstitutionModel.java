@@ -37,7 +37,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     private double q;
     private boolean updateIntermediates = true;
 
-    private void calculateIntermediates() {
+    public void calculateIntermediates() {
         this.q = arraySum(rateVector);
     }
 
@@ -87,11 +87,16 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 
     //This is to get transition probability between sequences (with potentially multiple edits)
     public double getSequenceTransitionProbability(List<Integer> sequencea, List<Integer> sequenceb, double distance) {
-        List<Integer> subtracted = new ArrayList<>(sequencea);
-        subtracted.removeAll(sequenceb);
+        List<Integer> subtracted = new ArrayList<>(sequenceb);
+        Log.info.println("sequencea" + sequencea);
+        Log.info.println("sequenceb" + sequenceb);
+        subtracted.removeAll(sequencea);
+        Log.info.println("subtracted" + subtracted);
         double transition_prob = 1;
+        if(subtracted.size() == 0 ) {
+            return getTransitionProbability(0, distance);
+        }
         for(Integer edit: subtracted) {
-
             transition_prob = transition_prob * getTransitionProbability(edit, distance);
         }
         //attempt at sequence subtraction
@@ -101,11 +106,14 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     }
 
     public double getTransitionProbability(Integer edit, double distance) {
-        if (updateMatrix) {
-            calculateIntermediates();
-            updateMatrix = false;
-        }
+//        if (updateMatrix) {
+//            calculateIntermediates();
+//            updateMatrix = false;
+//        }
+        Log.info.println("edit" + edit);
+        Log.info.println("q" + q);
         double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * q)) / q;
+        Log.info.println("pb" + pb);
         return pb;
     }
 
