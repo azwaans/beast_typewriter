@@ -22,7 +22,7 @@ import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 
 
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
-        "a beast tree and a branch rate model. This is a brute-force approach with no consideration for ")
+        "a beast tree and a branch rate model. This is a brute-force approach with no use of BEAST treelikelihood architecture ")
 
 public class TypewriterTreeLikelihood extends Distribution {
 
@@ -92,12 +92,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     public void traverseAncestral(Node node) {
 
-        Log.info.println(ancestralStates.size());
-        Log.info.println("node ID: " + node.getID() );
-        Log.info.println("node number: " + node.getNr() );
-        Log.info.println("node is root: " + node.isRoot());
-
-
 
         if(! (node == null) && !node.isRoot()) {
 
@@ -145,11 +139,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     public void traverseLikelihood(Node node) {
 
-    //needs a function to get transition prob between 2 states (that multiplies probabiliyies for multiple sequential
-    // editing events
-        Log.info.println("probabilities"+ Arrays.deepToString(probabilities));
-
-
         if(! (node == null) && !node.isRoot()) {
 
 
@@ -158,6 +147,7 @@ public class TypewriterTreeLikelihood extends Distribution {
                 double[] LeafProbabilities = init_probabilities_leaf(ancestralStates.get(node.getNr()).size());
                 probabilities[node.getNr()] = LeafProbabilities;
 
+
             } else {
 
                 final Node child1 = node.getLeft();
@@ -165,8 +155,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
                 traverseLikelihood(child1);
                 traverseLikelihood(child2);
-
-                //todo
 
                 double[] partials = calculatePartials(node.getNr(),child1,child2);
                 probabilities[node.getNr()] = partials;
@@ -177,11 +165,10 @@ public class TypewriterTreeLikelihood extends Distribution {
         else {
 
             //root node!
-
             //this takes care of the stem != root node
             final Node child1 = node.getChild(0);
             traverseLikelihood(child1);
-            probabilities[node.getNr()] = calculatePartials(node.getNr(),child1);
+            probabilities[node.getNr()] = calculateRootPartials(child1);
 
         }
 
@@ -192,13 +179,16 @@ public class TypewriterTreeLikelihood extends Distribution {
     public double[] calculatePartials(int nodeNr, Node child1Nr, Node child2Nr) {
         //here. implement felsensteins's pruning algorithm
 
-
         //initialize an array for the partials
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
 
         for(int state_index = 0 ; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
             List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
-            double product = sum_partial_child(start_state,child1Nr) * sum_partial_child(start_state,child2Nr);
+            double child1partialsum = sum_partial_child(start_state,child1Nr);
+            double child2partialsum = sum_partial_child(start_state,child2Nr);
+
+
+            double product = child1partialsum * child2partialsum;
             partials[state_index] = product;
         }
 
@@ -206,7 +196,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     }
 
-    public double[] calculatePartials(int nodeNr, Node child1Nr) {
+    public double[] calculateRootPartials(Node child1Nr) {
         //on the root node!
         double[] partials = new double[1];
         List<Integer> start_state = Arrays.asList(0,0,0,0,0);
@@ -221,9 +211,22 @@ public class TypewriterTreeLikelihood extends Distribution {
         final double branchRate = branchRateModel.getRateForBranch(childNode);
         final double branchTime = childNode.getLength() * branchRate;
         double sum = 0;
-        for(List<Integer> end_state : ancestralStates.get(childNode.getNr())) {
+
+        if(childNode.isLeaf()) {
+
+            List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(0);
             sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
+
         }
+        else {
+            for (int end_state_index = 0; end_state_index < ancestralStates.get(childNode.getNr()).size(); ++end_state_index) {
+
+                List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(end_state_index);
+                sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime) * probabilities[childNode.getNr()][end_state_index];
+
+            }
+        }
+
         return sum;
     }
 

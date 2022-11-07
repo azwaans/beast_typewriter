@@ -81,6 +81,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
             updateMatrix = false;
         }
         double distance = (startTime - endTime) * rate;
+
         double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * q)) / q;
         return pb;
     }
@@ -102,7 +103,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         //attempt at sequence subtraction
         //need branch length
         //clock rate
-        return 0.0;
+        return transition_prob;
     }
 
     public double getTransitionProbability(Integer edit, double distance) {
@@ -110,11 +111,12 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 //            calculateIntermediates();
 //            updateMatrix = false;
 //        }
-        Log.info.println("edit" + edit);
-        Log.info.println("q" + q);
-        double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * q)) / q;
-        Log.info.println("pb" + pb);
-        return pb;
+        if(edit == 0) {
+            return Math.exp(-distance *q);
+        }
+        else {
+        double pb = (rateVector[edit-1] - rateVector[edit-1] * Math.exp(-distance * q)) / q;
+        return pb;}
     }
 
 
