@@ -1,4 +1,4 @@
-package evolution.datatype;
+package beast.evolution.datatype;
 
 import beast.core.Description;
 import beast.evolution.datatype.DataType.Base;
@@ -7,14 +7,14 @@ import beast.evolution.datatype.DataType.Base;
 public class TypewriterData extends Base {
 
     public TypewriterData() {
-        stateCount = 13;
+        stateCount = 14;
         //for now, we use a integer representation of a Typewriter sequence.
         //todo change this mapping to actual nucleotide insert
         codeLength = 2; // with length 3 nucleotide inserts input: codeLength = 3
-        codeMap = "01020304050607080910111213" ; // with length 3 nucleotide inserts input codeMap = ATGCCTTAGTT etc
+        codeMap = "0001020304050607080910111213" ; // with length 3 nucleotide inserts input codeMap = ATGCCTTAGTT etc
         //with both codeLength 2 and 3 the resulting representation should be an integer array.
-        mapCodeToStateSet = new int[13][];
-        for (int i = 0; i < 13; i++) {
+        mapCodeToStateSet = new int[14][];
+        for (int i = 0; i < 14; i++) {
             mapCodeToStateSet[i] = new int[1];
             mapCodeToStateSet[i][0] = i;
         }
