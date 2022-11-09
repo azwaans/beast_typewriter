@@ -44,8 +44,8 @@ public class SimulatedAlignment extends Alignment{
                 "Length of sequence to simulate.",
                 Input.Validate.REQUIRED);
 
-        public Input<Integer> insertionLengthInput = new Input<>(
-            "insertionLength",
+        public Input<Integer> nrOfInsertionsPerSiteInput = new Input<>(
+            "nrOfInsertionsPerSite",
             "Number of insertions to add per site",
             Input.Validate.REQUIRED);
 
@@ -58,7 +58,7 @@ public class SimulatedAlignment extends Alignment{
         private SiteModel siteModel;
         private double[] insertionProb;
         private int seqLength;
-        private int insertionLength;
+        private int nrOfInsertionsPerSite;
         private DataType dataType;
 
         private String ancestralSeqStr;
@@ -74,7 +74,7 @@ public class SimulatedAlignment extends Alignment{
             tree = treeInput.get();
             siteModel = siteModelInput.get();
             seqLength = 1; //TODO rewrite for arbitrary #sites! sequenceLengthInput.get();
-            insertionLength = insertionLengthInput.get();
+            nrOfInsertionsPerSite = nrOfInsertionsPerSiteInput.get();
             sequences.clear();
 
             grabDataType();
@@ -108,11 +108,11 @@ public class SimulatedAlignment extends Alignment{
 
             double[] transitionProbs = substModel.getInsertionProbs();
 
-            int[][] alignment = new int[nTaxa][insertionLength];
+            int[][] alignment = new int[nTaxa][nrOfInsertionsPerSite];
 
             Node root = tree.getRoot();
 
-            int[] parentSequence = new int[insertionLength];
+            int[] parentSequence = new int[nrOfInsertionsPerSite];
 
             ancestralSeqStr = dataType.encodingToString(parentSequence);
 
@@ -162,13 +162,28 @@ public class SimulatedAlignment extends Alignment{
 
                 //double[] charProb = new double[nStates];
 
+
                 // sample number of new insertions
                 long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
+
+
+                // find site where insertion could happen, otw no more simulation necessary
+                int insertionI = 0;
+                while ( (childSequence[insertionI] !=0) & (insertionI < nrOfInsertionsPerSite)){
+                    insertionI++;
+                }
 
                 for (int i=0; i<nEdits; i++){
                     childSequence[]
                 }
+
+                //is editable site available
                 for (int i=0; i< childSequence.length; i++) {
+
+                    if (childSequence[i] == 0){
+
+                    }
+
                     //int category = categories[i];
                     //System.arraycopy(transitionProbs[category],
                     //        parentSequence[i]*nStates, charProb, 0, nStates);
