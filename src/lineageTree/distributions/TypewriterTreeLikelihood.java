@@ -187,7 +187,6 @@ public class TypewriterTreeLikelihood extends Distribution {
             double child1partialsum = sum_partial_child(start_state,child1Nr);
             double child2partialsum = sum_partial_child(start_state,child2Nr);
 
-
             double product = child1partialsum * child2partialsum;
             partials[state_index] = product;
         }
@@ -215,6 +214,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         if(childNode.isLeaf()) {
 
             List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(0);
+           double dummy = substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
             sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
 
         }

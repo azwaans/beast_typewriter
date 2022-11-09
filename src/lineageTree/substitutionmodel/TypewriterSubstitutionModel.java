@@ -60,7 +60,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         updateMatrix = true;
         nrOfStates = frequencies.getFreqs().length;
         rateVector = ratesInput.get().getValues();
-        Log.info.println("rate vector" + Arrays.asList(rateVector));
         if (rateVector.length != nrOfStates ) {
             throw new IllegalArgumentException("Dimension of input 'rates' is " + rateVector.length + " but a " +
                     "rate vector of dimension " + nrOfStates + " was " +
@@ -87,33 +86,40 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     }
 
     //This is to get transition probability between sequences (with potentially multiple edits)
-    public double getSequenceTransitionProbability(List<Integer> sequencea, List<Integer> sequenceb, double distance) {
-        List<Integer> subtracted = new ArrayList<>(sequenceb);
-        Log.info.println("sequencea" + sequencea);
-        Log.info.println("sequenceb" + sequenceb);
-        subtracted.removeAll(sequencea);
-        Log.info.println("subtracted" + subtracted);
+    public double getSequenceTransitionProbability(List<Integer> start_sequence, List<Integer> end_sequence, double distance) {
+        List<Integer> subtracted = new ArrayList<>(end_sequence);
+
+        //substracting start sequence from end sequence
+        start_sequence.forEach(subtracted::remove);
         double transition_prob = 1;
+
+        //the sequence is unedited, only the probability of staying unedited
         if(subtracted.size() == 0 ) {
             return getTransitionProbability(0, distance);
         }
+
+        //the subtraction is non empty, editing happened, we multiply edit probabilities
+        //todo here would be where things would change for model variant 2
         for(Integer edit: subtracted) {
             transition_prob = transition_prob * getTransitionProbability(edit, distance);
         }
-        //attempt at sequence subtraction
-        //need branch length
-        //clock rate
+
         return transition_prob;
     }
 
+    //This is to get transition probability for a single position
+    //todo remove redundancy with geteditprobability
     public double getTransitionProbability(Integer edit, double distance) {
 //        if (updateMatrix) {
 //            calculateIntermediates();
 //            updateMatrix = false;
 //        }
+        //edit0 is staying in the unedited state, return the 1st element
         if(edit == 0) {
             return Math.exp(-distance *q);
         }
+
+        //there is an edit, return the corresponding transition probability
         else {
         double pb = (rateVector[edit-1] - rateVector[edit-1] * Math.exp(-distance * q)) / q;
         return pb;}
