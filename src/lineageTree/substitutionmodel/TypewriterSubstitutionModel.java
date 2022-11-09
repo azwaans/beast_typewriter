@@ -60,9 +60,9 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         updateMatrix = true;
         nrOfStates = frequencies.getFreqs().length;
         rateVector = ratesInput.get().getValues();
-        if (rateVector.length != nrOfStates ) {
+        if (rateVector.length != nrOfStates -1 ) {
             throw new IllegalArgumentException("Dimension of input 'rates' is " + rateVector.length + " but a " +
-                    "rate vector of dimension " + nrOfStates + " was " +
+                    "rate vector of dimension " + (nrOfStates -1) + " was " +
                     "expected");
         }
 
