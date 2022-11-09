@@ -61,7 +61,7 @@ public class SimulatedAlignment extends Alignment{
         private int insertionLength;
         private DataType dataType;
 
-        private String[] ancestralSeqStr;
+        private String ancestralSeqStr;
         private String[] ancestralSequence;
 
         public SimulatedAlignment() {
@@ -108,18 +108,14 @@ public class SimulatedAlignment extends Alignment{
 
             double[] transitionProbs = substModel.getInsertionProbs();
 
-            int[][][] alignment = new int[nTaxa][seqLength][insertionLength];
+            int[][] alignment = new int[nTaxa][insertionLength];
 
             Node root = tree.getRoot();
 
-            int[][] parentSequence = new int[seqLength][insertionLength];
+            int[] parentSequence = new int[insertionLength];
 
-            ancestralSeqStr = new String[seqLength];
+            ancestralSeqStr = dataType.encodingToString(parentSequence);
 
-            for (int i=0; i < seqLength; i++){
-                //TODO we assume here that state 0 encodes unedited
-                ancestralSeqStr[i] = dataType.encodingToString(parentSequence[i]);
-            }
 
 
             traverse(root, parentSequence,
@@ -148,36 +144,29 @@ public class SimulatedAlignment extends Alignment{
          * @param regionAlignment alignment for particular region
          */
         private void traverse(Node node,
-                              int[][] parentSequence,
+                              int[] parentSequence,
                               double[] transitionProbs,
-                              int[][][] regionAlignment) {
+                              int[][] regionAlignment) {
 
 
             // ignore categories so far
 
             for (Node child : node.getChildren()) {
 
-                // Calculate transition probabilities
-            //    for (int i=0; i<siteModel.getCategoryCount(); i++) {
-                    //siteModel.getSubstitutionModel().getTransitionProbabilities(
-                     //       child, node.getHeight(), child.getHeight(),
-                      //      1,
-                       //     transitionProbs[0]);
-              //  }
-
                 double deltaT = node.getHeight() - child.getHeight();
                 double clockRate = siteModel.getRateForCategory(0, child);
 
                 // Draw characters on child sequence
-                int[][] childSequence = new int[parentSequence.length][parentSequence[0].length];
+                int[] childSequence = new int[parentSequence.length];
                 int nStates = dataType.getStateCount();
-                double[] charProb = new double[nStates];
+
+                //double[] charProb = new double[nStates];
 
                 // sample number of new insertions
                 long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
 
                 for (int i=0; i<nEdits; i++){
-
+                    childSequence[]
                 }
                 for (int i=0; i< childSequence.length; i++) {
                     //int category = categories[i];
