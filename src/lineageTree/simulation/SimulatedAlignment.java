@@ -157,14 +157,8 @@ public class SimulatedAlignment extends Alignment{
                 double clockRate = siteModel.getRateForCategory(0, child);
 
                 // Draw characters on child sequence
-                int[] childSequence = new int[parentSequence.length];
+                int[] childSequence = parentSequence.clone();
                 int nStates = dataType.getStateCount();
-
-                //double[] charProb = new double[nStates];
-
-
-                // sample number of new insertions
-                long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
 
 
                 // find site where insertion could happen, otw no more simulation necessary
@@ -173,25 +167,29 @@ public class SimulatedAlignment extends Alignment{
                     insertionI++;
                 }
 
-                for (int i=0; i<nEdits; i++){
-                    childSequence[]
-                }
+                // if parent sequence is fully edited
+                if (insertionI == nrOfInsertionsPerSite){
+                    break;
 
-                //is editable site available
-                for (int i=0; i< childSequence.length; i++) {
+                }else{
+                    // sample number of new insertions
+                    int possibleEdits = nrOfInsertionsPerSite - insertionI;
 
-                    if (childSequence[i] == 0){
+                    long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
+
+                    while (possibleEdits > 0 & nEdits > 0){
+
+                        int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
+                        childSequence[insertionI] = newInsertion;
+
+                        insertionI++;
+                        possibleEdits--;
+                        nEdits--;
 
                     }
 
-                    //int category = categories[i];
-                    //System.arraycopy(transitionProbs[category],
-                    //        parentSequence[i]*nStates, charProb, 0, nStates);
-                    //childSequence[i] = Randomizer.randomChoicePDF(charProb);
-
-
                 }
-
+                
                 if (child.isLeaf()) {
                     System.arraycopy(childSequence, 0,
                             regionAlignment[child.getNr()], 0, childSequence.length);
