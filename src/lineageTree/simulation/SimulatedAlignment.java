@@ -17,6 +17,7 @@ import beast.util.Randomizer;
 import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -43,16 +44,25 @@ public class SimulatedAlignment extends Alignment{
                 "Length of sequence to simulate.",
                 Input.Validate.REQUIRED);
 
+        public Input<Integer> insertionLengthInput = new Input<>(
+            "insertionLength",
+            "Number of insertions to add per site",
+            Input.Validate.REQUIRED);
+
+
         public Input<String> outputFileNameInput = new Input<>(
                 "outputFileName",
                 "Name of file (if any) simulated alignment should be saved to.");
 
         private Tree tree;
         private SiteModel siteModel;
+        private double[] insertionProb;
         private int seqLength;
+        private int insertionLength;
         private DataType dataType;
 
-        private String ancestralSeqStr;
+        private String[] ancestralSeqStr;
+        private String[] ancestralSequence;
 
         public SimulatedAlignment() {
             sequenceInput.setRule(Input.Validate.OPTIONAL);
@@ -63,8 +73,8 @@ public class SimulatedAlignment extends Alignment{
 
             tree = treeInput.get();
             siteModel = siteModelInput.get();
-            seqLength = sequenceLengthInput.get();
-
+            seqLength = 1; //TODO rewrite for arbitrary #sites! sequenceLengthInput.get();
+            insertionLength = insertionLengthInput.get();
             sequences.clear();
 
             grabDataType();
@@ -96,13 +106,16 @@ public class SimulatedAlignment extends Alignment{
             double[] categoryProbs = siteModel.getCategoryProportions(tree.getRoot());
 
             int nCategories = siteModel.getCategoryCount();
-            SubstitutionModel substModel = siteModel.getSubstitutionModel();
-            int nStates = substModel instanceof JukesCantor
-                    ? 4
-                    : substModel.getStateCount();
-            double[][] transitionProbs = new double[nCategories][nStates*nStates];
+            TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
+            int nStates = substModel.getStateCount();
 
-            int[][] alignment = new int[nTaxa][seqLength];
+            // transition into an edited state
+            Double[][] transitionProbs = new Double[nCategories][nStates];
+            transitionProbs[0] = substModel.getrateVector();
+
+            sumOfRates =
+
+            int[][][] alignment = new int[nTaxa][seqLength][insertionLength];
 
             int[] categories = new int[seqLength];
             for (int i=0; i<seqLength; i++)
@@ -110,12 +123,15 @@ public class SimulatedAlignment extends Alignment{
 
             Node root = tree.getRoot();
 
-            int[] parentSequence = new int[seqLength];
+            int[][] parentSequence = new int[seqLength][insertionLength];
             double[] frequencies = siteModel.getSubstitutionModel().getFrequencies();
-            for (int i=0; i<parentSequence.length; i++)
-                parentSequence[i] = Randomizer.randomChoicePDF(frequencies);
 
-            ancestralSeqStr = dataType.encodingToString(parentSequence);
+            ancestralSeqStr = new String[seqLength];
+
+            for (int i=0; i < seqLength; i++){
+                ancestralSeqStr[i] = dataType.encodingToString(parentSequence[i]);
+            }
+
 
             traverse(root, parentSequence,
                     categories, transitionProbs,
@@ -144,29 +160,44 @@ public class SimulatedAlignment extends Alignment{
          * @param regionAlignment alignment for particular region
          */
         private void traverse(Node node,
-                              int[] parentSequence,
+                              int[][] parentSequence,
                               int[] categories, double[][] transitionProbs,
-                              int[][] regionAlignment) {
+                              int[][][] regionAlignment) {
+
+
+            // ignore categories so far
 
             for (Node child : node.getChildren()) {
 
                 // Calculate transition probabilities
-                for (int i=0; i<siteModel.getCategoryCount(); i++) {
-                    siteModel.getSubstitutionModel().getTransitionProbabilities(
-                            child, node.getHeight(), child.getHeight(),
-                            siteModel.getRateForCategory(i, child),
-                            transitionProbs[i]);
-                }
+            //    for (int i=0; i<siteModel.getCategoryCount(); i++) {
+                    //siteModel.getSubstitutionModel().getTransitionProbabilities(
+                     //       child, node.getHeight(), child.getHeight(),
+                      //      1,
+                       //     transitionProbs[0]);
+              //  }
+
+                double deltaT = node.getHeight() - child.getHeight();
+                double clockRate = siteModel.getRateForCategory(0, child);
 
                 // Draw characters on child sequence
-                int[] childSequence = new int[parentSequence.length];
+                int[][] childSequence = new int[parentSequence.length][parentSequence[0].length];
                 int nStates = dataType.getStateCount();
                 double[] charProb = new double[nStates];
-                for (int i=0; i<childSequence.length; i++) {
-                    int category = categories[i];
-                    System.arraycopy(transitionProbs[category],
-                            parentSequence[i]*nStates, charProb, 0, nStates);
-                    childSequence[i] = Randomizer.randomChoicePDF(charProb);
+
+                // sample number of new insertions
+                long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
+
+                for (int i=0; i<nEdits; i++){
+
+                }
+                for (int i=0; i< childSequence.length; i++) {
+                    //int category = categories[i];
+                    //System.arraycopy(transitionProbs[category],
+                    //        parentSequence[i]*nStates, charProb, 0, nStates);
+                    //childSequence[i] = Randomizer.randomChoicePDF(charProb);
+
+
                 }
 
                 if (child.isLeaf()) {
