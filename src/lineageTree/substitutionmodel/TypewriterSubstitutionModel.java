@@ -181,6 +181,17 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 
     }
 
+    public double [] getInsertionProbs(){
+        calculateIntermediates();
+
+        double [] insertionProbs = new double [rateVector.length];
+
+        for (int i=0; i<insertionProbs.length; i++){
+            insertionProbs[i] = rateVector[i] / q;
+        }
+
+        return insertionProbs;
+    }
 
 
     @Override
