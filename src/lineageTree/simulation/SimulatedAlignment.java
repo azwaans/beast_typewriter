@@ -103,38 +103,27 @@ public class SimulatedAlignment extends Alignment{
         private void simulate() {
             int nTaxa = tree.getLeafNodeCount();
 
-            double[] categoryProbs = siteModel.getCategoryProportions(tree.getRoot());
-
-            int nCategories = siteModel.getCategoryCount();
             TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
             int nStates = substModel.getStateCount();
 
-            // transition into an edited state
-            Double[][] transitionProbs = new Double[nCategories][nStates];
-            transitionProbs[0] = substModel.getrateVector();
-
-            sumOfRates =
+            double[] transitionProbs = substModel.getInsertionProbs();
 
             int[][][] alignment = new int[nTaxa][seqLength][insertionLength];
-
-            int[] categories = new int[seqLength];
-            for (int i=0; i<seqLength; i++)
-                categories[i] = Randomizer.randomChoicePDF(categoryProbs);
 
             Node root = tree.getRoot();
 
             int[][] parentSequence = new int[seqLength][insertionLength];
-            double[] frequencies = siteModel.getSubstitutionModel().getFrequencies();
 
             ancestralSeqStr = new String[seqLength];
 
             for (int i=0; i < seqLength; i++){
+                //TODO we assume here that state 0 encodes unedited
                 ancestralSeqStr[i] = dataType.encodingToString(parentSequence[i]);
             }
 
 
             traverse(root, parentSequence,
-                    categories, transitionProbs,
+                    transitionProbs,
                     alignment);
 
             for (int leafIdx=0; leafIdx<nTaxa; leafIdx++) {
@@ -155,13 +144,12 @@ public class SimulatedAlignment extends Alignment{
          *
          * @param node Node of the tree
          * @param parentSequence Sequence at the parent node in the tree
-         * @param categories Mapping from sites to categories
          * @param transitionProbs transition probabilities
          * @param regionAlignment alignment for particular region
          */
         private void traverse(Node node,
                               int[][] parentSequence,
-                              int[] categories, double[][] transitionProbs,
+                              double[] transitionProbs,
                               int[][][] regionAlignment) {
 
 
@@ -205,7 +193,7 @@ public class SimulatedAlignment extends Alignment{
                             regionAlignment[child.getNr()], 0, childSequence.length);
                 } else {
                     traverse(child, childSequence,
-                            categories, transitionProbs,
+                            transitionProbs,
                             regionAlignment);
                 }
             }
