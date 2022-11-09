@@ -6,6 +6,8 @@ import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.datatype.DataType;
+import beast.evolution.datatype.IntegerData;
+import beast.evolution.datatype.TypewriterData;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.JukesCantor;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -56,13 +58,11 @@ public class SimulatedAlignment extends Alignment{
 
         private Tree tree;
         private SiteModel siteModel;
-        private double[] insertionProb;
         private int seqLength;
         private int nrOfInsertionsPerSite;
         private DataType dataType;
 
         private String ancestralSeqStr;
-        private String[] ancestralSequence;
 
         public SimulatedAlignment() {
             sequenceInput.setRule(Input.Validate.OPTIONAL);
@@ -104,7 +104,6 @@ public class SimulatedAlignment extends Alignment{
             int nTaxa = tree.getLeafNodeCount();
 
             TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
-            int nStates = substModel.getStateCount();
 
             double[] transitionProbs = substModel.getInsertionProbs();
 
@@ -158,7 +157,6 @@ public class SimulatedAlignment extends Alignment{
 
                 // Draw characters on child sequence
                 int[] childSequence = parentSequence.clone();
-                int nStates = dataType.getStateCount();
 
 
                 // find site where insertion could happen, otw no more simulation necessary
@@ -189,7 +187,7 @@ public class SimulatedAlignment extends Alignment{
                     }
 
                 }
-                
+
                 if (child.isLeaf()) {
                     System.arraycopy(childSequence, 0,
                             regionAlignment[child.getNr()], 0, childSequence.length);
