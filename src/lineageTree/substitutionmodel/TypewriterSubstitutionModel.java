@@ -34,11 +34,11 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     /**
      * Used for precalculations, sum of rates
      */
-    private double q;
+    private double sumOfRates;
     private boolean updateIntermediates = true;
 
     public void calculateIntermediates() {
-        this.q = arraySum(rateVector);
+        this.sumOfRates = arraySum(rateVector);
     }
 
     /**
@@ -81,7 +81,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         }
         double distance = (startTime - endTime) * rate;
 
-        double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * q)) / q;
+        double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * sumOfRates)) / sumOfRates;
         return pb;
     }
 
@@ -116,12 +116,12 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 //        }
         //edit0 is staying in the unedited state, return the 1st element
         if(edit == 0) {
-            return Math.exp(-distance *q);
+            return Math.exp(-distance *sumOfRates);
         }
 
         //there is an edit, return the corresponding transition probability
         else {
-        double pb = (rateVector[edit-1] - rateVector[edit-1] * Math.exp(-distance * q)) / q;
+        double pb = (rateVector[edit-1] - rateVector[edit-1] * Math.exp(-distance * sumOfRates)) / sumOfRates;
         return pb;}
     }
 
@@ -187,7 +187,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         double [] insertionProbs = new double [rateVector.length];
 
         for (int i=0; i<insertionProbs.length; i++){
-            insertionProbs[i] = rateVector[i] / q;
+            insertionProbs[i] = rateVector[i] / sumOfRates;
         }
 
         return insertionProbs;
