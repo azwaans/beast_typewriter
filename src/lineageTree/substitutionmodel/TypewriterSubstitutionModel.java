@@ -24,7 +24,7 @@ import java.util.stream.DoubleStream;
 @Description("Specifies transition probability vector for a Typewriter model")
 public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     final public Input<RealParameter> ratesInput = new Input<>("rates",
-            "Rates at which each target is cut in the barcode",
+            "Insertion frequencies for all possible trinucleotide insert types considered in the editing process",
             (RealParameter) null);
     /**
      * an m_nStates vector current rates  *
@@ -73,19 +73,10 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     protected boolean updateMatrix = true;
     private boolean storedUpdateMatrix = true;
 
-    //This is to get transition probabilities for a single editing event
-    public double getEditTransitionProbability(int edit, double rate, double startTime, double endTime) {
-        if (updateMatrix) {
-            calculateIntermediates();
-            updateMatrix = false;
-        }
-        double distance = (startTime - endTime) * rate;
 
-        double pb = (rateVector[edit] - rateVector[edit] * Math.exp(-distance * sumOfRates)) / sumOfRates;
-        return pb;
-    }
-
-    //This is to get transition probability between sequences (with potentially multiple edits)
+    /**
+     * This is to get transition probability between 2 sequences states (with potentially multiple edits having happened)
+     */
     public double getSequenceTransitionProbability(List<Integer> start_sequence, List<Integer> end_sequence, double distance) {
         List<Integer> subtracted = new ArrayList<>(end_sequence);
 
@@ -107,22 +98,26 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         return transition_prob;
     }
 
-    //This is to get transition probability for a single position
-    //todo remove redundancy with geteditprobability
+
+    /**
+     * This is to get a probability for a single insert event
+     */
     public double getTransitionProbability(Integer edit, double distance) {
-//        if (updateMatrix) {
-//            calculateIntermediates();
-//            updateMatrix = false;
-//        }
-        //edit0 is staying in the unedited state, return the 1st element
+        if (updateMatrix) {
+            calculateIntermediates();
+            updateMatrix = false;
+        }
+
+        //edit0 is staying in the unedited state, return the corresponding rate
         if(edit == 0) {
             return Math.exp(-distance *sumOfRates);
         }
 
         //there is an edit, return the corresponding transition probability
         else {
-        double pb = (rateVector[edit-1] - rateVector[edit-1] * Math.exp(-distance * sumOfRates)) / sumOfRates;
-        return pb;}
+            double pb = (rateVector[edit-1] - rateVector[edit-1] * Math.exp(-distance * sumOfRates)) / sumOfRates;
+            return pb;
+        }
     }
 
 
@@ -132,7 +127,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     public Double[] getrateVector() {
         return rateVector.clone();
     }
-
 
 
     /**
@@ -169,7 +163,10 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         return true;
     }
 
-
+    //
+    /**
+     * this not used in the current implementation because we do not use a matrix format
+     */
     @Override
     public void getTransitionProbabilities(Node node, double startTime, double endTime, double rate, double[] matrix) {
         double[] full_transition_probabilities = new double[rateVector.length];
@@ -181,13 +178,22 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 
     }
 
-    public double [] getInsertionProbs(){
+
+    /**
+     * this returns a vector of all insert probabilities [p_unedited,p_edit1,p_edit2...] given a certain distance
+     */
+    public double [] getInsertionProbs(double distance){
         calculateIntermediates();
 
         double [] insertionProbs = new double [rateVector.length];
 
-        for (int i=0; i<insertionProbs.length; i++){
-            insertionProbs[i] = rateVector[i] / sumOfRates;
+        //filling in the unedited state probability
+        insertionProbs[0] = Math.exp(-distance *sumOfRates);
+
+
+        //filling in the insert probabilities
+        for (int i=1; i<=insertionProbs.length; i++){
+            insertionProbs[i] = (rateVector[i] - rateVector[i] * Math.exp(-distance * sumOfRates))/ sumOfRates;
         }
 
         return insertionProbs;
@@ -198,13 +204,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     public EigenDecomposition getEigenDecomposition(Node node) {
         return null;
     }
-
-    /**
-     * This function returns the Eigen vectors.
-     *
-     * @return the array
-     */
-
 
     @Override
     public boolean canHandleDataType(DataType dataType) {

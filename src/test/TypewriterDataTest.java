@@ -101,7 +101,7 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
         RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.0");
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName("rates", insertrates, "frequencies", frequencies);
@@ -178,7 +178,7 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
         RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.0");
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName("rates", insertrates, "frequencies", frequencies);
@@ -242,7 +242,7 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
         RealParameter insertrates = new RealParameter("0.1 0.2 0.15 0.0");
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName("rates", insertrates, "frequencies", frequencies);
