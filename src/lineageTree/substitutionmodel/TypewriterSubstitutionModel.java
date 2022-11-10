@@ -180,24 +180,21 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 
 
     /**
-     * this returns a vector of all insert probabilities [p_unedited,p_edit1,p_edit2...] given a certain distance
+     * gets insertion probabilities without the clock rate component
      */
-    public double [] getInsertionProbs(double distance){
+    public double [] getInsertionProbs(){
+
         calculateIntermediates();
 
         double [] insertionProbs = new double [rateVector.length];
 
-        //filling in the unedited state probability
-        insertionProbs[0] = Math.exp(-distance *sumOfRates);
-
-
-        //filling in the insert probabilities
-        for (int i=1; i<=insertionProbs.length; i++){
-            insertionProbs[i] = (rateVector[i] - rateVector[i] * Math.exp(-distance * sumOfRates))/ sumOfRates;
+        for (int i=0; i<insertionProbs.length; i++) {
+            insertionProbs[i] = rateVector[i] / sumOfRates;
         }
 
         return insertionProbs;
     }
+
 
 
     @Override
