@@ -6,12 +6,11 @@ import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.substitutionmodel.Frequencies;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModel2;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 import org.junit.Test;
 
 import java.util.List;
 
-import static java.lang.Math.E;
 import static junit.framework.Assert.assertEquals;
 
 
@@ -49,7 +48,7 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilities2single_edit(){
 
         // Arrange
-        TypewriterSubstitutionModel2 typewritermodel = new TypewriterSubstitutionModel2();
+        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
         RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.0 0.8 0.2");
@@ -94,7 +93,7 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilities2multi_edits(){
 
         // Arrange
-        TypewriterSubstitutionModel2 typewritermodel = new TypewriterSubstitutionModel2();
+        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
         RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.0 0.8 0.2");
