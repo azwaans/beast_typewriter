@@ -4,6 +4,7 @@ package lineageTree.substitutionmodel;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.EigenDecomposition;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -44,16 +45,23 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     /**
      * This is to get transition probability between 2 sequences states (with potentially multiple edits having happened)
      */
-    public double getSequenceTransitionProbability(List<Integer> start_sequence, List<Integer> end_sequence, double distance) {
-        List<Integer> subtracted = new ArrayList<>(end_sequence);
+    public double getSequenceTransitionProbability(final List<Integer> start_sequence, final List<Integer> end_sequence, double distance) {
+        Log.info.println("getSequenceTransitionProbability" + start_sequence);
+        Log.info.println("getSequenceTransitionProbability" + end_sequence);
+
+        List<Integer> start = new ArrayList(start_sequence);
+        List<Integer> subtracted = new ArrayList(end_sequence);
+
 
         //substracting start sequence from end sequence: this is what what edited
-        start_sequence.forEach(subtracted::remove);
+        start.forEach(subtracted::remove);
 
         //upper bound for the poisson process is the number of unedited positions in the start sequence
         List<Integer> zero = Arrays.asList(0);
-        start_sequence.removeAll(zero);
-        int poisson_up = 5 -  start_sequence.size();
+
+
+        start.removeAll(zero);
+        int poisson_up = 5 -  start.size();
 
         //initialise the poisson distribution with mean rate * distance
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(rate*distance);
@@ -62,10 +70,9 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         // P(max) = 1- sum(P(n))
         if(subtracted.size() == poisson_up ) {
             double sum = 0.0;
-            for(int i = 0;  i<=poisson_up; i++) {
+            for(int i = 0;  i< poisson_up; i++) {
                 sum += dist.probability(i);
             }
-
              return (1-sum) * getFrequencyFactor(subtracted);
         }
 
@@ -74,7 +81,11 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
             double freq = getFrequencyFactor(subtracted);
             double prob = dist.probability(subtracted.size());
             return prob * freq;
+
+
         }
+
+
 
     }
 

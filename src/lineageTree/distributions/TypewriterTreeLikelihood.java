@@ -19,6 +19,7 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 
 
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
@@ -35,7 +36,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
             "A model describing the rates on the branches of the beast.tree.");
 
-    protected TypewriterSubstitutionModel substitutionModel;
+    protected TypewriterSubstitutionModelHomogeneous substitutionModel;
     protected BranchRateModel.Base branchRateModel;
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
@@ -52,7 +53,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         m_siteModel.setDataType(dataInput.get().getDataType());
 
-        substitutionModel = (TypewriterSubstitutionModel)  m_siteModel.substModelInput.get();
+        substitutionModel = (TypewriterSubstitutionModelHomogeneous)  m_siteModel.substModelInput.get();
         branchRateModel = new StrictClockModel();
         m_branchLengths = new double[nodeCount];
         ancestralStates = new Hashtable<>() ;
@@ -79,6 +80,16 @@ public class TypewriterTreeLikelihood extends Distribution {
         //ugly way to do that: Hashmaps
         final TreeInterface tree = treeInput.get();
         traverseAncestral(tree.getRoot());
+
+//        for(int i= 0 ; i<4; i++) {
+//
+//                for (List<Integer> j : ancestralStates.get(i)) {
+//                    Log.info.println("i "+ i + " ancestral" + j);
+//                }
+//        }
+
+
+
 
         //2nd step : calculate likelihood with these states
         // size of the partial likelihoods at each node = state.
@@ -214,11 +225,12 @@ public class TypewriterTreeLikelihood extends Distribution {
         if(childNode.isLeaf()) {
 
             List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(0);
-           double dummy = substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
+
             sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
 
         }
         else {
+
             for (int end_state_index = 0; end_state_index < ancestralStates.get(childNode.getNr()).size(); ++end_state_index) {
 
                 List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(end_state_index);
