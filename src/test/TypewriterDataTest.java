@@ -440,19 +440,18 @@ public void test_typewriter_data() {
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*0.5)*submodel.getSequenceTransitionProbability(allele0,allele12,5*0.5);
-        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*0.5)*submodel.getSequenceTransitionProbability(allele1,allele12,5*0.5);
-        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*0.5)*submodel.getSequenceTransitionProbability(allele12,allele12,5*0.5);
 
+        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5)*submodel.getSequenceTransitionProbability(allele0,allele12,5);
+        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5)*submodel.getSequenceTransitionProbability(allele1,allele12,5);
+        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5)*submodel.getSequenceTransitionProbability(allele12,allele12,5);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*0.5) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*0.5) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*0.5) ;
+        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
 
 
-        Log.info.println("Likelihood");
         double LogPCalc = likelihood.calculateLogP();
 
         assertEquals(LogPCalc, LogPExpected);

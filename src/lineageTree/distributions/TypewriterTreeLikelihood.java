@@ -76,25 +76,14 @@ public class TypewriterTreeLikelihood extends Distribution {
     public double calculateLogP() {
 
         //1st step : calculate all ancestral states in a Postorder traversal
-        // need a data-structure to save these!
+        //need a data-structure to save these!
         //ugly way to do that: Hashmaps
         final TreeInterface tree = treeInput.get();
         traverseAncestral(tree.getRoot());
 
-//        for(int i= 0 ; i<4; i++) {
-//
-//                for (List<Integer> j : ancestralStates.get(i)) {
-//                    Log.info.println("i "+ i + " ancestral" + j);
-//                }
-//        }
-
-
-
-
         //2nd step : calculate likelihood with these states
         // size of the partial likelihoods at each node = state.
         traverseLikelihood(tree.getRoot());
-
         //the tree log likelihood is the log(p) of unedited state at the root
         return Math.log(probabilities[probabilities.length - 1][0]);
 
@@ -105,7 +94,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
         if(! (node == null) && !node.isRoot()) {
-
 
             if (node.isLeaf()) {
                 List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
@@ -218,14 +206,13 @@ public class TypewriterTreeLikelihood extends Distribution {
     }
 
     public double sum_partial_child(List<Integer> start_state,Node childNode) {
-        final double branchRate = branchRateModel.getRateForBranch(childNode);
-        final double branchTime = childNode.getLength() * branchRate;
+        //final double branchRate = branchRateModel.getRateForBranch(childNode);
+        final double branchTime = childNode.getLength() ;
         double sum = 0;
 
         if(childNode.isLeaf()) {
 
             List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(0);
-
             sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime);
 
         }

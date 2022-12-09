@@ -46,19 +46,15 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      * This is to get transition probability between 2 sequences states (with potentially multiple edits having happened)
      */
     public double getSequenceTransitionProbability(final List<Integer> start_sequence, final List<Integer> end_sequence, double distance) {
-        Log.info.println("getSequenceTransitionProbability" + start_sequence);
-        Log.info.println("getSequenceTransitionProbability" + end_sequence);
 
         List<Integer> start = new ArrayList(start_sequence);
         List<Integer> subtracted = new ArrayList(end_sequence);
-
 
         //substracting start sequence from end sequence: this is what what edited
         start.forEach(subtracted::remove);
 
         //upper bound for the poisson process is the number of unedited positions in the start sequence
         List<Integer> zero = Arrays.asList(0);
-
 
         start.removeAll(zero);
         int poisson_up = 5 -  start.size();
@@ -81,11 +77,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
             double freq = getFrequencyFactor(subtracted);
             double prob = dist.probability(subtracted.size());
             return prob * freq;
-
-
         }
-
-
 
     }
 
