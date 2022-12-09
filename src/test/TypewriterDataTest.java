@@ -38,8 +38,8 @@ public void test_single_integer(){
 
 @Test
 public void test_typewriter_data() {
-    Sequence a = new Sequence("sequence1", "02010100");
-    Sequence b = new Sequence("sequence2", "01020000");
+    Sequence a = new Sequence("cell1", "0201010000");
+    Sequence b = new Sequence("cell2", "0102000000");
 
     Alignment alignment = new Alignment();
     alignment.initByName("sequence", a, "dataType", "TypewriterData");
