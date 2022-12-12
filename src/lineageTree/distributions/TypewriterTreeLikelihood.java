@@ -93,9 +93,10 @@ public class TypewriterTreeLikelihood extends Distribution {
     public void traverseAncestral(Node node) {
 
 
+
         if(! (node == null) && !node.isRoot()) {
 
-            if (node.isLeaf()) {
+            if (node.isLeaf() ) {
                 List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
                 ancestralStates.put(node.getNr(), LeafStates);
 
@@ -109,14 +110,18 @@ public class TypewriterTreeLikelihood extends Distribution {
 
                 List<List<Integer>> AncSetChild1 = ancestralStates.get(child1.getNr());
                 List<List<Integer>> AncSetChild2 = ancestralStates.get(child2.getNr());
+
+
                 List<List<Integer>> AncSetNode = new ArrayList<>(AncSetChild1);
                 AncSetNode.retainAll(AncSetChild2);
+
                 ancestralStates.put(node.getNr(), AncSetNode);
 
             }
         }
 
         else {
+            if (node.isRoot()) {
 
                 List<Integer> uneditedState = new ArrayList<Integer>() {{
                     add(0);
@@ -127,7 +132,8 @@ public class TypewriterTreeLikelihood extends Distribution {
                 }};
                 List<List<Integer>> unedited = new ArrayList(uneditedState);
                 ancestralStates.put(node.getNr(), unedited);
-                //this takes care of the stem != root node
+            }
+//                this takes care of the stem != root node
                 final Node child1 = node.getChild(0);
                 traverseAncestral(child1);
 
@@ -142,7 +148,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
             if (node.isLeaf()) {
-
                 double[] LeafProbabilities = init_probabilities_leaf(ancestralStates.get(node.getNr()).size());
                 probabilities[node.getNr()] = LeafProbabilities;
 
@@ -164,13 +169,13 @@ public class TypewriterTreeLikelihood extends Distribution {
         else {
 
             //root node!
-            //this takes care of the stem != root node
-            final Node child1 = node.getChild(0);
-            traverseLikelihood(child1);
-            probabilities[node.getNr()] = calculateRootPartials(child1);
-
+            // this takes care of the stem != root node
+            if (node.isRoot()) {
+                final Node child1 = node.getChild(0);
+                traverseLikelihood(child1);
+                probabilities[node.getNr()] = calculateRootPartials(child1);
+            }
         }
-
 
 
     }
@@ -179,17 +184,34 @@ public class TypewriterTreeLikelihood extends Distribution {
         //here. implement felsensteins's pruning algorithm
 
         //initialize an array for the partials
-        double[] partials = new double[ancestralStates.get(nodeNr).size()];
 
-        for(int state_index = 0 ; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
-            List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
-            double child1partialsum = sum_partial_child(start_state,child1Nr);
-            double child2partialsum = sum_partial_child(start_state,child2Nr);
+        double[] partials = new double[ancestralStates.get(nodeNr).size()];
+        if (ancestralStates.get(nodeNr).size() ==5) {
+            //root node
+             List<Integer> start_state = new ArrayList<Integer>() {{
+                add(0);
+                add(0);
+                add(0);
+                add(0);
+                add(0);
+            }}; ;
+            double child1partialsum = sum_partial_child(start_state, child1Nr);
+            double child2partialsum = sum_partial_child(start_state, child2Nr);
 
             double product = child1partialsum * child2partialsum;
-            partials[state_index] = product;
-        }
+            partials[0] = product;
 
+        }
+        else {
+            for (int state_index = 0; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
+                List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
+                double child1partialsum = sum_partial_child(start_state, child1Nr);
+                double child2partialsum = sum_partial_child(start_state, child2Nr);
+
+                double product = child1partialsum * child2partialsum;
+                partials[state_index] = product;
+            }
+        }
         return partials;
 
     }

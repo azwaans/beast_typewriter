@@ -657,7 +657,7 @@ public void test_typewriter_data() {
 
 
         //Testing the ancestral state reconstruction at internal nodes
-        //tree with 2 tips
+        //single branch
         String newick = "(CHILD2:5);";
         Sequence a = new Sequence("CHILD2", "0000000000");
 
@@ -717,14 +717,14 @@ public void test_typewriter_data() {
 
 
         //Testing the ancestral state reconstruction at internal nodes
-        //tree with 2 tips
-        String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2):2.0):0.0;";
+        //tree with 3 tips
+        String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)INTERNAL2:2.0):0.0;";
 
         Sequence a = new Sequence("CHILD1", "0102000000");
         Sequence b = new Sequence("CHILD3", "0102000000");
         Sequence c = new Sequence("CHILD2", "0201000000");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "user defined");
+        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "TypewriterData");
 
 
         Tree tree1 = new TreeParser();
@@ -764,23 +764,96 @@ public void test_typewriter_data() {
 
         double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1)*submodel.getSequenceTransitionProbability(allele0,allele12,1);
         double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1)*submodel.getSequenceTransitionProbability(allele1,allele12,1);
+
         double p1200_internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1)*submodel.getSequenceTransitionProbability(allele12,allele12,1);
 
-        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1 ) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1)) * (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele21,2));
+        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1 ) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2));
 
 
         //root node
-        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,1) ;
+        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
 
         double LogPCalc = likelihood.calculateLogP();
-
-        assertEquals(LogPCalc, LogPExpected);
+        Log.info.println("expected" + LogPExpected);
+        assertEquals(LogPExpected,LogPCalc);
 
 
     }
+
+    @Test
+    public void test_likelihood_3_leaves_all_different() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)INTERNAL2:2.0):0.0;";
+
+        Sequence a = new Sequence("CHILD1", "0101000000");
+        Sequence b = new Sequence("CHILD3", "0102000000");
+        Sequence c = new Sequence("CHILD2", "0201000000");
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "TypewriterData");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+
+        //create a sub model with values
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+        RealParameter insertrate = new RealParameter("0.5");
+        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName("rate", insertrate, "frequencies", frequencies);
+
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+
+
+        //initialise probabilities
+        likelihood.probabilities = new double[tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
+        List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
+        List<Integer> allele11 = Arrays.asList(1,1,0,0,0);
+        List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
+        List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+
+        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1)*submodel.getSequenceTransitionProbability(allele0,allele11,1);
+        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1)*submodel.getSequenceTransitionProbability(allele1,allele11,1);
+
+        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1 )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2));
+
+
+        //root node
+        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2) ;
+
+        //loglikelihood
+        double LogPExpected = Math.log(proot);
+
+        double LogPCalc = likelihood.calculateLogP();
+        Log.info.println("expected" + LogPExpected);
+        assertEquals(LogPExpected,LogPCalc);
+
+
+    }
+
+   
 
 
 
