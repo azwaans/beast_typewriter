@@ -4,6 +4,7 @@ import beast.core.Description;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.alignment.*;
+import beast.evolution.branchratemodel.StrictClockModel;
 import beast.evolution.datatype.DataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
@@ -100,7 +101,10 @@ public void test_typewriter_data() {
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
         //test ancestral states sets calculations
         likelihood.traverseAncestral(tree1.getRoot());
@@ -171,7 +175,10 @@ public void test_typewriter_data() {
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
         //test ancestral states sets calculations
         likelihood.traverseAncestral(tree1.getRoot());
@@ -248,7 +255,10 @@ public void test_typewriter_data() {
 //        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 //
 //        //likelihood class
-//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+//        RealParameter meanRate = new RealParameter("0.5");
+//        StrictClockModel clockModel = new StrictClockModel();
+//        clockModel.initByName("clock.rate",meanRate);
+//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 //
 //
 //        //initialise probabilities
@@ -300,16 +310,21 @@ public void test_typewriter_data() {
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter rate = new RealParameter("0.1");
+
         RealParameter freqs = new RealParameter("0.5 0.5");
-        submodel.initByName("rate", rate, "editfrequencies", freqs);
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName("editfrequencies", freqs,"frequencies",frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //calculate states dictionary
@@ -382,9 +397,8 @@ public void test_typewriter_data() {
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.8 0.2");
-Frequencies frequencies = new Frequencies();
+        Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
@@ -394,7 +408,10 @@ Frequencies frequencies = new Frequencies();
 
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //initialise probabilities
@@ -406,13 +423,14 @@ Frequencies frequencies = new Frequencies();
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+        double clock_rate = 0.5;
 
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5)*submodel.getSequenceTransitionProbability(allele0,allele12,5);
-        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5)*submodel.getSequenceTransitionProbability(allele1,allele12,5);
-        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5)*submodel.getSequenceTransitionProbability(allele12,allele12,5);
+        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele12,5*clock_rate);
+        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele12,5*clock_rate);
+        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele12,5*clock_rate);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1) ;
+        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
@@ -448,9 +466,8 @@ Frequencies frequencies = new Frequencies();
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.8 0.2");
-Frequencies frequencies = new Frequencies();
+        Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
@@ -459,7 +476,10 @@ Frequencies frequencies = new Frequencies();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //initialise probabilities
@@ -472,13 +492,14 @@ Frequencies frequencies = new Frequencies();
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele122 = Arrays.asList(1,2,2,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+        double clock_rate = 0.5;
 
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5)*submodel.getSequenceTransitionProbability(allele0,allele122,5);
-        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5)*submodel.getSequenceTransitionProbability(allele1,allele122,5);
-        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5)*submodel.getSequenceTransitionProbability(allele12,allele122,5);
+        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele122,5*clock_rate);
+        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele122,5*clock_rate);
+        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele122,5*clock_rate);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1) ;
+        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
@@ -514,9 +535,8 @@ Frequencies frequencies = new Frequencies();
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.8 0.2");
-Frequencies frequencies = new Frequencies();
+        Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
@@ -525,7 +545,10 @@ Frequencies frequencies = new Frequencies();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //initialise probabilities
@@ -535,12 +558,12 @@ Frequencies frequencies = new Frequencies();
 
         //internal node partials:
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
+        double clock_rate = 0.5;
 
-
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5)*submodel.getSequenceTransitionProbability(allele0,allele0,5);
+        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1) ;
+        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
@@ -575,9 +598,8 @@ Frequencies frequencies = new Frequencies();
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.8 0.2");
-Frequencies frequencies = new Frequencies();
+        Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
@@ -586,7 +608,10 @@ Frequencies frequencies = new Frequencies();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //initialise probabilities
@@ -597,8 +622,9 @@ Frequencies frequencies = new Frequencies();
         //internal node partials:
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
         List<Integer> allele122 = Arrays.asList(1,2,2,0,0);
+        double clock_rate = 0.5;
 
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele122,5);
+        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele122,5*clock_rate);
 
         //root node
         double proot = p0000_internal ;
@@ -636,10 +662,14 @@ Frequencies frequencies = new Frequencies();
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+
+
         RealParameter freqs = new RealParameter("0.8 0.2");
 
-Frequencies frequencies = new Frequencies();
+        Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
         //site model
@@ -647,7 +677,7 @@ Frequencies frequencies = new Frequencies();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //initialise probabilities
@@ -657,8 +687,8 @@ Frequencies frequencies = new Frequencies();
 
         //internal node partials:
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
-
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5);
+        double clock_rate = 0.5;
+        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate);
 
         //root node
         double proot = p0000_internal ;
@@ -698,10 +728,9 @@ Frequencies frequencies = new Frequencies();
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.8 0.2");
 
-Frequencies frequencies = new Frequencies();
+        Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
         //site model
@@ -709,7 +738,11 @@ Frequencies frequencies = new Frequencies();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+
 
 
         //initialise probabilities
@@ -722,22 +755,22 @@ Frequencies frequencies = new Frequencies();
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+        double clock_rate = 0.5;
 
-        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1)*submodel.getSequenceTransitionProbability(allele0,allele12,1);
-        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1)*submodel.getSequenceTransitionProbability(allele1,allele12,1);
+        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate);
+        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate);
 
-        double p1200_internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1)*submodel.getSequenceTransitionProbability(allele12,allele12,1);
+        double p1200_internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate);
 
-        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1 ) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2));
+        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
 
         //root node
-        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2) ;
+        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
 
         double LogPCalc = likelihood.calculateLogP();
-        Log.info.println("expected" + LogPExpected);
         assertEquals(LogPExpected,LogPCalc);
 
 
@@ -767,7 +800,6 @@ Frequencies frequencies = new Frequencies();
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("0.8 0.2");
 
 
@@ -780,7 +812,11 @@ Frequencies frequencies = new Frequencies();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
         //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
+        
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 
 
         //initialise probabilities
@@ -794,21 +830,21 @@ Frequencies frequencies = new Frequencies();
         List<Integer> allele11 = Arrays.asList(1,1,0,0,0);
         List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+        double clock_rate = 0.5;
 
-        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1)*submodel.getSequenceTransitionProbability(allele0,allele11,1);
-        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1)*submodel.getSequenceTransitionProbability(allele1,allele11,1);
+        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele11,1*clock_rate);
+        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele11,1*clock_rate);
 
-        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1 )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2));
+        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
 
 
         //root node
-        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2) ;
+        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
 
         //loglikelihood
         double LogPExpected = Math.log(proot);
 
         double LogPCalc = likelihood.calculateLogP();
-        Log.info.println("expected" + LogPExpected);
         assertEquals(LogPExpected,LogPCalc);
 
 

@@ -54,9 +54,14 @@ public class TypewriterTreeLikelihood extends Distribution {
         m_siteModel.setDataType(dataInput.get().getDataType());
 
         substitutionModel = (TypewriterSubstitutionModelHomogeneous)  m_siteModel.substModelInput.get();
-        branchRateModel = new StrictClockModel();
         m_branchLengths = new double[nodeCount];
         ancestralStates = new Hashtable<>() ;
+
+        if (branchRateModelInput.get() != null) {
+            branchRateModel = branchRateModelInput.get();
+        } else {
+            branchRateModel = new StrictClockModel();
+        }
 
 
     }
@@ -228,8 +233,8 @@ public class TypewriterTreeLikelihood extends Distribution {
     }
 
     public double sum_partial_child(List<Integer> start_state,Node childNode) {
-        //final double branchRate = branchRateModel.getRateForBranch(childNode);
-        final double branchTime = childNode.getLength() ;
+        final double branchRate = branchRateModel.getRateForBranch(childNode);
+        final double branchTime = childNode.getLength()*branchRate ;
         double sum = 0;
 
         if(childNode.isLeaf()) {
