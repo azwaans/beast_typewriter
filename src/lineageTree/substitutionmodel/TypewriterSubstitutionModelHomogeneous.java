@@ -5,6 +5,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
+import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.EigenDecomposition;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -18,14 +19,15 @@ import java.util.List;
 
 @Description("Allows to calculate transition probabilities for a Typewriter modelled as a Poisson process on the number of edits")
 public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Base {
-    final public Input<RealParameter> rateInput = new Input<>("rate",
-            "Insertion rate for the Poisson process",
+    final public Input<RealParameter> frequenciesInput = new Input<>("editfrequencies",
+            "Edit frequencies for the typewriter process",
             (RealParameter) null);
 
     /**
      * edit insertion rate  *
      */
-    protected double rate;
+    protected double[] insertFrequencies;
+
 
 
     @Override
@@ -33,7 +35,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         super.initAndValidate();
         updateMatrix = true;
         nrOfStates = frequencies.getFreqs().length;
-        rate = rateInput.get().getValue();
+        insertFrequencies = frequenciesInput.get().getDoubleValues();
 
 
     } // initAndValidate
@@ -60,7 +62,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         int poisson_up = 5 -  start.size();
 
         //initialise the poisson distribution with mean rate * distance
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(rate*distance);
+        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance);
 
         //calculate the transition probability for the case where all available positions are edited in:
         // P(max) = 1- sum(P(n))
@@ -87,7 +89,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     public double getFrequencyFactor(List<Integer> edits) {
         double factor = 1.0;
         for(Integer i : edits){
-            factor = factor * frequencies.getFreqs()[i];
+            factor = factor * insertFrequencies[i-1];
         }
         return factor;
 
@@ -98,8 +100,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     public double[] getInsertionProbs() {
 
-        double[] factor =  frequencies.getFreqs();
-        return Arrays.copyOfRange(factor, 1, factor.length-1);
+        return insertFrequencies;
 
     }
 

@@ -95,9 +95,7 @@ public void test_typewriter_data() {
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
-        //site model
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);        //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
 
@@ -162,11 +160,11 @@ public void test_typewriter_data() {
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter rate = new RealParameter("0.5");
+
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", rate, "frequencies", frequencies);
+        submodel.initByName( "editfrequencies", freqs, "frequencies", frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
@@ -303,10 +301,8 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter rate = new RealParameter("0.1");
-        RealParameter freqs = new RealParameter("0.0 0.5 0.5");
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", rate, "frequencies", frequencies);
+        RealParameter freqs = new RealParameter("0.5 0.5");
+        submodel.initByName("rate", rate, "editfrequencies", freqs);
 
         //site model
         SiteModel siteM = new SiteModel();
@@ -387,15 +383,15 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
-        Frequencies frequencies = new Frequencies();
+        RealParameter freqs = new RealParameter("0.8 0.2");
+Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
 
         //likelihood class
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
@@ -453,11 +449,10 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
-        Frequencies frequencies = new Frequencies();
+        RealParameter freqs = new RealParameter("0.8 0.2");
+Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
@@ -520,11 +515,10 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
-        Frequencies frequencies = new Frequencies();
+        RealParameter freqs = new RealParameter("0.8 0.2");
+Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
@@ -582,11 +576,10 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
-        Frequencies frequencies = new Frequencies();
+        RealParameter freqs = new RealParameter("0.8 0.2");
+Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
@@ -644,12 +637,11 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
-        Frequencies frequencies = new Frequencies();
+        RealParameter freqs = new RealParameter("0.8 0.2");
+
+Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
         //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
@@ -707,12 +699,11 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
-        Frequencies frequencies = new Frequencies();
+        RealParameter freqs = new RealParameter("0.8 0.2");
+
+Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
         //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
@@ -777,11 +768,12 @@ public void test_typewriter_data() {
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
         RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
+        RealParameter freqs = new RealParameter("0.8 0.2");
+
+
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rate", insertrate, "frequencies", frequencies);
-
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
