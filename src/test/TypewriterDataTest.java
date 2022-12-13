@@ -325,7 +325,7 @@ public void test_typewriter_data() {
 
         //likelihood class
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM);
-        
+
 
         //calculate states dictionary
         likelihood.traverseAncestral(tree1.getRoot());

@@ -93,6 +93,19 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
     }
 
+    /**
+     * Function to obtain the probability factor induced by insert frequencies
+     */
+    public double[] getInsertionProbs() {
+
+        double[] factor =  frequencies.getFreqs();
+        return Arrays.copyOfRange(factor, 1, factor.length-1);
+
+    }
+
+
+
+
 
     /**
      * CalculationNode implementation follows *
