@@ -8,6 +8,7 @@ import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
+import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
@@ -36,10 +37,14 @@ public class TypewriterTreeLikelihood extends Distribution {
     final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
             "A model describing the rates on the branches of the beast.tree.");
 
+    final public Input<RealParameter> originTimeInput = new Input<>("originTime", "Origin time of the editing process (stem)");
+
+
     protected TypewriterSubstitutionModelHomogeneous substitutionModel;
     protected BranchRateModel.Base branchRateModel;
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
+    protected double originTime;
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][] probabilities ;
@@ -62,6 +67,13 @@ public class TypewriterTreeLikelihood extends Distribution {
         } else {
             branchRateModel = new StrictClockModel();
         }
+        if (branchRateModelInput.get() != null) {
+            originTime = originTimeInput.get().getValue();
+        }
+        else {
+            originTime = 0.0;
+        }
+
 
 
     }
@@ -90,7 +102,14 @@ public class TypewriterTreeLikelihood extends Distribution {
         // size of the partial likelihoods at each node = state.
         traverseLikelihood(tree.getRoot());
         //the tree log likelihood is the log(p) of unedited state at the root
-        return Math.log(probabilities[probabilities.length - 1][0]);
+
+        if(originTime == 0.0) {
+            return Math.log(probabilities[probabilities.length - 1][0]);
+        }
+        else {
+            //todo insert here how to deal with OriginTime
+            return Math.log(probabilities[probabilities.length - 1][0]);
+        }
 
     }
 
