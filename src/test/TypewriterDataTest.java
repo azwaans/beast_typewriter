@@ -7,7 +7,7 @@ import beast.evolution.alignment.*;
 import beast.evolution.datatype.DataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.datatype.TypewriterData;
+//import beast.evolution.datatype.integer;
 import beast.evolution.tree.Node;
 import lineageTree.distributions.TypewriterTreeLikelihood;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
@@ -28,23 +28,13 @@ import static org.junit.Assert.*;
 public class TypewriterDataTest {
 
 @Test
-public void test_single_integer(){
-
-    DataType typewriter = new TypewriterData();
-
-    assertEquals("1", typewriter.getCharacter(01));
-    assertEquals("11", typewriter.getCharacter(11));
-
-}
-
-@Test
 public void test_typewriter_data() {
-    Sequence a = new Sequence("cell1", "0201010000");
-    Sequence b = new Sequence("cell2", "0102000000");
+    Sequence a = new Sequence("cell1", "21000");
+    Sequence b = new Sequence("cell2", "12000");
 
     Alignment alignment = new Alignment();
-    alignment.initByName("sequence", a, "dataType", "TypewriterData");
-    alignment.initByName("sequence", b, "dataType", "TypewriterData");
+    alignment.initByName("sequence", a, "dataType", "integer");
+    alignment.initByName("sequence", b, "dataType", "integer");
 
     //internal representation of the sequences for the package:
     List<Integer> sequence_a = alignment.getCounts().get(0);
@@ -55,15 +45,15 @@ public void test_typewriter_data() {
     List<List<Integer>> ancs_sequence_b = TypewriterTreeLikelihood.get_possible_ancestors(sequence_b);
 
     //manually create ancestral states
-    List<Integer> allele21 = Arrays.asList(2, 1, 0, 0);
-    List<Integer> allele12 = Arrays.asList(1, 2, 0, 0);
-    List<Integer> allele1 = Arrays.asList(1, 0, 0, 0);
-    List<Integer> allele2 = Arrays.asList(2, 0, 0, 0);
-    List<Integer> allele0 = Arrays.asList(0, 0, 0, 0);
+    List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+    List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+    List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+    List<Integer> allele2 = Arrays.asList(2, 0, 0, 0, 0);
+    List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
 
     // For a sequence with n sites, there are n_edited_sites + 1 ancestral sequences (all edited position + fully unedited))
-    assertEquals(ancs_sequence_a.size(), 4, 1e-5);
-
+    assertEquals(ancs_sequence_a.size(), 3, 1e-5);
+    Log.info.println("aancers" + ancs_sequence_a);
     //for any sequence, its possible ancestral sequences are itself + removing edits 1 by 1 + unedited
 
     //check for sequence a
@@ -85,12 +75,12 @@ public void test_typewriter_data() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
-        Sequence a = new Sequence("CHILD1", "0102000000");
-        Sequence b = new Sequence("CHILD2", "0102000000");
+        Sequence a = new Sequence("CHILD1", "12000");
+        Sequence b = new Sequence("CHILD2", "12000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -156,12 +146,12 @@ public void test_typewriter_data() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
-        Sequence a = new Sequence("CHILD1", "0102030000");
-        Sequence b = new Sequence("CHILD2", "0102000000");
+        Sequence a = new Sequence("CHILD1", "12300");
+        Sequence b = new Sequence("CHILD2", "12000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -171,13 +161,12 @@ public void test_typewriter_data() {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
-        RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.0");
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+        RealParameter rate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("rates", insertrates, "frequencies", frequencies);
-        submodel.calculateIntermediates();
+        submodel.initByName("rate", rate, "frequencies", frequencies);
 
         //site model
         SiteModel siteM = new SiteModel();
@@ -237,8 +226,8 @@ public void test_typewriter_data() {
 //        Sequence b = new Sequence("CHILD2", "0102000000");
 //
 //        Alignment alignment = new Alignment();
-//        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-//        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+//        alignment.initByName("sequence", a, "dataType", "integer");
+//        alignment.initByName("sequence", b, "dataType", "integer");
 //
 //        Tree tree1 = new TreeParser();
 //        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -294,14 +283,14 @@ public void test_typewriter_data() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "(((A:1,B:1):1,C:2):1)";
-        Sequence a = new Sequence("A", "0102000000");
-        Sequence b = new Sequence("B", "0101000000");
-        Sequence c = new Sequence("C", "0201000000");
+        Sequence a = new Sequence("A", "12000");
+        Sequence b = new Sequence("B", "11000");
+        Sequence c = new Sequence("C", "21000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
-        alignment.initByName("sequence", c, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+        alignment.initByName("sequence", c, "dataType", "integer");
 
 
         Tree tree1 = new TreeParser();
@@ -381,12 +370,12 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
-        Sequence a = new Sequence("CHILD1", "0102000000");
-        Sequence b = new Sequence("CHILD2", "0102000000");
+        Sequence a = new Sequence("CHILD1", "12000");
+        Sequence b = new Sequence("CHILD2", "12000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -447,12 +436,12 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
-        Sequence a = new Sequence("CHILD1", "0102020000");
-        Sequence b = new Sequence("CHILD2", "0102000000");
+        Sequence a = new Sequence("CHILD1", "12200");
+        Sequence b = new Sequence("CHILD2", "12000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -514,12 +503,12 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
-        Sequence a = new Sequence("CHILD1", "0000000000");
-        Sequence b = new Sequence("CHILD2", "0000000000");
+        Sequence a = new Sequence("CHILD1", "00000");
+        Sequence b = new Sequence("CHILD2", "00000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -578,10 +567,10 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "(CHILD2:5);";
-        Sequence a = new Sequence("CHILD2", "0102020000");
+        Sequence a = new Sequence("CHILD2", "122000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -640,10 +629,10 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //single branch
         String newick = "(CHILD2:5);";
-        Sequence a = new Sequence("CHILD2", "0000000000");
+        Sequence a = new Sequence("CHILD2", "00000");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -701,11 +690,11 @@ public void test_typewriter_data() {
         //tree with 3 tips
         String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)INTERNAL2:2.0):0.0;";
 
-        Sequence a = new Sequence("CHILD1", "0102000000");
-        Sequence b = new Sequence("CHILD3", "0102000000");
-        Sequence c = new Sequence("CHILD2", "0201000000");
+        Sequence a = new Sequence("CHILD1", "12000");
+        Sequence b = new Sequence("CHILD3", "12000");
+        Sequence c = new Sequence("CHILD2", "21000");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "TypewriterData");
+        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "integer");
 
 
         Tree tree1 = new TreeParser();
@@ -750,7 +739,6 @@ public void test_typewriter_data() {
 
         double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1 ) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2));
 
-
         //root node
         double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2) ;
 
@@ -772,11 +760,11 @@ public void test_typewriter_data() {
         //tree with 3 tips
         String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)INTERNAL2:2.0):0.0;";
 
-        Sequence a = new Sequence("CHILD1", "0101000000");
-        Sequence b = new Sequence("CHILD3", "0102000000");
-        Sequence c = new Sequence("CHILD2", "0201000000");
+        Sequence a = new Sequence("CHILD1", "11000");
+        Sequence b = new Sequence("CHILD3", "12000");
+        Sequence c = new Sequence("CHILD2", "21000");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "TypewriterData");
+        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "integer");
 
 
         Tree tree1 = new TreeParser();
