@@ -25,7 +25,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
 
-@Description("Datatype test for Typewriter Data")
+@Description("Tests for Typewriter Data on the ancestral state reconstruction and the likelihood")
 public class TypewriterDataTest {
 
 @Test
@@ -75,7 +75,7 @@ public void test_typewriter_data() {
     public void test_ancestors_identical_sequences() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
-        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
+        String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "12000");
         Sequence b = new Sequence("CHILD2", "12000");
 
@@ -117,7 +117,7 @@ public void test_typewriter_data() {
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
 
-        assertEquals(4, statesDictionary.size());
+        assertEquals(3, statesDictionary.size());
 
         //1st leaf
         assertEquals(statesDictionary.get(0).size(),3);
@@ -131,14 +131,12 @@ public void test_typewriter_data() {
         assertTrue(statesDictionary.get(1).contains(allele1));
         assertTrue(statesDictionary.get(1).contains(allele0));
 
-        //internal node
+        //root node
         assertEquals(statesDictionary.get(2).size(),3);
         assertTrue(statesDictionary.get(2).contains(allele12));
         assertTrue(statesDictionary.get(2).contains(allele1));
         assertTrue(statesDictionary.get(2).contains(allele0));
 
-        //root
-        assertEquals(statesDictionary.get(3),allele0);
 
 
     }
@@ -147,7 +145,7 @@ public void test_typewriter_data() {
     public void test_ancestors() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
-        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
+        String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "12300");
         Sequence b = new Sequence("CHILD2", "12000");
 
@@ -192,7 +190,7 @@ public void test_typewriter_data() {
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
 
-        assertEquals(4, statesDictionary.size());
+        assertEquals(3, statesDictionary.size());
 
         //1st leaf
         assertEquals(statesDictionary.get(0).size(),4);
@@ -207,90 +205,26 @@ public void test_typewriter_data() {
         assertTrue(statesDictionary.get(1).contains(allele1));
         assertTrue(statesDictionary.get(1).contains(allele0));
 
-        //internal node
+        //root node
         assertEquals(statesDictionary.get(2).size(),3);
         assertTrue(statesDictionary.get(2).contains(allele12));
         assertTrue(statesDictionary.get(2).contains(allele1));
         assertTrue(statesDictionary.get(2).contains(allele0));
 
-        //root
-        assertEquals(statesDictionary.get(3),allele0);
 
 
     }
 
 
-//    @Test
-//    public void test_likelihood_cherry() {
-//
-//
-//        // Testing the ancestral state reconstruction at internal nodes
-//        //tree with 2 tips
-//        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
-//        Sequence a = new Sequence("CHILD1", "0102030000");
-//        Sequence b = new Sequence("CHILD2", "0102000000");
-//
-//        Alignment alignment = new Alignment();
-//        alignment.initByName("sequence", a, "dataType", "integer");
-//        alignment.initByName("sequence", b, "dataType", "integer");
-//
-//        Tree tree1 = new TreeParser();
-//        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
-//                newick,
-//                "adjustTipHeights", false, "offset", 0);
-//
-//        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
-//
-//        //create a sub model with values
-//        TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
-//        RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.0");
-//        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
-//        Frequencies frequencies = new Frequencies();
-//        frequencies.initByName("frequencies", freqs, "estimate", false);
-//        submodel.initByName("rates", insertrates, "frequencies", frequencies);
-//        submodel.calculateIntermediates();
-//
-//        //site model
-//        SiteModel siteM = new SiteModel();
-//        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
-//
-//        //likelihood class
-//        RealParameter meanRate = new RealParameter("0.5");
-//        StrictClockModel clockModel = new StrictClockModel();
-//        clockModel.initByName("clock.rate",meanRate);
-//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
-//
-//
-//        //initialise probabilities
-//        likelihood.probabilities = new double[tree1.getNodeCount()][];
-//
-//        //Manually calc the likelihood for that tree:
-//
-//        //internal node partials:
-//        double p0000_internal = submodel.getTransitionProbability(1,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(1,5)*submodel.getTransitionProbability(2,5)*submodel.getTransitionProbability(3,5);
-//        double p1000_internal = submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(3,5);
-//        double p1200_internal = submodel.getTransitionProbability(0,5) * submodel.getTransitionProbability(3,5);
-//
-//        //root node
-//        double proot = p0000_internal *  submodel.getTransitionProbability(0,1) + p1000_internal* submodel.getTransitionProbability(1,1) + p1200_internal * submodel.getTransitionProbability(1,1) * submodel.getTransitionProbability(2,1);
-//
-//        //loglikelihood
-//        double LogPExpected = Math.log(proot);
-//
-//        double LogPCalc = likelihood.calculateLogP();
-//        assertEquals(LogPCalc, LogPExpected);
-//
-//
-//    }
-//
-//
+
+
     @Test
     public void test_ancestral_sets_3leaf() {
 
 
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
-        String newick = "(((A:1,B:1):1,C:2):1)";
+        String newick = "((A:1,B:1):1,C:2)";
         Sequence a = new Sequence("A", "12000");
         Sequence b = new Sequence("B", "11000");
         Sequence c = new Sequence("C", "21000");
@@ -330,7 +264,7 @@ public void test_typewriter_data() {
         //calculate states dictionary
         likelihood.traverseAncestral(tree1.getRoot());
         Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
-        assertEquals(6, statesDictionary.size());
+        assertEquals(5, statesDictionary.size());
 
         //Manually create states
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
@@ -364,12 +298,11 @@ public void test_typewriter_data() {
         assertTrue(statesDictionary.get(3).contains(allele1));
         assertTrue(statesDictionary.get(3).contains(allele0));
 
-        //internal node a/b/c
+        //root node a/b/c
         assertEquals(statesDictionary.get(4).size(),1);
         assertTrue(statesDictionary.get(4).contains(allele0));
 
-        // root
-        assertEquals(statesDictionary.get(5),allele0);
+
 
     }
 
@@ -380,7 +313,7 @@ public void test_typewriter_data() {
 
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
-        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
+        String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "12000");
         Sequence b = new Sequence("CHILD2", "12000");
 
@@ -411,7 +344,8 @@ public void test_typewriter_data() {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+        RealParameter origin = new RealParameter("6");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime", origin);
 
 
         //initialise probabilities
@@ -449,7 +383,12 @@ public void test_typewriter_data() {
 
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
-        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
+        String newick = "(CHILD1:5,CHILD2:5)";
+        //Using Origin Time: total height is 6
+
+
+
+
         Sequence a = new Sequence("CHILD1", "12200");
         Sequence b = new Sequence("CHILD2", "12000");
 
@@ -479,7 +418,8 @@ public void test_typewriter_data() {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+        RealParameter origin = new RealParameter("6");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime", origin);
 
 
         //initialise probabilities
@@ -518,7 +458,7 @@ public void test_typewriter_data() {
 
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
-        String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
+        String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "00000");
         Sequence b = new Sequence("CHILD2", "00000");
 
@@ -548,7 +488,8 @@ public void test_typewriter_data() {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+        RealParameter origin = new RealParameter("6");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
 
 
         //initialise probabilities
@@ -576,133 +517,133 @@ public void test_typewriter_data() {
 
     }
 
-
-    @Test
-    public void test_likelihood_cherry_homogeneous_single_branch() {
-
-
-        //Testing the ancestral state reconstruction at internal nodes
-        //tree with 2 tips
-        String newick = "(CHILD2:5);";
-        Sequence a = new Sequence("CHILD2", "122000");
-
-        Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "integer");
-
-        Tree tree1 = new TreeParser();
-        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
-                newick,
-                "adjustTipHeights", false, "offset", 0);
-
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
-
-        //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter freqs = new RealParameter("0.8 0.2");
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-
-        //site model
-        SiteModel siteM = new SiteModel();
-        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
-
-        //likelihood class
-        RealParameter meanRate = new RealParameter("0.5");
-        StrictClockModel clockModel = new StrictClockModel();
-        clockModel.initByName("clock.rate",meanRate);
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
-
-
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
-
-        //Manually calc the likelihood for that tree:
-
-        //internal node partials:
-        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
-        List<Integer> allele122 = Arrays.asList(1,2,2,0,0);
-        double clock_rate = 0.5;
-
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele122,5*clock_rate);
-
-        //root node
-        double proot = p0000_internal ;
-
-        //loglikelihood
-        double LogPExpected = Math.log(proot);
-
-
-        double LogPCalc = likelihood.calculateLogP();
-
-        assertEquals(LogPCalc, LogPExpected);
-
-
-    }
-
-
-    @Test
-    public void test_likelihood_cherry_homogeneous_single_branch_nothing() {
+    //todo remove/move these tests to testSubModel, as a single branch does not make sense for testing the likelihood
+//    @Test
+//    public void test_likelihood_cherry_homogeneous_single_branch() {
+//
+//
+//        //Testing the ancestral state reconstruction at internal nodes
+//
+//        String newick = "(CHILD2:5)";
+//        Sequence a = new Sequence("CHILD2", "122000");
+//
+//        Alignment alignment = new Alignment();
+//        alignment.initByName("sequence", a, "dataType", "integer");
+//
+//        Tree tree1 = new TreeParser();
+//        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+//                newick,
+//                "adjustTipHeights", false, "offset", 0);
+//
+//        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+//
+//        //create a sub model with values
+//        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+//        RealParameter freqs = new RealParameter("0.8 0.2");
+//        Frequencies frequencies = new Frequencies();
+//        frequencies.initByName("frequencies", freqs, "estimate", false);
+//        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+//
+//        //site model
+//        SiteModel siteM = new SiteModel();
+//        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+//
+//        //likelihood class
+//        RealParameter meanRate = new RealParameter("0.5");
+//        StrictClockModel clockModel = new StrictClockModel();
+//        RealParameter origin = new RealParameter("5");
+//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+//
+//
+//        //initialise probabilities
+//        likelihood.probabilities = new double[tree1.getNodeCount()][];
+//
+//        //Manually calc the likelihood for that tree:
+//
+//        //internal node partials:
+//        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
+//        List<Integer> allele122 = Arrays.asList(1,2,2,0,0);
+//        double clock_rate = 0.5;
+//
+//        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele122,5*clock_rate);
+//
+//        //root node
+//        double proot = p0000_internal ;
+//
+//        //loglikelihood
+//        double LogPExpected = Math.log(proot);
+//
+//
+//        double LogPCalc = likelihood.calculateLogP();
+//
+//        assertEquals(LogPCalc, LogPExpected);
+//
+//
+//    }
 
 
-        //Testing the ancestral state reconstruction at internal nodes
-        //single branch
-        String newick = "(CHILD2:5);";
-        Sequence a = new Sequence("CHILD2", "00000");
-
-        Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "integer");
-
-        Tree tree1 = new TreeParser();
-        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
-                newick,
-                "adjustTipHeights", false, "offset", 0);
-
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
-
-        //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter meanRate = new RealParameter("0.5");
-        StrictClockModel clockModel = new StrictClockModel();
-        clockModel.initByName("clock.rate",meanRate);
-
-
-        RealParameter freqs = new RealParameter("0.8 0.2");
-
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        //site model
-        SiteModel siteM = new SiteModel();
-        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
-
-        //likelihood class
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
-
-
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
-
-        //Manually calc the likelihood for that tree:
-
-        //internal node partials:
-        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
-        double clock_rate = 0.5;
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate);
-
-        //root node
-        double proot = p0000_internal ;
-
-        //loglikelihood
-        double LogPExpected = Math.log(proot);
-
-
-        double LogPCalc = likelihood.calculateLogP();
-
-        assertEquals(LogPCalc, LogPExpected);
-
-
-    }
+//    @Test
+//    public void test_likelihood_cherry_homogeneous_single_branch_nothing() {
+//
+//
+//        //Testing the ancestral state reconstruction at internal nodes
+//        //single branch
+//        String newick = "(CHILD2:5);";
+//        Sequence a = new Sequence("CHILD2", "00000");
+//
+//        Alignment alignment = new Alignment();
+//        alignment.initByName("sequence", a, "dataType", "integer");
+//
+//        Tree tree1 = new TreeParser();
+//        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+//                newick,
+//                "adjustTipHeights", false, "offset", 0);
+//
+//        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+//
+//        //create a sub model with values
+//        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+//        RealParameter meanRate = new RealParameter("0.5");
+//        StrictClockModel clockModel = new StrictClockModel();
+//        clockModel.initByName("clock.rate",meanRate);
+//
+//
+//        RealParameter freqs = new RealParameter("0.8 0.2");
+//
+//        Frequencies frequencies = new Frequencies();
+//        frequencies.initByName("frequencies", freqs, "estimate", false);
+//        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+//        //site model
+//        SiteModel siteM = new SiteModel();
+//        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+//
+//        //likelihood class
+//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+//
+//
+//        //initialise probabilities
+//        likelihood.probabilities = new double[tree1.getNodeCount()][];
+//
+//        //Manually calc the likelihood for that tree:
+//
+//        //internal node partials:
+//        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
+//        double clock_rate = 0.5;
+//        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate);
+//
+//        //root node
+//        double proot = p0000_internal ;
+//
+//        //loglikelihood
+//        double LogPExpected = Math.log(proot);
+//
+//
+//        double LogPCalc = likelihood.calculateLogP();
+//
+//        assertEquals(LogPCalc, LogPExpected);
+//
+//
+//    }
 
     @Test
     public void test_likelihood_3_leaves_homogeneous() {
@@ -710,7 +651,7 @@ public void test_typewriter_data() {
 
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 3 tips
-        String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)INTERNAL2:2.0):0.0;";
+        String newick = "((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)";
 
         Sequence a = new Sequence("CHILD1", "12000");
         Sequence b = new Sequence("CHILD3", "12000");
@@ -741,7 +682,9 @@ public void test_typewriter_data() {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+        RealParameter origin = new RealParameter("4");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+
 
 
 
@@ -782,7 +725,7 @@ public void test_typewriter_data() {
 
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 3 tips
-        String newick = "(((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)INTERNAL2:2.0):0.0;";
+        String newick = "((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)";
 
         Sequence a = new Sequence("CHILD1", "11000");
         Sequence b = new Sequence("CHILD3", "12000");
@@ -816,7 +759,9 @@ public void test_typewriter_data() {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+        RealParameter origin = new RealParameter("4");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+
 
 
         //initialise probabilities
@@ -849,6 +794,73 @@ public void test_typewriter_data() {
 
 
     }
+
+
+    ////OLD SUBSTIRUTION MODEL IMPLEMENTATION
+//    @Test
+//    public void test_likelihood_cherry() {
+//
+//
+//        // Testing the ancestral state reconstruction at internal nodes
+//        //tree with 2 tips
+//        String newick = "(CHILD1:5,CHILD2:5)";
+//        Sequence a = new Sequence("CHILD1", "0102030000");
+//        Sequence b = new Sequence("CHILD2", "0102000000");
+//
+//        Alignment alignment = new Alignment();
+//        alignment.initByName("sequence", a, "dataType", "integer");
+//        alignment.initByName("sequence", b, "dataType", "integer");
+//
+//        Tree tree1 = new TreeParser();
+//        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+//                newick,
+//                "adjustTipHeights", false, "offset", 0);
+//
+//        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+//
+//        //create a sub model with values
+//        TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
+//        RealParameter insertrates = new RealParameter("0.5 0.5 0.5 0.0");
+//        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
+//        Frequencies frequencies = new Frequencies();
+//        frequencies.initByName("frequencies", freqs, "estimate", false);
+//        submodel.initByName("rates", insertrates, "frequencies", frequencies);
+//        submodel.calculateIntermediates();
+//
+//        //site model
+//        SiteModel siteM = new SiteModel();
+//        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+//
+//        //likelihood class
+//        RealParameter meanRate = new RealParameter("0.5");
+//        StrictClockModel clockModel = new StrictClockModel();
+//        clockModel.initByName("clock.rate",meanRate);
+//        RealParameter origin = new RealParameter("6");
+//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime", origin);
+//
+//
+//
+//        //initialise probabilities
+//        likelihood.probabilities = new double[tree1.getNodeCount()][];
+//
+//        //Manually calc the likelihood for that tree:
+//
+//        //internal node partials:
+//        double p0000_internal = submodel.getTransitionProbability(1,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(1,5)*submodel.getTransitionProbability(2,5)*submodel.getTransitionProbability(3,5);
+//        double p1000_internal = submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(3,5);
+//        double p1200_internal = submodel.getTransitionProbability(0,5) * submodel.getTransitionProbability(3,5);
+//
+//        //root node
+//        double proot = p0000_internal *  submodel.getTransitionProbability(0,1) + p1000_internal* submodel.getTransitionProbability(1,1) + p1200_internal * submodel.getTransitionProbability(1,1) * submodel.getTransitionProbability(2,1);
+//
+//        //loglikelihood
+//        double LogPExpected = Math.log(proot);
+//
+//        double LogPCalc = likelihood.calculateLogP();
+//        assertEquals(LogPCalc, LogPExpected);
+//
+//
+//    }
 
 
 

@@ -45,6 +45,8 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
     protected double originTime;
+    protected double stemLength;
+
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][] probabilities ;
@@ -67,7 +69,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         } else {
             branchRateModel = new StrictClockModel();
         }
-        if (branchRateModelInput.get() != null) {
+        if (originTimeInput.get() != null) {
             originTime = originTimeInput.get().getValue();
         }
         else {
@@ -100,15 +102,19 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //2nd step : calculate likelihood with these states
         // size of the partial likelihoods at each node = state.
+
         traverseLikelihood(tree.getRoot());
         //the tree log likelihood is the log(p) of unedited state at the root
 
         if(originTime == 0.0) {
-            return Math.log(probabilities[probabilities.length - 1][0]);
+            //sum of all root probabilities
+            return Math.log(Arrays.stream(probabilities[probabilities.length - 1]).sum());
         }
         else {
             //todo insert here how to deal with OriginTime
-            return Math.log(probabilities[probabilities.length - 1][0]);
+
+            stemLength = originTime - tree.getRoot().getHeight();
+            return Math.log(calculateRootPartials(tree.getRoot()));
         }
 
     }
@@ -118,7 +124,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
 
-        if(! (node == null) && !node.isRoot()) {
+
 
             if (node.isLeaf() ) {
                 List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
@@ -142,33 +148,33 @@ public class TypewriterTreeLikelihood extends Distribution {
                 ancestralStates.put(node.getNr(), AncSetNode);
 
             }
-        }
+//        }
 
-        else {
-            if (node.isRoot()) {
+//        else {
+//            if (node.isRoot()) {
+//
+//                List<Integer> uneditedState = new ArrayList<Integer>() {{
+//                    add(0);
+//                    add(0);
+//                    add(0);
+//                    add(0);
+//                    add(0);
+//                }};
+//                List<List<Integer>> unedited = new ArrayList(uneditedState);
+//                ancestralStates.put(node.getNr(), unedited);
+//            }
+////                this takes care of the stem != root node
+//                final Node child1 = node.getChild(0);
+//                traverseAncestral(child1);
 
-                List<Integer> uneditedState = new ArrayList<Integer>() {{
-                    add(0);
-                    add(0);
-                    add(0);
-                    add(0);
-                    add(0);
-                }};
-                List<List<Integer>> unedited = new ArrayList(uneditedState);
-                ancestralStates.put(node.getNr(), unedited);
-            }
-//                this takes care of the stem != root node
-                final Node child1 = node.getChild(0);
-                traverseAncestral(child1);
-
-        }
+     //   }
 
 
     }
 
     public void traverseLikelihood(Node node) {
 
-        if(! (node == null) && !node.isRoot()) {
+        if( node != null ) {
 
 
             if (node.isLeaf()) {
@@ -190,16 +196,16 @@ public class TypewriterTreeLikelihood extends Distribution {
             }
         }
 
-        else {
-
-            //root node!
-            // this takes care of the stem != root node
-            if (node.isRoot()) {
-                final Node child1 = node.getChild(0);
-                traverseLikelihood(child1);
-                probabilities[node.getNr()] = calculateRootPartials(child1);
-            }
-        }
+//        else {
+//
+//            //root node!
+//            // this takes care of the stem != root node
+//            if (node.isRoot()) {
+//                final Node child1 = node.getChild(0);
+//                traverseLikelihood(child1);
+//                probabilities[node.getNr()] = calculateRootPartials(child1);
+//            }
+//        }
 
 
     }
@@ -240,20 +246,26 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     }
 
-    public double[] calculateRootPartials(Node child1Nr) {
+    public double calculateRootPartials(Node rootNode) {
         //on the root node!
-        double[] partials = new double[1];
         List<Integer> start_state = Arrays.asList(0,0,0,0,0);
-        partials[0] = sum_partial_child(start_state,child1Nr);
+        double partial = sum_partial_child(start_state,rootNode);
 
-
-        return partials;
+        return partial;
 
     }
 
     public double sum_partial_child(List<Integer> start_state,Node childNode) {
         final double branchRate = branchRateModel.getRateForBranch(childNode);
-        final double branchTime = childNode.getLength()*branchRate ;
+
+        double branchTime;
+        if (childNode.isRoot()) {
+              branchTime = stemLength* branchRate ;
+
+        }
+        else {
+            branchTime = childNode.getLength()*branchRate ;
+        }
         double sum = 0;
 
         if(childNode.isLeaf()) {
