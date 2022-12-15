@@ -30,8 +30,8 @@ public class TypewriterDataTest {
 
 @Test
 public void test_typewriter_data() {
-    Sequence a = new Sequence("cell1", "21000");
-    Sequence b = new Sequence("cell2", "12000");
+    Sequence a = new Sequence("cell1", "2,1,0,0,0");
+    Sequence b = new Sequence("cell2", "1,2,0,0,0");
 
     Alignment alignment = new Alignment();
     alignment.initByName("sequence", a, "dataType", "integer");
@@ -76,8 +76,8 @@ public void test_typewriter_data() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "(CHILD1:5,CHILD2:5)";
-        Sequence a = new Sequence("CHILD1", "12000");
-        Sequence b = new Sequence("CHILD2", "12000");
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -92,7 +92,6 @@ public void test_typewriter_data() {
 
         //create a sub model with values
         TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
-        RealParameter insertrate = new RealParameter("0.5");
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
@@ -146,8 +145,8 @@ public void test_typewriter_data() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "(CHILD1:5,CHILD2:5)";
-        Sequence a = new Sequence("CHILD1", "12300");
-        Sequence b = new Sequence("CHILD2", "12000");
+        Sequence a = new Sequence("CHILD1", "1,2,3,0,0");
+        Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -225,9 +224,9 @@ public void test_typewriter_data() {
         // Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "((A:1,B:1):1,C:2)";
-        Sequence a = new Sequence("A", "12000");
-        Sequence b = new Sequence("B", "11000");
-        Sequence c = new Sequence("C", "21000");
+        Sequence a = new Sequence("A", "1,2,0,0,0");
+        Sequence b = new Sequence("B", "1,1,0,0,0");
+        Sequence c = new Sequence("C", "2,1,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -314,8 +313,8 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "(CHILD1:5,CHILD2:5)";
-        Sequence a = new Sequence("CHILD1", "12000");
-        Sequence b = new Sequence("CHILD2", "12000");
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -389,8 +388,8 @@ public void test_typewriter_data() {
 
 
 
-        Sequence a = new Sequence("CHILD1", "12200");
-        Sequence b = new Sequence("CHILD2", "12000");
+        Sequence a = new Sequence("CHILD1", "1,2,2,0,0");
+        Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -459,8 +458,8 @@ public void test_typewriter_data() {
         //Testing the ancestral state reconstruction at internal nodes
         //tree with 2 tips
         String newick = "(CHILD1:5,CHILD2:5)";
-        Sequence a = new Sequence("CHILD1", "00000");
-        Sequence b = new Sequence("CHILD2", "00000");
+        Sequence a = new Sequence("CHILD1", "0,0,0,0,0");
+        Sequence b = new Sequence("CHILD2", "0,0,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -653,9 +652,9 @@ public void test_typewriter_data() {
         //tree with 3 tips
         String newick = "((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)";
 
-        Sequence a = new Sequence("CHILD1", "12000");
-        Sequence b = new Sequence("CHILD3", "12000");
-        Sequence c = new Sequence("CHILD2", "21000");
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD3", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "integer");
 
@@ -727,9 +726,9 @@ public void test_typewriter_data() {
         //tree with 3 tips
         String newick = "((CHILD1:1,CHILD3:1)INTERNAL:1,CHILD2:2.0)";
 
-        Sequence a = new Sequence("CHILD1", "11000");
-        Sequence b = new Sequence("CHILD3", "12000");
-        Sequence c = new Sequence("CHILD2", "21000");
+        Sequence a = new Sequence("CHILD1", "1,1,0,0,0");
+        Sequence b = new Sequence("CHILD3", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "integer");
 

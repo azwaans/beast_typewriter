@@ -2,6 +2,7 @@ package test;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.substitutionmodel.Frequencies;
@@ -21,26 +22,35 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilities(){
 
         // Arrange
-        TypewriterSubstitutionModel typewritermodel = new TypewriterSubstitutionModel();
+        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
-        RealParameter insertrates = new RealParameter("0.5 0.5 0.5");
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
-        typewritermodel.initByName("rates", insertrates, "frequencies", frequencies);
+        Sequence a = new Sequence("cell1", "2,1,0,0,0");
+        Sequence b = new Sequence("cell2", "1,2,2,0,0");
 
-        double start_time = 1;
-        double end_time = 2;
-        double branch_rate = 0.5;
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
-        Double expectedProbability = 0.1758778157529951;
+        //internal representation of the sequences for the package:
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+        List<Integer> sequence_b = alignment.getCounts().get(1);
+
+        // expectedProbability : draw 1 event on a Poisson process bounded to 3
+        // 0.60653
+        // event 2 with probability 0.2
+
+        Double expectedProbability = 0.36788 * 0.2 ;
 
         // Act
-        Double actualProbability = typewritermodel.getTransitionProbability( 2, branch_rate*(end_time-start_time));
+        Double actualProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,1);
 
         // Assert
-        assertEquals(expectedProbability, actualProbability);
+        assertEquals(expectedProbability, actualProbability,0.00001);
 
     }
 
@@ -51,29 +61,26 @@ public class TypewriterSubstModelTest {
         // Arrange
         TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
-        RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
+
+        RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
-        typewritermodel.initByName("rate", insertrate, "frequencies", frequencies);
 
-        double start_time = 1;
-        double end_time = 2;
-
-        Sequence a = new Sequence("cell1", "0201000000");
-        Sequence b = new Sequence("cell2", "0102000000");
+        Sequence a = new Sequence("cell1", "2,1,0,0,0");
+        Sequence b = new Sequence("cell2", "1,2,0,0,0");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,(end_time-start_time));
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
         // expectedProbability : draw 0 event on a Poisson process bounded to 3
         // 0.60653
@@ -92,29 +99,25 @@ public class TypewriterSubstModelTest {
         // Arrange
         TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
-        RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
+        RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
-        typewritermodel.initByName("rate", insertrate, "frequencies", frequencies);
 
-        double start_time = 1;
-        double end_time = 2;
-
-        Sequence a = new Sequence("cell1", "0201000000");
-        Sequence b = new Sequence("cell2", "0102010000");
+        Sequence a = new Sequence("cell1", "2,1,0,0,0");
+        Sequence b = new Sequence("cell2", "1,2,1,0,0");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,(end_time-start_time));
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
         // expectedProbability : draw 1 event on a Poisson process bounded to 3, with event frequency 0.8
         // 0.30327 * 0.8
@@ -134,29 +137,25 @@ public class TypewriterSubstModelTest {
         // Arrange
         TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
-        RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
+        RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
-        typewritermodel.initByName("rate", insertrate, "frequencies", frequencies);
 
-        double start_time = 1;
-        double end_time = 2;
-
-        Sequence a = new Sequence("cell1", "0201000000");
-        Sequence b = new Sequence("cell2", "0102010200");
+        Sequence a = new Sequence("cell1", "2,1,0,0,0");
+        Sequence b = new Sequence("cell2", "1,2,1,2,0");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,(end_time-start_time));
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
         // expectedProbability : draw 1 event on a Poisson process bounded to 3, with event frequency 0.8
         // 0.07582 * 0.8 * 0.2
@@ -174,29 +173,27 @@ public class TypewriterSubstModelTest {
         // Arrange
         TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
-        RealParameter insertrate = new RealParameter("0.5");
-        RealParameter freqs = new RealParameter("0.0 0.8 0.2");
+        RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
-        typewritermodel.initByName("rate", insertrate, "frequencies", frequencies);
 
-        double start_time = 1;
-        double end_time = 2;
-
-        Sequence a = new Sequence("cell1", "0201000000");
-        Sequence b = new Sequence("cell2", "0102010202");
+        Sequence a = new Sequence("cell1", "2,1,0,0,0");
+        Sequence b = new Sequence("cell2", "1,2,1,2,2");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "TypewriterData");
-        alignment.initByName("sequence", b, "dataType", "TypewriterData");
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
 
         //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
+
         List<Integer> sequence_b = alignment.getCounts().get(1);
+        Log.info.println(sequence_b);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,(end_time-start_time));
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
         // expectedProbability : draw 3 events on a Poisson process bounded to 3:
         // with event frequency 0.8, 0.2, 0.2
