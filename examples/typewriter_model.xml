@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel.Generaltypewriter:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution.likelihood:lineageTree.distributions.typewriterTreeLikelihood" required="" version="2.6">
 
     <!-- dataType has to be set to integer and the value must contain a ',' s.t. the class recognizes it as a comma separated string of integers-->
     <data  id="typewriterTest" spec="Alignment" name="alignment" >
-        <userDataType spec="beast.evolution.datatype.integer"/>
+        <userDataType spec="beast.evolution.datatype.IntegerData"/>
         <sequence id="0" spec="Sequence" taxon="0"  value="1,1,2,11,0"/>
         <sequence id="1" spec="Sequence" taxon="1"  value="3,8,5,0,0"/>
         <sequence id="2" spec="Sequence" taxon="2"  value="2,0,0,0,0"/>
@@ -46,10 +46,6 @@
     <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
     <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
-    <!--specify tip dates -->
-<!--    <traitSet id="dateTrait.t:typewriterTest"-->
-<!--              spec="beast.evolution.tree.TraitSet"-->
-<!--              taxa="@TaxonSet.0" traitname="date-forward" value="CHILD2=5,CHILD3=5,CHILD5=5,CHILD6=5" />-->
 
     <taxa id="TaxonSet.0" spec="TaxonSet">
         <alignment idref="typewriterTest"/>
@@ -57,10 +53,6 @@
 
     <run id="mcmc" spec="MCMC" chainLength="100000">
         <state id="state" spec="State" storeEvery="1">
-
-<!--            <stateNode spec='beast.util.TreeParser' id='Tree.t:typewriterTest' IsLabelledNewick='true' adjustTipHeights='false'-->
-<!--                             taxa='@typewriterTest'-->
-<!--                             newick="((CHILD2:4,(CHILD3:3,(CHILD5:1,CHILD6:1)1:3)1:0.01)1:1);"/>-->
 
 
             <tree id="Tree.t:typewriterTest" spec="beast.evolution.tree.Tree" name="stateNode">
@@ -94,22 +86,7 @@
                     <treeIntervals spec="beast.evolution.tree.coalescent.TreeIntervals" tree="@Tree.t:typewriterTest"/>
                 </distribution>
 
-
-
                 <!-- prior distributions on parameters -->
-                <prior id="doubleCutWeightPrior" name="distribution" x="@doubleCutWeight">
-                    <LogNormal id="LogNormalDistributionModel.1" name="distr">
-                        <parameter id="RealParameter.13" spec="parameter.RealParameter" estimate="false" name="M">-2.65</parameter>
-                        <parameter id="RealParameter.14" spec="parameter.RealParameter" estimate="false" name="S">1.25</parameter>
-                    </LogNormal>
-                </prior>
-
-                <prior id="cutRatePrior" name="distribution" x="@cutRates">
-                    <LogNormal id="LogNormalDistributionModel.2" name="distr">
-                        <parameter id="RealParameter.17" spec="parameter.RealParameter" estimate="false" name="M">0.0</parameter>
-                        <parameter id="RealParameter.18" spec="parameter.RealParameter" estimate="false" name="S">1.25</parameter>
-                    </LogNormal>
-                </prior>
 
                 <prior id="popSizePrior" name="distribution" x="@popsize">
                     <LogNormal id="LogNormalDistributionModel.3" name="distr">
@@ -127,7 +104,10 @@
                 </prior>
 
                 <prior id="ClockPrior.c:typewriterTest" name="distribution" x="@clockRate.c:typewriterTest">
-                    <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
+                    <LogNormal id="LogNorm1" name="distr">
+                        <parameter id="RealParameter.111" spec="parameter.RealParameter" estimate="false" name="M">-0.5799733</parameter>
+                        <parameter id="RealParameter.122" spec="parameter.RealParameter" estimate="false" name="S">0.5</parameter>
+                    </LogNormal>
                 </prior>
 
             </distribution>
@@ -136,12 +116,11 @@
 
             <!-- Tree likelihood -->
             <distribution id="likelihood" spec="util.CompoundDistribution">
-                <distribution id="treeLikelihood.typewriterTest" spec="lineageTree.distributions.typewriterTreeLikelihood" data="@typewriterTest" tree="@Tree.t:typewriterTest">
+                <distribution id="treeLikelihood.typewriterTest" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@typewriterTest" tree="@Tree.t:typewriterTest" originTime="25">
                     <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel">
                         <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
-
                         <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="JC69.s:typewriterTest" spec="lineageTree.substitutionmodel.Generaltypewriter" barcodeSequence="CG GATACGATACGCGCACGCTATGG AGTC GACACGACTCGCGCATACGATGG AGTC GATAGTATGCGTATACGCTATGG AGTC GATATGCATAGCGCATGCTATGG AGTC GAGTCGAGACGCTGACGATATGG AGTC GCTACGATACACTCTGACTATGG AGTC GCGACTGTACGCACACGCGATGG AGTC GATACGTAGCACGCAGACTATGG AGTC GACACAGTACTCTCACTCTATGG AGTC GATATGAGACTCGCATGTGATGG GAAAAAAAAAAAAAAA" cutSite="6" crucialPos="6 6" maxSumSteps= "20" maxExtraSteps="1" cutRates="@cutRates" longTrimScaling="@longTrimScaling" doubleCutWeight="@doubleCutWeight">
+                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous" editfrequencies="@insertFrequencies">
                             <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
@@ -160,18 +139,8 @@
                   isNarrow="true" tree="@Tree.t:typewriterTest"
                   weight="30.0"/>
 
-       <!-- <operator id="ContempUniformOperator" spec="Uniform" tree="@Tree.t:typewriterTest" weight="30.0"/>
-
-        <operator id="ContempSubtreeSlide" spec="SubtreeSlide" tree="@Tree.t:typewriterTest" weight="15.0"/>
-
-        <operator id="ContempNarrow" spec="Exchange" tree="@Tree.t:typewriterTest" weight="15.0"/>
-
-        <operator id="ContempWide" spec="Exchange" isNarrow="false" tree="@Tree.t:typewriterTest" weight="3.0"/>-->
-
-        <!-- phylogenetic operators -->
-       <operator id="cutRatesScaler" spec="ScaleOperator" parameter="@cutRates" scaleFactor="0.8" weight="3.0"/>
-        <operator id="doubleCutScaler" spec="ScaleOperator" parameter="@doubleCutWeight" scaleFactor="0.8" weight="3.0"/>
-        <operator id="longTrimScalingScaler" spec="ScaleOperator" parameter="@longTrimScaling" scaleFactor="0.8" weight="3.0"/>
+        <!-- clock rate operator -->
+        <operator id="StrictClockRateScaler" spec="ScaleOperator" parameter="@clockRate.c:typewriterTest" scaleFactor="0.75" weight="3.0"/>
 
 
         <!-- phylodynamic operators -->
@@ -185,12 +154,9 @@
             <log idref="prior"/>
             <log idref="treeLikelihood.typewriterTest"/>
             <log id="treeHeight.t:typewriterTest" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:typewriterTest"/>
-<!--            <log id="treeLength.t:typewriterTest" spec="multitypetree.util.TreeLengthLogger" tree="@Tree.t:typewriterTest"/>-->
             <log idref="popsize"/>
             <log idref="growthRate"/>
             <log idref="clockRate.c:typewriterTest"/>
-            <log idref="cutRates"/>
-            <log idref="doubleCutWeight"/>
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="1">

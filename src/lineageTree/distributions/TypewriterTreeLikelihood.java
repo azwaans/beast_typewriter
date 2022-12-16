@@ -76,6 +76,8 @@ public class TypewriterTreeLikelihood extends Distribution {
             originTime = 0.0;
         }
 
+        probabilities = new double[nodeCount][];
+
 
 
     }
