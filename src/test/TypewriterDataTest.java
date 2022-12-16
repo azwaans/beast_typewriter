@@ -794,6 +794,84 @@ public void test_typewriter_data() {
 
     }
 
+    @Test
+    public void test_likelihood_debug() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "((1:0.08286956714231264,0:0.08286956714231264)3:0.23559810414018906,2:0.3184676712825017)4:0.0";
+
+        Sequence a = new Sequence("0", "2,0,0,0,0");
+        Sequence b = new Sequence("1", "2,2,1,0,0");
+        Sequence c = new Sequence("2", "2,7,1,0,0");
+
+
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a,"sequence", b,"sequence", c,"dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+
+        //create a sub model with values
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+        RealParameter freqs = new RealParameter("0.09839173 0.09471644 0.08676738 0.07392497 0.05575022 0.04823091 0.03505629 0.02870759 0.02532363 0.02211764 0.01668117 0.01032324 0.004736481 0.004293548 0.004135358 0.003263993 0.003008252 0.00199188 0.0007105381 0.3818687548");
+
+
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
+
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        RealParameter origin = new RealParameter("4");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+
+
+
+        //initialise probabilities
+        likelihood.probabilities = new double[tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+//        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
+//        List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
+//        List<Integer> allele11 = Arrays.asList(1,1,0,0,0);
+//        List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
+//        List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+//        double clock_rate = 0.5;
+//
+//        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele11,1*clock_rate);
+//        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele11,1*clock_rate);
+//
+//        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
+//
+//
+//        //root node
+//        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
+//
+//        //loglikelihood
+//        double LogPExpected = Math.log(proot);
+
+        double LogPCalc = likelihood.calculateLogP();
+//        assertEquals(LogPExpected,LogPCalc);
+
+
+    }
 
     ////OLD SUBSTIRUTION MODEL IMPLEMENTATION
 //    @Test
@@ -860,6 +938,8 @@ public void test_typewriter_data() {
 //
 //
 //    }
+
+
 
 
 

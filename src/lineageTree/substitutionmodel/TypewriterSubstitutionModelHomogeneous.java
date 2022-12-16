@@ -48,36 +48,46 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      * This is to get transition probability between 2 sequences states (with potentially multiple edits having happened)
      */
     public double getSequenceTransitionProbability(final List<Integer> start_sequence, final List<Integer> end_sequence, double distance) {
+        //Log.info.println("start sequence"+ start_sequence);
+        //Log.info.println("end sequence"+ end_sequence);
 
-        List<Integer> start = new ArrayList(start_sequence);
-        List<Integer> subtracted = new ArrayList(end_sequence);
+        List<Integer> startstate = new ArrayList(start_sequence);
+        List<Integer> endstate = new ArrayList(end_sequence);
 
-        //substracting start sequence from end sequence: this is what what edited
-        start.forEach(subtracted::remove);
-
-        //upper bound for the poisson process is the number of unedited positions in the start sequence
         List<Integer> zero = Arrays.asList(0);
 
-        start.removeAll(zero);
-        int poisson_up = 5 -  start.size();
+        //removing all unedited sites from each sequence
+        startstate.removeAll(zero);
+        endstate.removeAll(zero);
+
+        //subtracting start sequence from end sequence: edits introduced
+        startstate.forEach(endstate::remove);
+
+        //if endstate is less edited than the start state, violates ordering
+        if(startstate.size() > endstate.size() ){
+            return 0.0;
+        }
+
+        //available positions are 5 - number of edited positions
+        int poisson_up = 5 -  startstate.size();
 
         //initialise the poisson distribution with mean rate * distance
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance);
 
         //calculate the transition probability for the case where all available positions are edited in:
         // P(max) = 1- sum(P(n))
-        if(subtracted.size() == poisson_up ) {
+        if(endstate.size() == poisson_up ) {
             double sum = 0.0;
             for(int i = 0;  i< poisson_up; i++) {
                 sum += dist.probability(i);
             }
-             return (1-sum) * getFrequencyFactor(subtracted);
+             return (1-sum) * getFrequencyFactor(endstate);
         }
 
         //calculate the transition probability for the case where a #edits < avaialable positions
         else{
-            double freq = getFrequencyFactor(subtracted);
-            double prob = dist.probability(subtracted.size());
+            double freq = getFrequencyFactor(endstate);
+            double prob = dist.probability(endstate.size());
             return prob * freq;
         }
 
@@ -89,6 +99,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     public double getFrequencyFactor(List<Integer> edits) {
         double factor = 1.0;
         for(Integer i : edits){
+            //Log.info.println("edit for which we are trying to find the freq" + i);
             factor = factor * insertFrequencies[i-1];
         }
         return factor;
