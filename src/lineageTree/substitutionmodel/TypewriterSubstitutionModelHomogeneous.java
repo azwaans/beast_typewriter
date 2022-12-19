@@ -26,7 +26,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     /**
      * edit insertion rate  *
      */
-    protected double[] insertFrequencies;
+    protected RealParameter insertFrequencies;
 
 
 
@@ -35,7 +35,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         super.initAndValidate();
         updateMatrix = true;
         nrOfStates = frequencies.getFreqs().length;
-        insertFrequencies = frequenciesInput.get().getDoubleValues();
+        insertFrequencies = frequenciesInput.get();
 
 
     } // initAndValidate
@@ -98,9 +98,11 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     public double getFrequencyFactor(List<Integer> edits) {
         double factor = 1.0;
+        double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
+
         for(Integer i : edits){
             //Log.info.println("edit for which we are trying to find the freq" + i);
-            factor = factor * insertFrequencies[i-1];
+            factor = factor * insertFrequenciesValue[i-1];
         }
         return factor;
 
@@ -110,8 +112,9 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      * Function to obtain the probability factor induced by insert frequencies
      */
     public double[] getInsertionProbs() {
+        double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
 
-        return insertFrequencies;
+        return insertFrequenciesValue;
 
     }
 
