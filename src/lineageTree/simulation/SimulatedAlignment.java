@@ -161,21 +161,19 @@ public class SimulatedAlignment extends Alignment{
 
                 // find site where insertion could happen, otw no more simulation necessary
                 int insertionI = 0;
-                while ( (childSequence[insertionI] !=0) & (insertionI < nrOfInsertionsPerSite)){
+                while ((insertionI < nrOfInsertionsPerSite) && (childSequence[insertionI] !=0)){
                     insertionI++;
                 }
 
-                // if parent sequence is fully edited
-                if (insertionI == nrOfInsertionsPerSite){
-                    break;
+                // if parent sequence is not yet fully edited, sample new edit
+                if (insertionI != nrOfInsertionsPerSite){
 
-                }else{
                     // sample number of new insertions
                     int possibleEdits = nrOfInsertionsPerSite - insertionI;
 
                     long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
 
-                    while (possibleEdits > 0 & nEdits > 0){
+                    while (possibleEdits > 0 && nEdits > 0){
 
                         int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
                         childSequence[insertionI] = newInsertion;
