@@ -719,6 +719,83 @@ public void test_typewriter_data() {
     }
 
     @Test
+    public void test_likelihood_debugging_NAN() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "((137:8.952403402204816E-4,78:8.952403402204816E-4)325:0.0010347828136821708,(297:3.6835646305956847E-4,149:3.6835646305956847E-4)326:0.0015616666908430839)327:0.029335608497724822";
+
+        Sequence a = new Sequence("137", "2,1,2,0,0");
+        Sequence b = new Sequence("78", "1,1,0,0,0");
+        Sequence d = new Sequence("297", "2,1,1,1,2");
+        Sequence e = new Sequence("149", "2,2,1,0,0");
+
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a,"sequence", b,"sequence", d,"sequence", e,"dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+
+        //create a sub model with values
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+        RealParameter freqs = new RealParameter("0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1");
+
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.1");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        RealParameter origin = new RealParameter("25");
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+
+
+
+
+        //initialise probabilities
+        likelihood.probabilities = new double[tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
+        List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
+        List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
+        List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
+        double clock_rate = 0.5;
+
+        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate);
+        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate);
+
+        double p1200_internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate);
+
+        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
+
+        //root node
+        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
+
+        //loglikelihood
+        double LogPExpected = Math.log(proot);
+
+        double LogPCalc = likelihood.calculateLogP();
+        assertEquals(LogPExpected,LogPCalc);
+
+
+    }
+
+    @Test
     public void test_likelihood_3_leaves_all_different() {
 
 
