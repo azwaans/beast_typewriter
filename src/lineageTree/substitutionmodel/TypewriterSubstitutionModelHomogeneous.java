@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.E;
+import static java.lang.Math.log;
+
 
 @Description("Allows to calculate transition probabilities for a Typewriter modelled as a Poisson process on the number of edits")
 public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Base {
@@ -48,8 +51,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      * This is to get transition probability between 2 sequences states (with potentially multiple edits having happened)
      */
     public double getSequenceTransitionProbability(final List<Integer> start_sequence, final List<Integer> end_sequence, double distance) {
-        //Log.info.println("start sequence"+ start_sequence);
-        //Log.info.println("end sequence"+ end_sequence);
+
 
         List<Integer> startstate = new ArrayList(start_sequence);
         List<Integer> endstate = new ArrayList(end_sequence);
@@ -77,11 +79,13 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         //calculate the transition probability for the case where all available positions are edited in:
         // P(max) = 1- sum(P(n))
         if(endstate.size() == poisson_up ) {
+
             double sum = 0.0;
-            for(int i = 0;  i< poisson_up; i++) {
-                sum += dist.probability(i);
+            for(int i = 0;  i<poisson_up; i++) {
+                sum = dist.probability(i);
             }
-             return (1-sum) * getFrequencyFactor(endstate);
+
+            return  (1 - sum)*getFrequencyFactor(endstate);
         }
 
         //calculate the transition probability for the case where a #edits < avaialable positions
@@ -93,13 +97,13 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
     }
 
+
     /**
      * Function to obtain the probability factor induced by insert frequencies
      */
     public double getFrequencyFactor(List<Integer> edits) {
         double factor = 1.0;
         for(Integer i : edits){
-            //Log.info.println("edit for which we are trying to find the freq" + i);
             factor = factor * insertFrequencies[i-1];
         }
         return factor;
