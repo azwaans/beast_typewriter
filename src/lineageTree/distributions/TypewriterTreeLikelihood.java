@@ -110,13 +110,15 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         if(originTime == 0.0) {
             //sum of all root probabilities
-            return Math.log(Arrays.stream(probabilities[probabilities.length - 1]).sum());
+            logP = Math.log(Arrays.stream(probabilities[probabilities.length - 1]).sum());
+            return logP;
         }
         else {
             //todo insert here how to deal with OriginTime
 
             stemLength = originTime - tree.getRoot().getHeight();
-            return Math.log(calculateRootPartials(tree.getRoot()));
+            logP = Math.log(calculateRootPartials(tree.getRoot()));
+            return logP;
         }
 
     }
