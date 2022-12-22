@@ -2,6 +2,7 @@ package lineageTree.simulation;
 
 import beast.core.Description;
 import beast.core.Input;
+import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.alignment.TaxonSet;
@@ -20,6 +21,7 @@ import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -29,7 +31,7 @@ import java.util.List;
 
 
 @Description("A more flexible alignment simulator adapted from Tim Vaughan's feast implementation")
-public class SimulatedAlignment extends Alignment{
+public class SimulatedTypeWriterAlignment extends Alignment{
 
         public Input<Tree> treeInput = new Input<>(
                 "tree",
@@ -51,6 +53,10 @@ public class SimulatedAlignment extends Alignment{
             "Number of insertions to add per site",
             Input.Validate.REQUIRED);
 
+    public Input<RealParameter> originInput = new Input<>(
+            "origin", "Start of the process, usually the experiment",
+            Input.Validate.OPTIONAL);
+
 
         public Input<String> outputFileNameInput = new Input<>(
                 "outputFileName",
@@ -61,10 +67,11 @@ public class SimulatedAlignment extends Alignment{
         private int seqLength;
         private int nrOfInsertionsPerSite;
         private DataType dataType;
+        private double originHeight;
 
         private String ancestralSeqStr;
 
-        public SimulatedAlignment() {
+        public SimulatedTypeWriterAlignment() {
             sequenceInput.setRule(Input.Validate.OPTIONAL);
         }
 
@@ -76,6 +83,10 @@ public class SimulatedAlignment extends Alignment{
             seqLength = 1; //TODO rewrite for arbitrary #sites! sequenceLengthInput.get();
             nrOfInsertionsPerSite = nrOfInsertionsPerSiteInput.get();
             sequences.clear();
+
+            if(originInput.get() != null){
+                originHeight = originInput.get().getValue();
+            }
 
             grabDataType();
 
@@ -103,7 +114,7 @@ public class SimulatedAlignment extends Alignment{
         private void simulate() {
             int nTaxa = tree.getLeafNodeCount();
 
-            TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
+            TypewriterSubstitutionModelHomogeneous substModel = (TypewriterSubstitutionModelHomogeneous) siteModel.getSubstitutionModel();
 
             double[] transitionProbs = substModel.getInsertionProbs();
 
@@ -113,9 +124,27 @@ public class SimulatedAlignment extends Alignment{
 
             int[] parentSequence = new int[nrOfInsertionsPerSite];
 
+            if (originHeight != 0){
+                // then parent sequence is sequence at origin and we evolve sequence first down to the root
+                double deltaT = originHeight - root.getHeight();
+                double clockRate = siteModel.getRateForCategory(0, root);
+
+                int possibleEdits = 5;
+                long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
+
+                int insertionI = 0;
+                while (possibleEdits > 0 && nEdits > 0){
+
+                    int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
+                    parentSequence[insertionI] = newInsertion;
+
+                    insertionI++;
+                    possibleEdits--;
+                    nEdits--;
+                }
+            }
+
             ancestralSeqStr = dataType.encodingToString(parentSequence);
-
-
 
             traverse(root, parentSequence,
                     transitionProbs,
