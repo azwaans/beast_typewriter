@@ -106,12 +106,10 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
 
         for(Integer i : edits){
-<<<<<<< HEAD
-            factor = factor * insertFrequencies[i-1];
-=======
+            factor = factor * insertFrequenciesValue[i-1];
+
             //Log.info.println("edit for which we are trying to find the freq" + i);
             factor = factor * insertFrequenciesValue[i-1];
->>>>>>> ff05a8895915ca66afa697050f1373ff44ecb73d
         }
         return factor;
 
