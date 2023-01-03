@@ -104,7 +104,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //2nd step : calculate likelihood with these states
         // size of the partial likelihoods at each node = state.
-
         traverseLikelihood(tree.getRoot());
         //the tree log likelihood is the log(p) of unedited state at the root
 
@@ -114,21 +113,16 @@ public class TypewriterTreeLikelihood extends Distribution {
             return logP;
         }
         else {
-            //todo insert here how to deal with OriginTime
-
             stemLength = originTime - tree.getRoot().getHeight();
-            logP = Math.log(calculateRootPartials(tree.getRoot()));
-            return logP;
+            return Math.log(calculateRootPartials(tree.getRoot()));
+
         }
 
     }
 
 
     public void traverseAncestral(Node node) {
-
-
-
-
+        
 
             if (node.isLeaf() ) {
                 List<List<Integer>> LeafStates = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
@@ -152,26 +146,6 @@ public class TypewriterTreeLikelihood extends Distribution {
                 ancestralStates.put(node.getNr(), AncSetNode);
 
             }
-//        }
-
-//        else {
-//            if (node.isRoot()) {
-//
-//                List<Integer> uneditedState = new ArrayList<Integer>() {{
-//                    add(0);
-//                    add(0);
-//                    add(0);
-//                    add(0);
-//                    add(0);
-//                }};
-//                List<List<Integer>> unedited = new ArrayList(uneditedState);
-//                ancestralStates.put(node.getNr(), unedited);
-//            }
-////                this takes care of the stem != root node
-//                final Node child1 = node.getChild(0);
-//                traverseAncestral(child1);
-
-     //   }
 
 
     }
@@ -200,16 +174,6 @@ public class TypewriterTreeLikelihood extends Distribution {
             }
         }
 
-//        else {
-//
-//            //root node!
-//            // this takes care of the stem != root node
-//            if (node.isRoot()) {
-//                final Node child1 = node.getChild(0);
-//                traverseLikelihood(child1);
-//                probabilities[node.getNr()] = calculateRootPartials(child1);
-//            }
-//        }
 
 
     }
@@ -218,8 +182,8 @@ public class TypewriterTreeLikelihood extends Distribution {
         //here. implement felsensteins's pruning algorithm
 
         //initialize an array for the partials
-
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
+
         if (ancestralStates.get(nodeNr).size() ==5) {
             //root node
              List<Integer> start_state = new ArrayList<Integer>() {{
@@ -283,8 +247,12 @@ public class TypewriterTreeLikelihood extends Distribution {
             for (int end_state_index = 0; end_state_index < ancestralStates.get(childNode.getNr()).size(); ++end_state_index) {
 
                 List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(end_state_index);
-                sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime) * probabilities[childNode.getNr()][end_state_index];
-
+                if (probabilities[childNode.getNr()][end_state_index] == 0.0) {
+                    sum = sum + 0.0;
+                }
+                else {
+                    sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, branchTime) * probabilities[childNode.getNr()][end_state_index];
+                }
             }
         }
 
