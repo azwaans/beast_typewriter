@@ -52,23 +52,22 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     public double getSequenceTransitionProbability(final List<Integer> start_sequence, final List<Integer> end_sequence, double distance) {
 
-
         List<Integer> startstate = new ArrayList(start_sequence);
         List<Integer> endstate = new ArrayList(end_sequence);
 
+        //create an unedited state to subtract from sequences to get only edited sites
         List<Integer> zero = Arrays.asList(0);
 
         //removing all unedited sites from each sequence
         startstate.removeAll(zero);
         endstate.removeAll(zero);
 
-        //subtracting start sequence from end sequence: edits introduced
-        startstate.forEach(endstate::remove);
-
         //if endstate is less edited than the start state, violates ordering
         if(startstate.size() > endstate.size() ){
             return 0.0;
         }
+        //subtracting start sequence from end sequence: edits introduced
+        startstate.forEach(endstate::remove);
 
         //available positions are 5 - number of edited positions
         int poisson_up = 5 -  startstate.size();
@@ -82,13 +81,12 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
             double sum = 0.0;
             for(int i = 0;  i<poisson_up; i++) {
-                sum = dist.probability(i);
+                sum += dist.probability(i);
             }
-
             return  (1 - sum)*getFrequencyFactor(endstate);
         }
 
-        //calculate the transition probability for the case where a #edits < avaialable positions
+        //calculate the transition probability for the case where a #edits < available positions
         else{
             double freq = getFrequencyFactor(endstate);
             double prob = dist.probability(endstate.size());
@@ -106,12 +104,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
 
         for(Integer i : edits){
-<<<<<<< HEAD
-            factor = factor * insertFrequencies[i-1];
-=======
-            //Log.info.println("edit for which we are trying to find the freq" + i);
             factor = factor * insertFrequenciesValue[i-1];
->>>>>>> ff05a8895915ca66afa697050f1373ff44ecb73d
         }
         return factor;
 
