@@ -44,13 +44,13 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 Input.Validate.REQUIRED);
 
         //TODO rename number of targets
-        public Input<Integer> sequenceLengthInput = new Input<>(
-                "sequenceLength",
-                "Length of sequence to simulate.",
+        public Input<Integer> nrOfTargetsInput = new Input<>(
+                "numberOfTargets",
+                "Number of targets to simulate.",
                 Input.Validate.REQUIRED);
 
-        public Input<Integer> nrOfInsertionsPerSiteInput = new Input<>(
-            "nrOfInsertionsPerSite",
+        public Input<Integer> nrOfInsertionsPerTargetInput = new Input<>(
+            "nrOfInsertionsPerTarget",
             "Number of insertions to add per site",
             Input.Validate.REQUIRED);
 
@@ -65,8 +65,8 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
         private Tree tree;
         private SiteModel siteModel;
-        private int seqLength;
-        private int nrOfInsertionsPerSite;
+        private int numberOfTargets;
+        private int nrOfInsertionsPerTarget;
         private DataType dataType;
         private double originHeight;
 
@@ -81,10 +81,8 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
             tree = treeInput.get();
             siteModel = siteModelInput.get();
-            //TODO rename for as above
-            seqLength = 1; //TODO rewrite for arbitrary #sites! sequenceLengthInput.get();
-            // TODO rename per target
-            nrOfInsertionsPerSite = nrOfInsertionsPerSiteInput.get();
+            numberOfTargets = 1; //TODO rewrite for arbitrary #targets
+            nrOfInsertionsPerTarget = nrOfInsertionsPerTargetInput.get();
             sequences.clear();
 
             if(originInput.get() != null){
@@ -119,40 +117,40 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
             TypewriterSubstitutionModelHomogeneous substModel = (TypewriterSubstitutionModelHomogeneous) siteModel.getSubstitutionModel();
 
-            //TODO rename getInsertProbabilities
-            double[] transitionProbs = substModel.getInsertionProbs();
+            double[] transitionProbs = substModel.getInsertProbabilities();
 
-            int[][] alignment = new int[nTaxa][nrOfInsertionsPerSite];
+            int[][] alignment = new int[nTaxa][nrOfInsertionsPerTarget];
 
             Node root = tree.getRoot();
 
-            //TODO rename root sequence
-            int[] parentSequence = new int[nrOfInsertionsPerSite];
+            int[] rootSequence = new int[nrOfInsertionsPerTarget];
 
             if (originHeight != 0){
                 // then parent sequence is sequence at origin and we evolve sequence first down to the root
                 double deltaT = originHeight - root.getHeight();
                 double clockRate = siteModel.getRateForCategory(0, root);
 
-                int possibleEdits = 5;
+                int nPossibleInserts = 5;
                 //TODO rename to inserts, i.e nrOfNewInserts
-                long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
+                long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
 
-                int insertionI = 0;
-                while (possibleEdits > 0 && nEdits > 0){
+                int insertionIndex = 0;
+
+                // Add potential inserts while there are still possible insertion positions
+                while (nPossibleInserts > 0 && nPotentialInserts > 0){
 
                     int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
-                    parentSequence[insertionI] = newInsertion;
+                    rootSequence[insertionIndex] = newInsertion;
 
-                    insertionI++;
-                    possibleEdits--;
-                    nEdits--;
+                    insertionIndex++;
+                    nPossibleInserts--;
+                    nPotentialInserts--;
                 }
             }
 
             //ancestralSeqStr = dataType.encodingToString(parentSequence);
 
-            traverse(root, parentSequence,
+            traverse(root, rootSequence,
                     transitionProbs,
                     alignment);
 
@@ -193,32 +191,29 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 // Draw characters on child sequence
                 int[] childSequence = parentSequence.clone();
 
-
-                // find site where insertion could happen, i.e. the first '0', otw no more simulation necessary
-                int insertionI = 0;
-                while ((insertionI < nrOfInsertionsPerSite) && (childSequence[insertionI] !=0)){
-                    insertionI++;
+                // find site where next insertion could happen, i.e. the next unedited state '0'
+                int insertionIndex = 0;
+                while ((insertionIndex < nrOfInsertionsPerTarget) && (childSequence[insertionIndex] !=0)){
+                    insertionIndex++;
                 }
 
-                if (insertionI == nrOfInsertionsPerSite){
+                if (insertionIndex == nrOfInsertionsPerTarget){
+                    // then sequence is fully edited, no further simulation necessary
                     ;
                 }else{
-                // if parent sequence is not yet fully edited, sample new edit
                     // sample number of new insertions
-                    // TODO possibleInserts
-                    int possibleEdits = nrOfInsertionsPerSite - insertionI;
+                    int nPossibleInserts = nrOfInsertionsPerTarget - insertionIndex;
+                    long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
 
-                    // TODO numberOfInserts
-                    long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
-
-                    while (possibleEdits > 0 && nEdits > 0){
+                    // Add potential inserts while there are still possible insertion positions
+                    while (nPossibleInserts > 0 && nPotentialInserts > 0){
 
                         int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
-                        childSequence[insertionI] = newInsertion;
+                        childSequence[insertionIndex] = newInsertion;
 
-                        insertionI++;
-                        possibleEdits--;
-                        nEdits--;
+                        insertionIndex++;
+                        nPossibleInserts--;
+                        nPotentialInserts--;
                     }
                 }
 

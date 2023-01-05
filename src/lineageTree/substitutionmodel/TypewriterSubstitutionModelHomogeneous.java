@@ -131,10 +131,9 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
     /**
      * Function to obtain the insert probabilities
-     * TODO : rename: getInsertProbabilities
      * TODO : Check in initAndValidate: a) value in [0,1]; b) sum=1;
      */
-    public double[] getInsertionProbs() {
+    public double[] getInsertProbabilities() {
 
         double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
 
