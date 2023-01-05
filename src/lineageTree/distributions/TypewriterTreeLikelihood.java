@@ -184,23 +184,25 @@ public class TypewriterTreeLikelihood extends Distribution {
         //initialize an array for the partials
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
 
-        if (ancestralStates.get(nodeNr).size() ==5) {
-            //root node
-             List<Integer> start_state = new ArrayList<Integer>() {{
-                add(0);
-                add(0);
-                add(0);
-                add(0);
-                add(0);
-            }}; ;
-            double child1partialsum = sum_partial_child(start_state, child1Nr);
-            double child2partialsum = sum_partial_child(start_state, child2Nr);
+        //todo potentially remove the following dead code: when a List<List<Integer>> contains a single List<Integer> it is not considered a List<List>>
 
-            double product = child1partialsum * child2partialsum;
-            partials[0] = product;
-
-        }
-        else {
+//        if (ancestralStates.get(nodeNr).size() ==5) {
+//            //root node
+//             List<Integer> start_state = new ArrayList<Integer>() {{
+//                add(0);
+//                add(0);
+//                add(0);
+//                add(0);
+//                add(0);
+//            }}; ;
+//            double child1partialsum = sum_partial_child(start_state, child1Nr);
+//            double child2partialsum = sum_partial_child(start_state, child2Nr);
+//
+//            double product = child1partialsum * child2partialsum;
+//            partials[0] = product;
+//
+//        }
+//        else {
             for (int state_index = 0; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
                 List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
                 double child1partialsum = sum_partial_child(start_state, child1Nr);
@@ -209,7 +211,7 @@ public class TypewriterTreeLikelihood extends Distribution {
                 double product = child1partialsum * child2partialsum;
                 partials[state_index] = product;
             }
-        }
+//        }
         return partials;
 
     }
