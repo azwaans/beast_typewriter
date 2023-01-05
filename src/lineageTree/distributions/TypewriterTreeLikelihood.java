@@ -113,6 +113,7 @@ public class TypewriterTreeLikelihood extends Distribution {
             return logP;
         }
         else {
+            logP = Math.log(calculateRootPartials(tree.getRoot()));
             stemLength = originTime - tree.getRoot().getHeight();
             return Math.log(calculateRootPartials(tree.getRoot()));
 
