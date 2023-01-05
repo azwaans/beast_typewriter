@@ -43,6 +43,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 "Site model to use in simulation.",
                 Input.Validate.REQUIRED);
 
+        //TODO rename number of targets
         public Input<Integer> sequenceLengthInput = new Input<>(
                 "sequenceLength",
                 "Length of sequence to simulate.",
@@ -80,7 +81,9 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
             tree = treeInput.get();
             siteModel = siteModelInput.get();
+            //TODO rename for as above
             seqLength = 1; //TODO rewrite for arbitrary #sites! sequenceLengthInput.get();
+            // TODO rename per target
             nrOfInsertionsPerSite = nrOfInsertionsPerSiteInput.get();
             sequences.clear();
 
@@ -116,12 +119,14 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
             TypewriterSubstitutionModelHomogeneous substModel = (TypewriterSubstitutionModelHomogeneous) siteModel.getSubstitutionModel();
 
+            //TODO rename getInsertProbabilities
             double[] transitionProbs = substModel.getInsertionProbs();
 
             int[][] alignment = new int[nTaxa][nrOfInsertionsPerSite];
 
             Node root = tree.getRoot();
 
+            //TODO rename root sequence
             int[] parentSequence = new int[nrOfInsertionsPerSite];
 
             if (originHeight != 0){
@@ -130,6 +135,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 double clockRate = siteModel.getRateForCategory(0, root);
 
                 int possibleEdits = 5;
+                //TODO rename to inserts, i.e nrOfNewInserts
                 long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
 
                 int insertionI = 0;
@@ -144,7 +150,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 }
             }
 
-            ancestralSeqStr = dataType.encodingToString(parentSequence);
+            //ancestralSeqStr = dataType.encodingToString(parentSequence);
 
             traverse(root, parentSequence,
                     transitionProbs,
@@ -188,18 +194,21 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 int[] childSequence = parentSequence.clone();
 
 
-                // find site where insertion could happen, otw no more simulation necessary
+                // find site where insertion could happen, i.e. the first '0', otw no more simulation necessary
                 int insertionI = 0;
                 while ((insertionI < nrOfInsertionsPerSite) && (childSequence[insertionI] !=0)){
                     insertionI++;
                 }
 
+                if (insertionI == nrOfInsertionsPerSite){
+                    ;
+                }else{
                 // if parent sequence is not yet fully edited, sample new edit
-                if (insertionI != nrOfInsertionsPerSite){
-
                     // sample number of new insertions
+                    // TODO possibleInserts
                     int possibleEdits = nrOfInsertionsPerSite - insertionI;
 
+                    // TODO numberOfInserts
                     long nEdits = Randomizer.nextPoisson(deltaT * clockRate);
 
                     while (possibleEdits > 0 && nEdits > 0){
@@ -210,9 +219,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                         insertionI++;
                         possibleEdits--;
                         nEdits--;
-
                     }
-
                 }
 
                 if (child.isLeaf()) {
