@@ -29,8 +29,8 @@ import static org.junit.Assert.*;
 public class TypewriterDataTest {
 
 @Test
-public void test_typewriter_data() {
-    Sequence a = new Sequence("cell1", "2,1,0,0,0");
+public void testGetPossibleAncestors() {
+    Sequence a = new Sequence("cell1", "1,2,0,0,0");
     Sequence b = new Sequence("cell2", "1,2,0,0,0");
 
     Alignment alignment = new Alignment();
@@ -46,20 +46,17 @@ public void test_typewriter_data() {
     List<List<Integer>> ancs_sequence_b = TypewriterTreeLikelihood.get_possible_ancestors(sequence_b);
 
     //manually create ancestral states
-    List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
     List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
     List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
-    List<Integer> allele2 = Arrays.asList(2, 0, 0, 0, 0);
     List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
 
     // For a sequence with n sites, there are n_edited_sites + 1 ancestral sequences (all edited position + fully unedited))
     assertEquals(ancs_sequence_a.size(), 3, 1e-5);
-    Log.info.println("aancers" + ancs_sequence_a);
     //for any sequence, its possible ancestral sequences are itself + removing edits 1 by 1 + unedited
 
     //check for sequence a
-    assertTrue(ancs_sequence_a.contains(allele21));
-    assertTrue(ancs_sequence_a.contains(allele2));
+    assertTrue(ancs_sequence_b.contains(allele12));
+    assertTrue(ancs_sequence_a.contains(allele1));
     assertTrue(ancs_sequence_a.contains(allele0));
 
     //check for sequence b
@@ -72,9 +69,9 @@ public void test_typewriter_data() {
 }
 
     @Test
-    public void test_ancestors_identical_sequences() {
+    public void testTraverseAncestralIdentical() {
         // Testing the ancestral state reconstruction at internal nodes
-        //tree with 2 tips
+        //CHERRY
         String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
         Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
@@ -141,9 +138,9 @@ public void test_typewriter_data() {
     }
 
     @Test
-    public void test_ancestors() {
+    public void testTraverseAncestralDifferentLengthSharedEdits() {
         // Testing the ancestral state reconstruction at internal nodes
-        //tree with 2 tips
+        //CHERRY
         String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "1,2,3,0,0");
         Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
@@ -208,6 +205,225 @@ public void test_typewriter_data() {
         assertEquals(statesDictionary.get(2).size(),3);
         assertTrue(statesDictionary.get(2).contains(allele12));
         assertTrue(statesDictionary.get(2).contains(allele1));
+        assertTrue(statesDictionary.get(2).contains(allele0));
+
+
+
+    }
+
+    @Test
+    public void testTraverseAncestralSameLengthInvertedSharedEdits() {
+        // Testing the ancestral state reconstruction at internal nodes
+        //CHERRY
+        String newick = "(CHILD1:5,CHILD2:5)";
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD2", "2,1,0,0,0");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+
+        //create a sub model with values
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+
+        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName( "editfrequencies", freqs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+
+        //test ancestral states sets calculations
+        likelihood.traverseAncestral(tree1.getRoot());
+        Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+
+
+        //first calculate states dictionary
+        //manually create states:
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+        List<Integer> allele2 = Arrays.asList(2, 0, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+
+        assertEquals(3, statesDictionary.size());
+
+        //1st leaf
+        assertEquals(statesDictionary.get(0).size(),3);
+        assertTrue(statesDictionary.get(0).contains(allele12));
+        assertTrue(statesDictionary.get(0).contains(allele1));
+        assertTrue(statesDictionary.get(0).contains(allele0));
+
+        //2nd leaf
+        assertEquals(statesDictionary.get(1).size(),3);
+        assertTrue(statesDictionary.get(1).contains(allele21));
+        assertTrue(statesDictionary.get(1).contains(allele2));
+        assertTrue(statesDictionary.get(1).contains(allele0));
+
+        //root node
+        assertEquals(statesDictionary.get(2).size(),1);
+        assertTrue(statesDictionary.get(2).contains(allele0));
+
+
+
+    }
+
+    @Test
+    public void testTraverseAncestralDifferentLengthInvertedSharedEdits() {
+        // Testing the ancestral state reconstruction at internal nodes
+        //CHERRY
+        String newick = "(CHILD1:5,CHILD2:5)";
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD2", "2,1,1,0,0");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+
+        //create a sub model with values
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+
+        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName( "editfrequencies", freqs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+
+        //test ancestral states sets calculations
+        likelihood.traverseAncestral(tree1.getRoot());
+        Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+
+
+        //first calculate states dictionary
+        //manually create states:
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele211 = Arrays.asList(2, 1, 1, 0, 0);
+        List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+        List<Integer> allele2 = Arrays.asList(2, 0, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+
+        assertEquals(3, statesDictionary.size());
+
+        //1st leaf
+        assertEquals(statesDictionary.get(0).size(),3);
+        assertTrue(statesDictionary.get(0).contains(allele12));
+        assertTrue(statesDictionary.get(0).contains(allele1));
+        assertTrue(statesDictionary.get(0).contains(allele0));
+
+        //2nd leaf
+        assertEquals(statesDictionary.get(1).size(),3);
+        assertTrue(statesDictionary.get(1).contains(allele211));
+        assertTrue(statesDictionary.get(1).contains(allele21));
+        assertTrue(statesDictionary.get(1).contains(allele2));
+        assertTrue(statesDictionary.get(1).contains(allele0));
+
+        //root node
+        assertEquals(statesDictionary.get(2).size(),1);
+        assertTrue(statesDictionary.get(2).contains(allele0));
+
+
+
+    }
+
+    @Test
+    public void testTraverseAncestralSharedEditsAtDifferentPositions() {
+        // Testing the ancestral state reconstruction at internal nodes
+        //CHERRY
+        String newick = "(CHILD1:5,CHILD2:5)";
+        Sequence a = new Sequence("CHILD1", "1,0,0,0,0");
+        Sequence b = new Sequence("CHILD2", "3,1,0,0,0");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+
+        //create a sub model with values
+        TypewriterSubstitutionModelHomogeneous submodel = new TypewriterSubstitutionModelHomogeneous();
+
+        RealParameter freqs = new RealParameter("1.0 0 0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName( "editfrequencies", freqs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", submodel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate",meanRate);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
+
+        //test ancestral states sets calculations
+        likelihood.traverseAncestral(tree1.getRoot());
+        Hashtable<Integer,List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+
+
+        //first calculate states dictionary
+        //manually create states:
+
+        List<Integer> allele31 = Arrays.asList(3, 1, 0, 0, 0);
+        List<Integer> allele3 = Arrays.asList(3, 1, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+
+        assertEquals(3, statesDictionary.size());
+
+        //1st leaf
+        assertEquals(statesDictionary.get(0).size(),2);
+        assertTrue(statesDictionary.get(0).contains(allele1));
+        assertTrue(statesDictionary.get(0).contains(allele0));
+
+
+
+        //2nd leaf
+        assertEquals(statesDictionary.get(1).size(),3);
+        assertTrue(statesDictionary.get(1).contains(allele31));
+        assertTrue(statesDictionary.get(1).contains(allele3));
+        assertTrue(statesDictionary.get(1).contains(allele0));
+
+        //root node
+        assertEquals(statesDictionary.get(2).size(),1);
         assertTrue(statesDictionary.get(2).contains(allele0));
 
 
