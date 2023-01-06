@@ -206,4 +206,44 @@ public class TypewriterSubstModelTest {
 
     }
 
+    @Test
+    public void testTransitionProbabilitiesNonsensical(){
+
+        // Arrange
+        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
+
+        RealParameter freqs = new RealParameter("0.8 0.2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+
+
+        Sequence a = new Sequence("cell1", "2,0,0,0,0");
+        Sequence b = new Sequence("cell2", "1,2,0,0,0");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        //internal representation of the sequences for the package:
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+        List<Integer> sequence_b = alignment.getCounts().get(1);
+
+
+
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
+
+        // expectedProbability : draw 1 event on a Poisson process bounded to 4:
+        // with event frequency 0.8, 0.2
+        // P(1) * 0.8
+
+        Double expectedProbability = dist.probability(1)  * 0.8  ;
+
+        assertEquals(expectedProbability, calculatedProbability, 0.00001);
+        //THIS IS THE PROBABILITY OF TRANSITION BY ADDING 1, this cannot be!
+
+
+    }
+
 }
