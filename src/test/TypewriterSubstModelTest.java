@@ -29,7 +29,7 @@ public class TypewriterSubstModelTest {
         frequencies.initByName("frequencies", freqs, "estimate", false);
         typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
-        Sequence a = new Sequence("cell1", "2,1,0,0,0");
+        Sequence a = new Sequence("cell1", "1,2,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,2,0,0");
 
         Alignment alignment = new Alignment();
@@ -68,7 +68,7 @@ public class TypewriterSubstModelTest {
 
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
-        Sequence b = new Sequence("cell2", "1,2,0,0,0");
+        Sequence b = new Sequence("cell2", "2,1,0,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -105,7 +105,7 @@ public class TypewriterSubstModelTest {
 
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
-        Sequence b = new Sequence("cell2", "1,2,1,0,0");
+        Sequence b = new Sequence("cell2", "2,1,1,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -145,7 +145,7 @@ public class TypewriterSubstModelTest {
 
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
-        Sequence b = new Sequence("cell2", "1,2,1,2,0");
+        Sequence b = new Sequence("cell2", "2,1,1,2,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -181,7 +181,7 @@ public class TypewriterSubstModelTest {
 
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
-        Sequence b = new Sequence("cell2", "1,2,1,2,2");
+        Sequence b = new Sequence("cell2", "2,1,1,2,2");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
