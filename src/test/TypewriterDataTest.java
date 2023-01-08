@@ -560,7 +560,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("6");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime", origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin", origin);
 
 
         //initialise probabilities
@@ -634,7 +634,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("6");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime", origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin", origin);
 
 
         //initialise probabilities
@@ -704,7 +704,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("6");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
 
         //initialise probabilities
@@ -767,7 +767,7 @@ public void testGetPossibleAncestors() {
 //        RealParameter meanRate = new RealParameter("0.5");
 //        StrictClockModel clockModel = new StrictClockModel();
 //        RealParameter origin = new RealParameter("5");
-//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 //
 //
 //        //initialise probabilities
@@ -898,7 +898,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("4");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
 
 
@@ -975,7 +975,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("25");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
         //initialise probabilities
         likelihood.probabilities = new double[tree1.getNodeCount()][];
@@ -1048,7 +1048,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("4");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
 
 
@@ -1127,7 +1127,7 @@ public void testGetPossibleAncestors() {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate",meanRate);
         RealParameter origin = new RealParameter("4");
-        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime",origin);
+        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
 
 
@@ -1202,7 +1202,7 @@ public void testGetPossibleAncestors() {
 //        StrictClockModel clockModel = new StrictClockModel();
 //        clockModel.initByName("clock.rate",meanRate);
 //        RealParameter origin = new RealParameter("6");
-//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"originTime", origin);
+//        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin", origin);
 //
 //
 //

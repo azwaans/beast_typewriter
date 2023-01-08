@@ -45,17 +45,23 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected SiteModel.Base m_siteModel;
     protected double[] m_branchLengths;
     protected double originTime;
+    protected int nodeCount;
 
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][] probabilities ;
+    protected double[] scalingFactors;
+    protected boolean useScaling = true;
+
+
+    private double scalingThreshold = 1.0E-100;
 
 
 
     @Override
     public void initAndValidate() {
 
-        int nodeCount = treeInput.get().getNodeCount();
+        nodeCount = treeInput.get().getNodeCount();
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         m_siteModel.setDataType(dataInput.get().getDataType());
 
@@ -80,6 +86,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //TODO rename to partial likelihoods
         probabilities = new double[nodeCount][];
+        scalingFactors = new double[nodeCount];
 
 
 
@@ -112,16 +119,46 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         if(originTime == 0.0) {
             //sum of all partial likelihoods at the root
-            logP = Math.log(Arrays.stream(probabilities[tree.getRoot().getNr()]).sum());
+            logP = Math.log(Arrays.stream(probabilities[tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
             return logP;
         }
         else {
             //the tree log likelihood is the log(p) of unedited state at the origin
             //TODO check that origin logP is calculated
-            logP = Math.log(calculateOriginPartial(tree.getRoot()));
+            logP = Math.log(calculateOriginPartial(tree.getRoot())) + getLogScalingFactor();
             return logP;
 
         }
+
+    }
+
+    protected void scalePartials(int nodeNumber) {
+
+            double scaleFactor = 0.0;
+
+            //find the highest partial likelihodo
+            //is node number same as nodeIndex
+            for (int k = 0; k < probabilities[nodeNumber].length; k++) {
+                if(probabilities[nodeNumber][k] > scaleFactor) {
+                    scaleFactor = probabilities[nodeNumber][k];
+                }
+
+            }
+            //if this partial is smaller than the threshold, scale the partials
+            if (scaleFactor < scalingThreshold) {
+
+                for (int k = 0; k < probabilities[nodeNumber].length; k++) {
+
+                    probabilities[nodeNumber][k] /= scaleFactor;
+
+                }
+                // save the log(scaling factors)
+                scalingFactors[nodeNumber] = Math.log(scaleFactor);
+
+            } else {
+                scalingFactors[nodeNumber] = 0.0;
+            }
+
 
     }
 
@@ -176,6 +213,10 @@ public class TypewriterTreeLikelihood extends Distribution {
 
                 double[] partials = calculatePartials(node.getNr(),child1,child2);
                 probabilities[node.getNr()] = partials;
+
+                if (useScaling) {
+                    scalePartials(node.getNr());
+                }
 
             }
         }
@@ -303,6 +344,24 @@ public class TypewriterTreeLikelihood extends Distribution {
             }
         }
         return ancestors;
+    }
+
+    /**
+     * This function returns the scaling factor for that pattern by summing over
+     * the log scalings used at each node. If scaling is off then this just returns
+     * a 0.
+     *
+     * @return the log scaling factor
+     */
+    public double getLogScalingFactor() {
+
+        double logScalingFactor = 0.0;
+        if (useScaling) {
+            for (int i = 0; i < nodeCount; i++) {
+                logScalingFactor += scalingFactors[i];
+            }
+        }
+        return logScalingFactor;
     }
 
 }
