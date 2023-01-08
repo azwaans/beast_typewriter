@@ -2,21 +2,15 @@ package test;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.*;
 import beast.evolution.branchratemodel.StrictClockModel;
-import beast.evolution.datatype.DataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
-//import beast.evolution.datatype.integer;
-import beast.evolution.tree.Node;
 import lineageTree.distributions.TypewriterTreeLikelihood;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;

@@ -26,7 +26,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     protected RealParameter insertFrequencies;
 
-    
+
     @Override
     public void initAndValidate() {
         super.initAndValidate();
