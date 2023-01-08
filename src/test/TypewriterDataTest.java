@@ -42,8 +42,8 @@ public void testGetPossibleAncestors() {
     List<Integer> sequence_b = alignment.getCounts().get(1);
 
     //ancestral sequences
-    List<List<Integer>> ancs_sequence_a = TypewriterTreeLikelihood.get_possible_ancestors(sequence_a);
-    List<List<Integer>> ancs_sequence_b = TypewriterTreeLikelihood.get_possible_ancestors(sequence_b);
+    List<List<Integer>> ancs_sequence_a = TypewriterTreeLikelihood.getPossibleAncestors(sequence_a);
+    List<List<Integer>> ancs_sequence_b = TypewriterTreeLikelihood.getPossibleAncestors(sequence_b);
 
     //manually create ancestral states
     List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);

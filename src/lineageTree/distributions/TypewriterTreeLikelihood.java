@@ -76,15 +76,11 @@ public class TypewriterTreeLikelihood extends Distribution {
         } else {
             branchRateModel = new StrictClockModel();
         }
+        originTime = 0.0;
         if (originTimeInput.get() != null) {
             originTime = originTimeInput.get().getValue();
         }
-        //TODO clean up
-        else {
-            originTime = 0.0;
-        }
 
-        //TODO rename to partial likelihoods
         partialLikelihoods = new double[nodeCount][];
         scalingFactors = new double[nodeCount];
 
@@ -166,7 +162,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     public void traverseAncestral(Node node) {
 
             if (node.isLeaf() ) {
-                List<List<Integer>> possibleLeafAncestors = get_possible_ancestors(dataInput.get().getCounts().get(node.getNr()));
+                List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(node.getNr()));
                 ancestralStates.put(node.getNr(), possibleLeafAncestors);
 
             } else {
@@ -198,9 +194,9 @@ public class TypewriterTreeLikelihood extends Distribution {
         if( node != null ) {
 
             if (node.isLeaf()) {
-                //TODO partials
-                double[] LeafpartialLikelihoods = init_partialLikelihoods_leaf(ancestralStates.get(node.getNr()).size());
-                partialLikelihoods[node.getNr()] = LeafpartialLikelihoods;
+                
+                double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(node.getNr()).size());
+                partialLikelihoods[node.getNr()] = leafPartialLikelihoods;
 
 
             } else {
@@ -242,8 +238,8 @@ public class TypewriterTreeLikelihood extends Distribution {
 //                add(0);
 //                add(0);
 //            }}; ;
-//            double child1partialsum = sum_partial_child(start_state, child1Nr);
-//            double child2partialsum = sum_partial_child(start_state, child2Nr);
+//            double child1partialsum = calculatePartialLikelihoodState(start_state, child1Nr);
+//            double child2partialsum = calculatePartialLikelihoodState(start_state, child2Nr);
 //
 //            double product = child1partialsum * child2partialsum;
 //            partials[0] = product;
@@ -252,8 +248,8 @@ public class TypewriterTreeLikelihood extends Distribution {
 //        else {
             for (int state_index = 0; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
                 List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
-                double child1partialsum = sum_partial_child(start_state, child1);
-                double child2partialsum = sum_partial_child(start_state, child2);
+                double child1partialsum = calculatePartialLikelihoodState(start_state, child1);
+                double child2partialsum = calculatePartialLikelihoodState(start_state, child2);
 
                 double statePartialLikelihood = child1partialsum * child2partialsum;
                 partials[state_index] = statePartialLikelihood;
@@ -267,14 +263,12 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //on the root node!
         List<Integer> start_state = Arrays.asList(0,0,0,0,0);
-        double partialAtOrigin = sum_partial_child(start_state, rootNode);
-
+        double partialAtOrigin = calculatePartialLikelihoodState(start_state, rootNode);
         return partialAtOrigin;
 
     }
 
-    //TODO get partial likelihood per state
-    public double sum_partial_child(List<Integer> start_state, Node childNode) {
+    public double calculatePartialLikelihoodState(List<Integer> start_state, Node childNode) {
         final double branchRate = branchRateModel.getRateForBranch(childNode);
 
         double distance;
@@ -319,9 +313,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         return sum;
     }
 
-    //TODO CamelCase
-    //TODO rename leaf partial likelihoods
-   public double[] init_partialLikelihoods_leaf(int size) {
+   public double[] initPartialLikelihoodsLeaf(int size) {
 
         double[] leafPartials = new double[size];
         leafPartials[0] = 1;
@@ -329,8 +321,7 @@ public class TypewriterTreeLikelihood extends Distribution {
    }
 
 
-   //TODO CamelCase
-    public static List<List<Integer>> get_possible_ancestors(List<Integer> sequence) {
+    public static List<List<Integer>> getPossibleAncestors(List<Integer> sequence) {
         // to get all possible ancestors we just remove edits 1 by 1 along the barcode, starting from the last edited position
         List<List<Integer>> ancestors = new ArrayList();
         //adding the sequence itself as an ancestor
