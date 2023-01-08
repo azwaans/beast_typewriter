@@ -2,11 +2,9 @@ package test;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.substitutionmodel.Frequencies;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.junit.Test;

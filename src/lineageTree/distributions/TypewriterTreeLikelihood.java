@@ -9,7 +9,6 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -17,9 +16,7 @@ import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.sitemodel.SiteModelInterface;
 import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 
 
@@ -248,25 +245,6 @@ public class TypewriterTreeLikelihood extends Distribution {
         //initialize an array for the partials
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
 
-        //todo potentially remove the following dead code: when a List<List<Integer>> contains a single List<Integer> it is not considered a List<List>>
-
-//        if (ancestralStates.get(nodeNr).size() ==5) {
-//            //root node
-//             List<Integer> startState = new ArrayList<Integer>() {{
-//                add(0);
-//                add(0);
-//                add(0);
-//                add(0);
-//                add(0);
-//            }}; ;
-//            double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1Nr);
-//            double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2Nr);
-//
-//            double product = child1PartialLikelihoodState * child2PartialLikelihoodState;
-//            partials[0] = product;
-//
-//        }
-//        else {
             for (int stateIndex = 0; stateIndex < ancestralStates.get(nodeNr).size(); ++stateIndex) {
                 
                 List<Integer> startState = ancestralStates.get(nodeNr).get(stateIndex);
@@ -276,7 +254,6 @@ public class TypewriterTreeLikelihood extends Distribution {
                 
                 partials[stateIndex] = child1PartialLikelihoodState * child2PartialLikelihoodState;
             }
-//        }
         return partials;
 
     }

@@ -4,20 +4,15 @@ package lineageTree.substitutionmodel;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
-import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.EigenDecomposition;
 import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.evolution.tree.Node;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static java.lang.Math.E;
-import static java.lang.Math.log;
 
 
 @Description("Allows to calculate transition probabilities for a Typewriter modelled as a Poisson process on the number of edits")
@@ -31,8 +26,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     protected RealParameter insertFrequencies;
 
-
-
+    
     @Override
     public void initAndValidate() {
         super.initAndValidate();
@@ -42,7 +36,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         insertFrequencies = frequenciesInput.get();
 
 
-    } // initAndValidate
+    }
 
     protected boolean updateMatrix = true;
     private boolean storedUpdateMatrix = true;
@@ -154,7 +148,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     @Override
     public void store() {
         storedUpdateMatrix = updateMatrix;
-//        System.arraycopy(relativeRates, 0, storedRelativeRates, 0, relativeRates.length);
+//      System.arraycopy(relativeRates, 0, storedRelativeRates, 0, relativeRates.length);
 
         super.store();
     }
@@ -166,10 +160,10 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     public void restore() {
 
         updateMatrix = storedUpdateMatrix;
-// To restore all this stuff just swap the pointers...
-//        double[] tmp1 = storedRelativeRates;
-//        storedRelativeRates = relativeRates;
-//        relativeRates = tmp1;
+//      To restore all this stuff just swap the pointers...
+//      double[] tmp1 = storedRelativeRates;
+//      storedRelativeRates = relativeRates;
+//      relativeRates = tmp1;
         super.restore();
 
     }
@@ -188,8 +182,6 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     @Override
     public void getTransitionProbabilities(Node node, double startTime, double endTime, double rate, double[] matrix) {
-        // not implemented
-
     }
 
     @Override
@@ -202,4 +194,4 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         return dataType.getStateCount() != Integer.MAX_VALUE;
     }
 
-} // class GeneralSubstitutionModel
+}
