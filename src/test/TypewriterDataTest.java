@@ -343,7 +343,7 @@ public void testGetPossibleAncestors() {
         assertTrue(statesDictionary.get(0).contains(allele0));
 
         //2nd leaf
-        assertEquals(statesDictionary.get(1).size(),3);
+        assertEquals(statesDictionary.get(1).size(),4);
         assertTrue(statesDictionary.get(1).contains(allele211));
         assertTrue(statesDictionary.get(1).contains(allele21));
         assertTrue(statesDictionary.get(1).contains(allele2));
@@ -563,8 +563,8 @@ public void testGetPossibleAncestors() {
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin", origin);
 
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -637,8 +637,8 @@ public void testGetPossibleAncestors() {
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin", origin);
 
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -707,8 +707,8 @@ public void testGetPossibleAncestors() {
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -770,8 +770,8 @@ public void testGetPossibleAncestors() {
 //        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 //
 //
-//        //initialise probabilities
-//        likelihood.probabilities = new double[tree1.getNodeCount()][];
+//        //initialise partialLikelihoods
+//        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 //
 //        //Manually calc the likelihood for that tree:
 //
@@ -836,8 +836,8 @@ public void testGetPossibleAncestors() {
 //        likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel);
 //
 //
-//        //initialise probabilities
-//        likelihood.probabilities = new double[tree1.getNodeCount()][];
+//        //initialise partialLikelihoods
+//        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 //
 //        //Manually calc the likelihood for that tree:
 //
@@ -903,8 +903,8 @@ public void testGetPossibleAncestors() {
 
 
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -977,8 +977,8 @@ public void testGetPossibleAncestors() {
         RealParameter origin = new RealParameter("25");
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin);
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -1052,8 +1052,8 @@ public void testGetPossibleAncestors() {
 
 
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -1131,8 +1131,8 @@ public void testGetPossibleAncestors() {
 
 
 
-        //initialise probabilities
-        likelihood.probabilities = new double[tree1.getNodeCount()][];
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -1206,8 +1206,8 @@ public void testGetPossibleAncestors() {
 //
 //
 //
-//        //initialise probabilities
-//        likelihood.probabilities = new double[tree1.getNodeCount()][];
+//        //initialise partialLikelihoods
+//        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
 //
 //        //Manually calc the likelihood for that tree:
 //

@@ -49,7 +49,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
-    public double[][] probabilities ;
+    public double[][] partialLikelihoods ;
     protected double[] scalingFactors;
     protected boolean useScaling = false;
 
@@ -85,7 +85,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         }
 
         //TODO rename to partial likelihoods
-        probabilities = new double[nodeCount][];
+        partialLikelihoods = new double[nodeCount][];
         scalingFactors = new double[nodeCount];
 
 
@@ -119,7 +119,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         if(originTime == 0.0) {
             //sum of all partial likelihoods at the root
-            logP = Math.log(Arrays.stream(probabilities[tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
+            logP = Math.log(Arrays.stream(partialLikelihoods[tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
             return logP;
         }
         else {
@@ -138,18 +138,18 @@ public class TypewriterTreeLikelihood extends Distribution {
 
             //find the highest partial likelihodo
             //is node number same as nodeIndex
-            for (int k = 0; k < probabilities[nodeNumber].length; k++) {
-                if(probabilities[nodeNumber][k] > scaleFactor) {
-                    scaleFactor = probabilities[nodeNumber][k];
+            for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
+                if(partialLikelihoods[nodeNumber][k] > scaleFactor) {
+                    scaleFactor = partialLikelihoods[nodeNumber][k];
                 }
 
             }
             //if this partial is smaller than the threshold, scale the partials
             if (scaleFactor < scalingThreshold) {
 
-                for (int k = 0; k < probabilities[nodeNumber].length; k++) {
+                for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
 
-                    probabilities[nodeNumber][k] /= scaleFactor;
+                    partialLikelihoods[nodeNumber][k] /= scaleFactor;
 
                 }
                 // save the log(scaling factors)
@@ -199,8 +199,8 @@ public class TypewriterTreeLikelihood extends Distribution {
 
             if (node.isLeaf()) {
                 //TODO partials
-                double[] LeafProbabilities = init_probabilities_leaf(ancestralStates.get(node.getNr()).size());
-                probabilities[node.getNr()] = LeafProbabilities;
+                double[] LeafpartialLikelihoods = init_partialLikelihoods_leaf(ancestralStates.get(node.getNr()).size());
+                partialLikelihoods[node.getNr()] = LeafpartialLikelihoods;
 
 
             } else {
@@ -212,7 +212,7 @@ public class TypewriterTreeLikelihood extends Distribution {
                 traverseLikelihood(child2);
 
                 double[] partials = calculatePartials(node.getNr(),child1,child2);
-                probabilities[node.getNr()] = partials;
+                partialLikelihoods[node.getNr()] = partials;
 
                 if (useScaling) {
                     scalePartials(node.getNr());
@@ -308,10 +308,10 @@ public class TypewriterTreeLikelihood extends Distribution {
                 List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(end_state_index);
 
                 // if the end state has non null partial likelihood
-                if (! (probabilities[childNode.getNr()][end_state_index] == 0.0)) {
+                if (! (partialLikelihoods[childNode.getNr()][end_state_index] == 0.0)) {
 
                     sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, distance) *
-                            probabilities[childNode.getNr()][end_state_index];
+                            partialLikelihoods[childNode.getNr()][end_state_index];
                 }
             }
         }
@@ -321,7 +321,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     //TODO CamelCase
     //TODO rename leaf partial likelihoods
-   public double[] init_probabilities_leaf(int size) {
+   public double[] init_partialLikelihoods_leaf(int size) {
 
         double[] leafPartials = new double[size];
         leafPartials[0] = 1;
