@@ -127,70 +127,87 @@ public class TypewriterTreeLikelihood extends Distribution {
         }
 
     }
-
+    /**
+     * Scale the partials at a given node. This uses a scaling suggested by Ziheng Yang in
+     * Yang (2000) J. Mol. Evol. 51: 423-432
+     * <p/>
+     * This function looks over the partial likelihoods for each state at each pattern
+     * and finds the largest. If this is less than the scalingThreshold (currently set
+     * to 1E-40) then it rescales the partials for that pattern by dividing by this number
+     * (i.e., normalizing to between 0, 1). It then stores the log of this scaling.
+     * This is called for every internal node after the partials are calculated so provides
+     * most of the performance hit. Ziheng suggests only doing this on a proportion of nodes
+     * but this sounded like a headache to organize (and he doesn't use the threshold idea
+     * which improves the performance quite a bit).
+     *
+     * @param nodeNumber
+     */
     protected void scalePartials(int nodeNumber) {
 
-            double scaleFactor = 0.0;
+        double scaleFactor = 0.0;
 
-            //find the highest partial likelihodo
-            //is node number same as nodeIndex
+        //find the highest partial likelihodo
+        //is node number same as nodeIndex
+        for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
+            if(partialLikelihoods[nodeNumber][k] > scaleFactor) {
+                scaleFactor = partialLikelihoods[nodeNumber][k];
+            }
+
+        }
+        //if this partial is smaller than the threshold, scale the partials
+        if (scaleFactor < scalingThreshold) {
+
             for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
-                if(partialLikelihoods[nodeNumber][k] > scaleFactor) {
-                    scaleFactor = partialLikelihoods[nodeNumber][k];
-                }
+
+                partialLikelihoods[nodeNumber][k] /= scaleFactor;
 
             }
-            //if this partial is smaller than the threshold, scale the partials
-            if (scaleFactor < scalingThreshold) {
+            // save the log(scaling factors)
+            scalingFactors[nodeNumber] = Math.log(scaleFactor);
 
-                for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
-
-                    partialLikelihoods[nodeNumber][k] /= scaleFactor;
-
-                }
-                // save the log(scaling factors)
-                scalingFactors[nodeNumber] = Math.log(scaleFactor);
-
-            } else {
-                scalingFactors[nodeNumber] = 0.0;
-            }
-
+        } else {
+            scalingFactors[nodeNumber] = 0.0;
+        }
 
     }
 
-
+    /**
+     * This function implements a postorder traversal of the tree to obtain all possible sets of ancestral state sets
+     */
     public void traverseAncestral(Node node) {
 
-            if (node.isLeaf() ) {
-                List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(node.getNr()));
-                ancestralStates.put(node.getNr(), possibleLeafAncestors);
+        if (node.isLeaf() ) {
+            List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(node.getNr()));
+            ancestralStates.put(node.getNr(), possibleLeafAncestors);
 
-            } else {
+        } else {
 
-                final Node child1 = node.getLeft();
-                final Node child2 = node.getRight();
+            final Node child1 = node.getLeft();
+            final Node child2 = node.getRight();
 
-                traverseAncestral(child1);
-                traverseAncestral(child2);
+            traverseAncestral(child1);
+            traverseAncestral(child2);
 
-                List<List<Integer>> AncSetChild1 = ancestralStates.get(child1.getNr());
-                List<List<Integer>> AncSetChild2 = ancestralStates.get(child2.getNr());
+            List<List<Integer>> ancSetChild1 = ancestralStates.get(child1.getNr());
+            List<List<Integer>> ancSetChild2 = ancestralStates.get(child2.getNr());
 
+            List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
+            // intersection of children ancestral states
+            ancSetNode.retainAll(ancSetChild2);
 
-                List<List<Integer>> AncSetNode = new ArrayList<>(AncSetChild1);
-                // intersection of children ancestral states
-                AncSetNode.retainAll(AncSetChild2);
+            ancestralStates.put(node.getNr(), ancSetNode);
 
-                ancestralStates.put(node.getNr(), AncSetNode);
-
-            }
+        }
 
 
     }
 
+    /**
+     * This function implements a postorder traversal of the tree to fill the partialLikelihood array
+     *
+     */
     public void traverseLikelihood(Node node) {
 
-        //TODO remove this because not needed (origin handled separately now)
         if( node != null ) {
 
             if (node.isLeaf()) {
@@ -221,8 +238,12 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     }
 
+    /**
+     * This function calculates partial likelihoods for all possible states at node given its children partials
+     *
+     * @return partial likelihoods for states at node nodeNr
+     */
     public double[] calculatePartials(int nodeNr, Node child1, Node child2) {
-        //here. implement felsensteins's pruning algorithm
 
         //initialize an array for the partials
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
@@ -231,88 +252,106 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 //        if (ancestralStates.get(nodeNr).size() ==5) {
 //            //root node
-//             List<Integer> start_state = new ArrayList<Integer>() {{
+//             List<Integer> startState = new ArrayList<Integer>() {{
 //                add(0);
 //                add(0);
 //                add(0);
 //                add(0);
 //                add(0);
 //            }}; ;
-//            double child1partialsum = calculatePartialLikelihoodState(start_state, child1Nr);
-//            double child2partialsum = calculatePartialLikelihoodState(start_state, child2Nr);
+//            double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1Nr);
+//            double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2Nr);
 //
-//            double product = child1partialsum * child2partialsum;
+//            double product = child1PartialLikelihoodState * child2PartialLikelihoodState;
 //            partials[0] = product;
 //
 //        }
 //        else {
-            for (int state_index = 0; state_index < ancestralStates.get(nodeNr).size(); ++state_index) {
-                List<Integer> start_state = ancestralStates.get(nodeNr).get(state_index);
-                double child1partialsum = calculatePartialLikelihoodState(start_state, child1);
-                double child2partialsum = calculatePartialLikelihoodState(start_state, child2);
-
-                double statePartialLikelihood = child1partialsum * child2partialsum;
-                partials[state_index] = statePartialLikelihood;
+            for (int stateIndex = 0; stateIndex < ancestralStates.get(nodeNr).size(); ++stateIndex) {
+                
+                List<Integer> startState = ancestralStates.get(nodeNr).get(stateIndex);
+                
+                double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1);
+                double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2);
+                
+                partials[stateIndex] = child1PartialLikelihoodState * child2PartialLikelihoodState;
             }
 //        }
         return partials;
 
     }
 
-    public double calculateOriginPartial(Node rootNode) {
+    /**
+     * This function calculates the likelihood of the unedited state at the origin given partial likelihoods at the root
+     * node
+     *
+     * @return likelihood of the unedited barcode at t = origin
+     */
 
-        //on the root node!
-        List<Integer> start_state = Arrays.asList(0,0,0,0,0);
-        double partialAtOrigin = calculatePartialLikelihoodState(start_state, rootNode);
+    public double calculateOriginPartial(Node rootNode) {
+        //the start state is the unedited typewriter barcode
+        List<Integer> startState = Arrays.asList(0,0,0,0,0);
+        double partialAtOrigin = calculatePartialLikelihoodState(startState, rootNode);
         return partialAtOrigin;
 
     }
 
-    public double calculatePartialLikelihoodState(List<Integer> start_state, Node childNode) {
-        final double branchRate = branchRateModel.getRateForBranch(childNode);
+    /**
+     * This function calculates the partial likelihood term of a specific state at a node derived on a branch leading to
+     * a child node
+     *
+     * @return partial likelihood for a state at a node given partials at a node childNode
+     */
+    public double calculatePartialLikelihoodState(List<Integer> startState, Node childNode) {
 
+        final double branchRate = branchRateModel.getRateForBranch(childNode);
         double distance;
 
-        //init evolutionary distance
+        //initialise evolutionary distance
+        // TODO rename distance
         if (childNode.isRoot()) {
-            double stemLength = originTime - childNode.getHeight();
-            // TODO rename distance
-            distance = stemLength * branchRate ;
-
+            distance = (originTime - childNode.getHeight()) * branchRate ;
         }
+
         else {
             distance = childNode.getLength() * branchRate ;
         }
 
         // calculate partials
-        // TODO rename likelihood to transition from the start state into any end state at the child node?
-        // Name: StatePartialLikelihood
-        double sum = 0;
+        double statePartialLikelihood = 0;
+
         if(childNode.isLeaf()) {
 
-            List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(0);
-            //TODO erase sum +
-            sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, distance);
+            List<Integer> endState = ancestralStates.get(childNode.getNr()).get(0);
+            statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance);
 
         }
         else {
 
-            for (int end_state_index = 0; end_state_index < ancestralStates.get(childNode.getNr()).size(); ++end_state_index) {
+            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr()).size(); ++endStateIndex) {
 
-                List<Integer> end_state = ancestralStates.get(childNode.getNr()).get(end_state_index);
+                List<Integer> endState = ancestralStates.get(childNode.getNr()).get(endStateIndex);
 
                 // if the end state has non null partial likelihood
-                if (! (partialLikelihoods[childNode.getNr()][end_state_index] == 0.0)) {
+                if (partialLikelihoods[childNode.getNr()][endStateIndex] != 0.0) {
 
-                    sum = sum + substitutionModel.getSequenceTransitionProbability(start_state, end_state, distance) *
-                            partialLikelihoods[childNode.getNr()][end_state_index];
+                    statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance) *
+                            partialLikelihoods[childNode.getNr()][endStateIndex];
+
                 }
             }
         }
 
-        return sum;
+        return statePartialLikelihood;
     }
 
+    /**
+     * This function initialises an array of partial likelihoods for a leaf node, the partial likelihood is 1 for
+     * the observed sequence and 0 for everything else. The size corresponds to the total number of possible ancestral states.
+     *
+     *
+     * @return array of partial likelihoods at leaf node
+     */
    public double[] initPartialLikelihoodsLeaf(int size) {
 
         double[] leafPartials = new double[size];
@@ -320,16 +359,21 @@ public class TypewriterTreeLikelihood extends Distribution {
         return leafPartials;
    }
 
-
+    /**
+     * This function returns all possible ancestral states given a sequence.
+     * Because typewriter sequences record ordered edits, ancestral states are obtained by sequentially removing edits
+     * along the sequence (from any insert (1 to N)  to 0)
+     *
+     * @return a list of possible ancestral typewriter barcode states
+     */
     public static List<List<Integer>> getPossibleAncestors(List<Integer> sequence) {
-        // to get all possible ancestors we just remove edits 1 by 1 along the barcode, starting from the last edited position
+
         List<List<Integer>> ancestors = new ArrayList();
-        //adding the sequence itself as an ancestor
         ancestors.add(sequence);
+
         List<Integer> ancestor = new ArrayList<>(sequence);
         for(int i = sequence.size()-1; i >= 0; --i) {
             if(sequence.get(i) != 0) {
-                //append possible ancestor list
                 ancestor.set(i, 0);
                 ancestors.add(new ArrayList<>(ancestor));
             }

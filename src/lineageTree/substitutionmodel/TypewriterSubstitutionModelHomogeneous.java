@@ -49,79 +49,83 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
 
     /**
-     * This is to get transition probability between 2 sequences states (with potentially multiple edits having happened)
-     * start sequence is sequence of parent node
-     * end sequence is sequence of a child node
+     * This function calculates the probability of transitioning between 2 sequences states in given evolutionary time (distance)
+     * (with potentially multiple edits having happened)
+     *
+     * @param startSequence  is a sequence state at a parent node
+     * @param endSequence is a sequence state at a child node
      */
-    public double getSequenceTransitionProbability(final List<Integer> start_sequence, final List<Integer> end_sequence, double distance) {
+    public double getSequenceTransitionProbability(final List<Integer> startSequence, final List<Integer> endSequence, double distance) {
 
-        List<Integer> startstate = new ArrayList(start_sequence);
-        List<Integer> endstate = new ArrayList(end_sequence);
+        List<Integer> startState = new ArrayList(startSequence);
+        List<Integer> endState = new ArrayList(endSequence);
 
         //create an unedited state to subtract from sequences to get only edited sites
         List<Integer> zero = Arrays.asList(0);
 
         //removing all unedited sites from each sequence
-        startstate.removeAll(zero);
-        endstate.removeAll(zero);
+        startState.removeAll(zero);
+        endState.removeAll(zero);
 
-        //if endstate is less edited than the start state, violates ordering
-        if(startstate.size() > endstate.size() ){
+        //if endState is less edited than the start state, violates ordering
+        if(startState.size() > endState.size() ){
             return 0.0;
         }
         //subtracting start sequence from end sequence: edits introduced
         // if start state has identical elements to end state remove
-        startstate.forEach(endstate::remove);
+        startState.forEach(endState::remove);
+        List<Integer> newInserts = endState;
         //TODO foor loop over positions, make explicit checks, compare if that has the same result as above
 
         //available positions are 5 - number of edited positions
-        // TODO rename nrOfPossibleInserts
-        int poisson_up = 5 - startstate.size();
+        int nrOfPossibleInserts = 5 - startState.size();
 
         //initialise the poisson distribution with mean rate * distance
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance);
+        org.apache.commons.math.distribution.PoissonDistribution poissonDistribution = new PoissonDistributionImpl(distance);
 
-        //calculate the transition probability for the case where all available positions are edited in:
-        // P(max) = 1- sum(P(n))
-        //TODO rename endstate to newInserts
-        if(endstate.size() == poisson_up ) {
-
-            double sum = 0.0;
-            for(int i = 0;  i<poisson_up; i++) {
-                sum += dist.probability(i);
-            }
-            return  (1 - sum)*getFrequencyFactor(endstate);
+        //calculate the transition probability for the case where all available positions are edited in
+        // This is the absorbing state in the poisson process
+        // P(max) = 1- sum(P(n)) * probability of this insert combination
+        if(newInserts.size() == nrOfPossibleInserts ) {
+            return calculateAbsorbingStateProbability(poissonDistribution,nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
         }
-
         //calculate the transition probability for the case where a #edits < available positions
+        //this is a regular draw from the poisson process * probability of this insert combination
         else{
-            // Or keep in structure as in the if statement before
-            // rename combine probability
-            double freq = getFrequencyFactor(endstate);
-            // todo rename poisson probability
-            double prob = dist.probability(endstate.size());
-            return prob * freq;
+            return poissonDistribution.probability(endState.size()) * combinedInsertProbabilities(endState);
         }
 
     }
 
     //TODO function getNewInserts
 
-    //TODO function calculate truncated poisson probability
-// double sum = 0.0;
-//            for(int i = 0;  i<poisson_up; i++) {
-//                sum += dist.probability(i);
-//            }
+    /**
+     * This function calculates the probability of reaching/editing the last unedited position in the barcode with nbrOfPossibleInserts
+     * available positions
+     *
+     * @param nbrOfPossibleInserts  is the number of available positions until the absorbing state is reached
+     * @param dist is the poisson
+     */
+    public double calculateAbsorbingStateProbability(org.apache.commons.math.distribution.PoissonDistribution dist,int nbrOfPossibleInserts) {
+        double absorbingStateProbability = 1.0;
+        for(int i = 0;  i < nbrOfPossibleInserts ; i++) {
+            absorbingStateProbability -= dist.probability(i);
+        }
+        return absorbingStateProbability;
+
+    }
+
+
     /**
      * Function to obtain the probability factor induced by insert frequencies
      * combineInsertProbabilities
      */
-    public double getFrequencyFactor(List<Integer> edits) {
-        //TODO rename combinedProbability
+    public double combinedInsertProbabilities(List<Integer> inserts) {
+
         double factor = 1.0;
         double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
 
-        for(Integer i : edits){
+        for(Integer i : inserts){
             //inserts are in {1, ..., nInserts}; insertProbabilities are in {0, ..., nInserts - 1}
             factor = factor * insertFrequenciesValue[i-1];
         }
@@ -130,14 +134,14 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     }
 
     /**
-     * Function to obtain the insert probabilities
+     * Function to obtain the array of insert probabilities
      * TODO : Check in initAndValidate: a) value in [0,1]; b) sum=1;
      */
     public double[] getInsertProbabilities() {
 
         double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
-
         return insertFrequenciesValue;
+
     }
 
 
