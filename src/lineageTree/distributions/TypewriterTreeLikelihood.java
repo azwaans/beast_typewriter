@@ -51,7 +51,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][] probabilities ;
     protected double[] scalingFactors;
-    protected boolean useScaling = true;
+    protected boolean useScaling = false;
 
 
     private double scalingThreshold = 1.0E-100;
