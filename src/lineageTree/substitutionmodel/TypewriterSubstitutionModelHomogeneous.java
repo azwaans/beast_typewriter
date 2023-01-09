@@ -4,6 +4,7 @@ package lineageTree.substitutionmodel;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.EigenDecomposition;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -35,6 +36,22 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         nrOfStates = frequencies.getFreqs().length;
         insertFrequencies = frequenciesInput.get();
 
+        double[] insertProbabilities = insertFrequencies.getDoubleValues();
+        if( Arrays.stream(insertProbabilities).sum() != 1 ) {
+
+            throw new IllegalArgumentException(String.format(
+                    "sum of insert probabilities is not 1"));
+
+        }
+
+        for( double insertProbability : insertProbabilities) {
+            if(insertProbability>1 || insertProbability<0) {
+                throw new IllegalArgumentException(String.format(
+                        "insert probabilities is not between 0 and 1"));
+            }
+        }
+
+
 
     }
 
@@ -65,11 +82,30 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         if(startState.size() > endState.size() ){
             return 0.0;
         }
+        //todo here, we check if we have any sequence transitions that violate ordering/do weird things
+        //specifically, if there is already editing in startState, all edits in startState should be found in end state.
+//        else if (startState.size() != 0){
+//            //if there is already editing in startState, all edits in startState should be found in end state.
+//            boolean sharedEdits = true;
+//            for(int i=0; i<startState.size(); i++){
+//                if(endState.get(i) != startState.get(i)) {
+//                    sharedEdits = false;
+//                }
+//            }
+//            if(sharedEdits == false) {
+//                Log.info.println("there are no shared edits where there should be");
+//                Log.info.println("startseq : " + startSequence);
+//                Log.info.println("endseq : " + endSequence);
+//            }
+
+//        }
         //subtracting start sequence from end sequence: edits introduced
         // if start state has identical elements to end state remove
         startState.forEach(endState::remove);
         List<Integer> newInserts = endState;
         //TODO foor loop over positions, make explicit checks, compare if that has the same result as above
+
+
 
         //available positions are 5 - number of edited positions
         int nrOfPossibleInserts = 5 - startState.size();
