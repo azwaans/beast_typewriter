@@ -64,6 +64,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         //if endState is less edited than the start state, violates ordering
         if(startState.size() > endState.size() ){
             return 0.0;
+            
         }
         //subtracting start sequence from end sequence: edits introduced
         // if start state has identical elements to end state remove
@@ -81,14 +82,20 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         // This is the absorbing state in the poisson process
         // P(max) = 1- sum(P(n)) * probability of this insert combination
         if(newInserts.size() == nrOfPossibleInserts ) {
-            return calculateAbsorbingStateProbability(poissonDistribution,nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
+
+            return calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
+
         }
         //calculate the transition probability for the case where a #edits < available positions
         //this is a regular draw from the poisson process * probability of this insert combination
-        else{
-            return poissonDistribution.probability(endState.size()) * combinedInsertProbabilities(endState);
-        }
+        else if (newInserts.size() < nrOfPossibleInserts){
 
+            return poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
+
+        } else{
+
+            throw new RuntimeException("Error! Number of new inserts is larger than nr of possible inserts!");
+        }
     }
 
     //TODO function getNewInserts
