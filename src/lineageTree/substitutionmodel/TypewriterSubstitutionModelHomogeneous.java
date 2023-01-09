@@ -37,12 +37,14 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         insertFrequencies = frequenciesInput.get();
 
         double[] insertProbabilities = insertFrequencies.getDoubleValues();
-        if( Arrays.stream(insertProbabilities).sum() != 1 ) {
 
+        double insertProbabilitiesSum = Arrays.stream(insertProbabilities).sum();
+        if (Math.abs(insertProbabilitiesSum - 1.0) > 1e-6) {
             throw new IllegalArgumentException(String.format(
                     "sum of insert probabilities is not 1"));
 
         }
+
 
         for( double insertProbability : insertProbabilities) {
             if(insertProbability>1 || insertProbability<0) {
