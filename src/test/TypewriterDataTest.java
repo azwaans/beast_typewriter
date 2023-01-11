@@ -566,17 +566,17 @@ public void testGetPossibleAncestors() {
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-        double clock_rate = 0.5;
+        double clockRate = 0.5;
 
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele12,5*clock_rate);
-        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele12,5*clock_rate);
-        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele12,5*clock_rate);
+        double partial0000Internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele12,5*clockRate);
+        double partial1000Internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*clockRate)*submodel.getSequenceTransitionProbability(allele1,allele12,5*clockRate);
+        double partial1200Internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*clockRate)*submodel.getSequenceTransitionProbability(allele12,allele12,5*clockRate);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate) ;
+        double partialOrigin = partial0000Internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) + partial1000Internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*clockRate) + partial1200Internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate) ;
 
         //loglikelihood
-        double LogPExpected = Math.log(proot);
+        double LogPExpected = Math.log(partialOrigin);
 
 
         double LogPCalc = likelihood.calculateLogP();
@@ -641,17 +641,17 @@ public void testGetPossibleAncestors() {
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele122 = Arrays.asList(1,2,2,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-        double clock_rate = 0.5;
+        double clockRate = 0.5;
 
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele122,5*clock_rate);
-        double p1000_internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele122,5*clock_rate);
-        double p1200_internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele122,5*clock_rate);
+        double partial0000Internal = submodel.getSequenceTransitionProbability(allele0,allele12,5*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele122,5*clockRate);
+        double partial1000Internal = submodel.getSequenceTransitionProbability(allele1,allele12,5*clockRate)*submodel.getSequenceTransitionProbability(allele1,allele122,5*clockRate);
+        double partial1200Internal = submodel.getSequenceTransitionProbability(allele12,allele12,5*clockRate)*submodel.getSequenceTransitionProbability(allele12,allele122,5*clockRate);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate) ;
+        double partialOrigin = partial0000Internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) + partial1000Internal* submodel.getSequenceTransitionProbability(allele0,allele1,1*clockRate) + partial1200Internal * submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate) ;
 
         //loglikelihood
-        double LogPExpected = Math.log(proot);
+        double LogPExpected = Math.log(partialOrigin);
 
 
         double LogPCalc = likelihood.calculateLogP();
@@ -708,15 +708,15 @@ public void testGetPossibleAncestors() {
 
         //internal node partials:
         List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
-        double clock_rate = 0.5;
+        double clockRate = 0.5;
 
-        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate);
+        double partial0000Internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele0,5*clockRate);
 
         //root node
-        double proot = p0000_internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) ;
+        double partialOrigin = partial0000Internal * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) ;
 
         //loglikelihood
-        double LogPExpected = Math.log(proot);
+        double LogPExpected = Math.log(partialOrigin);
 
 
         double LogPCalc = likelihood.calculateLogP();
@@ -772,15 +772,15 @@ public void testGetPossibleAncestors() {
 //        //internal node partials:
 //        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
 //        List<Integer> allele122 = Arrays.asList(1,2,2,0,0);
-//        double clock_rate = 0.5;
+//        double clockRate = 0.5;
 //
-//        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele122,5*clock_rate);
+//        double partial0000Internal = submodel.getSequenceTransitionProbability(allele0,allele122,5*clockRate);
 //
 //        //root node
-//        double proot = p0000_internal ;
+//        double partialOrigin = partial0000Internal ;
 //
 //        //loglikelihood
-//        double LogPExpected = Math.log(proot);
+//        double LogPExpected = Math.log(partialOrigin);
 //
 //
 //        double LogPCalc = likelihood.calculateLogP();
@@ -837,14 +837,14 @@ public void testGetPossibleAncestors() {
 //
 //        //internal node partials:
 //        List<Integer> allele0 = Arrays.asList(0,0,0,0,0);
-//        double clock_rate = 0.5;
-//        double p0000_internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clock_rate);
+//        double clockRate = 0.5;
+//        double partial0000Internal = submodel.getSequenceTransitionProbability(allele0,allele0,5*clockRate);
 //
 //        //root node
-//        double proot = p0000_internal ;
+//        double partialOrigin = partial0000Internal ;
 //
 //        //loglikelihood
-//        double LogPExpected = Math.log(proot);
+//        double LogPExpected = Math.log(partialOrigin);
 //
 //
 //        double LogPCalc = likelihood.calculateLogP();
@@ -907,20 +907,20 @@ public void testGetPossibleAncestors() {
         List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
         List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-        double clock_rate = 0.5;
+        double clockRate = 0.5;
 
-        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate);
-        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate);
+        double partial0000Internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate);
+        double partial1000Internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele1,allele12,1*clockRate);
 
-        double p1200_internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate);
+        double partial1200Internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele12,allele12,1*clockRate);
 
-        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
+        double partial0000Internal2 = (partial0000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) + partial1000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clockRate) + partial1200Internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clockRate));
 
         //root node
-        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
+        double partialOrigin = partial0000Internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clockRate) ;
 
         //loglikelihood
-        double LogPExpected = Math.log(proot);
+        double LogPExpected = Math.log(partialOrigin);
 
         double LogPCalc = likelihood.calculateLogP();
         assertEquals(LogPExpected,LogPCalc);
@@ -928,6 +928,8 @@ public void testGetPossibleAncestors() {
 
     }
 
+
+    //todo remove that test
     @Test
     public void test_likelihood_debugging_neg_infinity() {
 
@@ -981,23 +983,23 @@ public void testGetPossibleAncestors() {
 //        List<Integer> allele12 = Arrays.asList(1,2,0,0,0);
 //        List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
 //        List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-//        double clock_rate = 0.5;
+//        double clockRate = 0.5;
 //
-//        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate);
-//        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate);
+//        double partial0000Internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate);
+//        double partial1000Internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele1,allele12,1*clockRate);
 //
-//        double p1200_internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele12,allele12,1*clock_rate);
+//        double partial1200Internal1 = submodel.getSequenceTransitionProbability(allele12,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele12,allele12,1*clockRate);
 //
-//        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate) + p1200_internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
+//        double partial0000Internal2 = (partial0000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) + partial1000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clockRate) + partial1200Internal1 * submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate)) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clockRate));
 
         //root node
-//        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
+//        double partialOrigin = partial0000Internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clockRate) ;
 
         //loglikelihood
-//        double LogPExpected = Math.log(proot);
+//        double LogPExpected = Math.log(partialOrigin);
 
         double LogPCalc = likelihood.calculateLogP();
-        assertEquals(Double.NEGATIVE_INFINITY,LogPCalc);
+        assertEquals(-149.22562765883814,LogPCalc);
 
     }
 
@@ -1057,19 +1059,19 @@ public void testGetPossibleAncestors() {
         List<Integer> allele11 = Arrays.asList(1,1,0,0,0);
         List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
         List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-        double clock_rate = 0.5;
+        double clockRate = 0.5;
 
-        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele11,1*clock_rate);
-        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele11,1*clock_rate);
+        double partial0000Internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele11,1*clockRate);
+        double partial1000Internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele1,allele11,1*clockRate);
 
-        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
+        double partial0000Internal2 = (partial0000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) + partial1000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clockRate )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clockRate));
 
 
         //root node
-        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
+        double partialOrigin = partial0000Internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clockRate) ;
 
         //loglikelihood
-        double LogPExpected = Math.log(proot);
+        double LogPExpected = Math.log(partialOrigin);
 
         double LogPCalc = likelihood.calculateLogP();
         assertEquals(LogPExpected,LogPCalc);
@@ -1136,19 +1138,19 @@ public void testGetPossibleAncestors() {
 //        List<Integer> allele11 = Arrays.asList(1,1,0,0,0);
 //        List<Integer> allele21 = Arrays.asList(2,1,0,0,0);
 //        List<Integer> allele1 = Arrays.asList(1,0,0,0,0);
-//        double clock_rate = 0.5;
+//        double clockRate = 0.5;
 //
-//        double p0000_internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele0,allele11,1*clock_rate);
-//        double p1000_internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clock_rate)*submodel.getSequenceTransitionProbability(allele1,allele11,1*clock_rate);
+//        double partial0000Internal1 = submodel.getSequenceTransitionProbability(allele0,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele0,allele11,1*clockRate);
+//        double partial1000Internal1 = submodel.getSequenceTransitionProbability(allele1,allele12,1*clockRate)*submodel.getSequenceTransitionProbability(allele1,allele11,1*clockRate);
 //
-//        double p0000_internal2 = (p0000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clock_rate) + p1000_internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clock_rate )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clock_rate));
+//        double partial0000Internal2 = (partial0000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele0,1*clockRate) + partial1000Internal1 * submodel.getSequenceTransitionProbability(allele0,allele1,1*clockRate )) * ( submodel.getSequenceTransitionProbability(allele0,allele21,2*clockRate));
 //
 //
 //        //root node
-//        double proot = p0000_internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clock_rate) ;
+//        double partialOrigin = partial0000Internal2 * submodel.getSequenceTransitionProbability(allele0,allele0,2*clockRate) ;
 //
 //        //loglikelihood
-//        double LogPExpected = Math.log(proot);
+//        double LogPExpected = Math.log(partialOrigin);
 
         double LogPCalc = likelihood.calculateLogP();
 //        assertEquals(LogPExpected,LogPCalc);
@@ -1206,15 +1208,15 @@ public void testGetPossibleAncestors() {
 //        //Manually calc the likelihood for that tree:
 //
 //        //internal node partials:
-//        double p0000_internal = submodel.getTransitionProbability(1,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(1,5)*submodel.getTransitionProbability(2,5)*submodel.getTransitionProbability(3,5);
-//        double p1000_internal = submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(3,5);
-//        double p1200_internal = submodel.getTransitionProbability(0,5) * submodel.getTransitionProbability(3,5);
+//        double partial0000Internal = submodel.getTransitionProbability(1,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(1,5)*submodel.getTransitionProbability(2,5)*submodel.getTransitionProbability(3,5);
+//        double partial1000Internal = submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(2,5) * submodel.getTransitionProbability(3,5);
+//        double partial1200Internal = submodel.getTransitionProbability(0,5) * submodel.getTransitionProbability(3,5);
 //
 //        //root node
-//        double proot = p0000_internal *  submodel.getTransitionProbability(0,1) + p1000_internal* submodel.getTransitionProbability(1,1) + p1200_internal * submodel.getTransitionProbability(1,1) * submodel.getTransitionProbability(2,1);
+//        double partialOrigin = partial0000Internal *  submodel.getTransitionProbability(0,1) + partial1000Internal* submodel.getTransitionProbability(1,1) + partial1200Internal * submodel.getTransitionProbability(1,1) * submodel.getTransitionProbability(2,1);
 //
 //        //loglikelihood
-//        double LogPExpected = Math.log(proot);
+//        double LogPExpected = Math.log(partialOrigin);
 //
 //        double LogPCalc = likelihood.calculateLogP();
 //        assertEquals(LogPCalc, LogPExpected);
