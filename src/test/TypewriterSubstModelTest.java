@@ -309,7 +309,7 @@ public class TypewriterSubstModelTest {
     }
 
     @Test
-    public void test0ClockWithEdit(){
+    public void testAlmost0DistanceWithEdit(){
 
         // Arrange
         TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
@@ -320,7 +320,7 @@ public class TypewriterSubstModelTest {
         typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
 
         Sequence a = new Sequence("cell1", "0,0,0,0,0");
-        Sequence b = new Sequence("cell2", "2,0,0,0,0");
+        Sequence b = new Sequence("cell2", "1,1,1,0,0");
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "integer");
@@ -330,17 +330,62 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
-        double clockRate = 0;
-        double deltaT = 10;
+        double clockRate = 1E-4;
+        double deltaT = 1E-4;
         double distance = clockRate * deltaT;
 
         Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b, distance);
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance, );
+        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance);
 
-        Double expectedProbability = 0.0; // dist.probability(0);
+        Double expectedProbability = dist.probability(3);
 
-        assertEquals(expectedProbability, calculatedProbability, 0.00001);
+        System.out.println(expectedProbability);
+        System.out.println(calculatedProbability);
+        assertEquals(expectedProbability, calculatedProbability, 1E-26);
 
+    }
+
+    @Test
+    public void testAlmost0DistanceWithEditSaturated(){
+
+        // Arrange
+        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
+
+        RealParameter freqs = new RealParameter("1.0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+
+        Sequence a = new Sequence("cell1", "0,0,0,0,0");
+        Sequence b = new Sequence("cell2", "1,1,1,1,1");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        //internal representation of the sequences for the package:
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+        List<Integer> sequence_b = alignment.getCounts().get(1);
+
+        double clockRate = 0.07;
+        double deltaT = 0.1;
+        double distance = clockRate * deltaT;
+
+        // calculate for test
+        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance);
+        double expectedProbability = 1;
+        int x = 0;
+        while (x <= 4){
+            expectedProbability -= dist.probability(x);
+            x++;
+        }
+
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability(sequence_a, sequence_b, distance);
+
+        System.out.println(expectedProbability);
+        System.out.println(calculatedProbability);
+
+        assertEquals(expectedProbability, calculatedProbability, 1E-16);
     }
 
 }
