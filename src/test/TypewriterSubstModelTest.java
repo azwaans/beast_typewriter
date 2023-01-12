@@ -245,6 +245,37 @@ public class TypewriterSubstModelTest {
     }
 
     @Test
+    public void testPoissonDist(){
+        //this is to test this pacakge iimplementation against probabilities obtained in R
+
+        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
+        double p0 = dist.probability(0);
+        assertEquals( 0.6065307, p0, 0.00001);
+        double p1 = dist.probability(1);
+        assertEquals( 0.3032653, p1, 0.00001);
+        double p2 = dist.probability(2);
+        assertEquals(  0.07581633, p2, 0.00001);
+        double p3 = dist.probability(3);
+        assertEquals(  0.01263606, p3, 0.00001);
+        double p4 = dist.probability(4);
+        assertEquals(  0.001579507, p4, 0.00001);
+
+         dist = new PoissonDistributionImpl(0.001);
+
+         p0 = dist.probability(0);
+        assertEquals( 0.9990005, p0, 0.00001);
+         p1 = dist.probability(1);
+        assertEquals( 0.0009990005, p1, 0.00001);
+         p2 = dist.probability(2);
+        assertEquals(  4.995002e-07, p2, 0.00001);
+         p3 = dist.probability(3);
+        assertEquals(  1.665001e-10, p3, 0.00001);
+         p4 = dist.probability(4);
+        assertEquals(  4.162502e-14, p4, 0.00001);
+
+    }
+
+
     public void testHighClockNoEdit(){
 
         // Arrange

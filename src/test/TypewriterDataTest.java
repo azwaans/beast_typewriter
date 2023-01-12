@@ -1067,10 +1067,7 @@ public void testGetPossibleAncestors() {
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
 
         double LogPCalc = likelihood.calculateLogP();
-        Log.info.println("root number"+tree1.getRoot().getNr() );
 
-        Log.info.println(likelihood.ancestralStates );
-        Log.info.println(Arrays.deepToString(likelihood.partialLikelihoods ));
         partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
         partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
         partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);
@@ -1133,10 +1130,6 @@ public void testGetPossibleAncestors() {
 
         partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
         partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);
-        Log.info.println("likelihoods" + likelihoods);
-        Log.info.println("partial 0000" + partial0000internals);
-        Log.info.println("partial 2000" + partial2000internals);
-        Log.info.println("partial 2200" + partial2200internals);
 
 
 
