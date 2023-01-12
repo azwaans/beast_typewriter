@@ -145,6 +145,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     public double calculateAbsorbingStateProbability(org.apache.commons.math.distribution.PoissonDistribution dist,int nbrOfPossibleInserts) {
         double absorbingStateProbability = 1.0;
+        //TODO use cumulative distribution until nrOfPossible inserts
         for(int i = 0;  i < nbrOfPossibleInserts ; i++) {
             absorbingStateProbability -= dist.probability(i);
         }
