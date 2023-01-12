@@ -276,5 +276,38 @@ public class TypewriterSubstModelTest {
     }
 
 
+    public void testHighClockNoEdit(){
+
+        // Arrange
+        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
+
+        RealParameter freqs = new RealParameter("1.0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+
+        Sequence a = new Sequence("cell1", "0,0,0,0,0");
+        Sequence b = new Sequence("cell2", "0,0,0,0,0");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        //internal representation of the sequences for the package:
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+        List<Integer> sequence_b = alignment.getCounts().get(1);
+
+        double clockRate = 40;
+        double deltaT = 10;
+        double distance = clockRate * deltaT;
+
+        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b, distance);
+        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(distance);
+
+        Double expectedProbability = dist.probability(0);
+
+        assertEquals(expectedProbability, calculatedProbability, 0.00001);
+
+    }
 
 }
