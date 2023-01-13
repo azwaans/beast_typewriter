@@ -311,6 +311,8 @@ public class TypewriterSubstModelTest {
     @Test
     public void testAlmost0DistanceWithEdit(){
 
+        //because 0 distance throws already throws an error from the Java implementation part
+
         // Arrange
         TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
