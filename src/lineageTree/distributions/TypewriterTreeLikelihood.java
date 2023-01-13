@@ -143,7 +143,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         double scaleFactor = 0.0;
 
-        //find the highest partial likelihodo
+        //find the highest partial likelihood
         //is node number same as nodeIndex
         for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
             if(partialLikelihoods[nodeNumber][k] > scaleFactor) {
