@@ -36,6 +36,8 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
+    final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
+            Validate.OPTIONAL);
 
     protected TypewriterSubstitutionModelHomogeneous substitutionModel;
     protected BranchRateModel.Base branchRateModel;
@@ -79,7 +81,11 @@ public class TypewriterTreeLikelihood extends Distribution {
         }
 
         partialLikelihoods = new double[nodeCount][];
-        scalingFactors = new double[nodeCount];
+
+        if(useScalingInput.get()){
+            useScaling = true;
+            scalingFactors = new double[nodeCount];
+        }
 
 
 
