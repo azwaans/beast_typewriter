@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution.likelihood:lineageTree.distributions.typewriterTreeLikelihood" required="" version="2.6">
+
+     dataType has to be set to integer and the value must contain a ',' s.t. the class recognizes it as a comma separated string of integers
+    <data  id="typewriterTest1" spec="Alignment" name="alignment1" >
+        <userDataType spec="beast.evolution.datatype.IntegerData"/>
+        <sequence id="0" spec="Sequence" taxon="0"  value="1,1,2,11,0"/>
+        <sequence id="1" spec="Sequence" taxon="1"  value="3,8,5,0,0"/>
+        <sequence id="2" spec="Sequence" taxon="2"  value="2,0,0,0,0"/>
+        <sequence id="3" spec="Sequence" taxon="3"  value="6,1,0,0,0"/>
+        <sequence id="4" spec="Sequence" taxon="4"  value="11,0,0,0,0"/>
+        <sequence id="5" spec="Sequence" taxon="5"  value="1,2,2,4,0"/>
+        <sequence id="6" spec="Sequence" taxon="6"  value="2,2,1,0,0"/>
+        <sequence id="7" spec="Sequence" taxon="7"  value="2,7,1,0,0"/>
+        <sequence id="8" spec="Sequence" taxon="8"  value="8,8,6,7,18"/>
+        <sequence id="9" spec="Sequence" taxon="9"  value="2,1,5,6,6"/>
+        <sequence id="10" spec="Sequence" taxon="10"  value="14,8,1,7,0"/>
+        <sequence id="11" spec="Sequence" taxon="11"  value="6,2,2,5,0"/>
+        <sequence id="12" spec="Sequence" taxon="12"  value="5,1,1,2,0"/>
+        <sequence id="13" spec="Sequence" taxon="13"  value="1,1,8,7,0"/>
+        <sequence id="14" spec="Sequence" taxon="14"  value="0,0,0,0,0"/>
+        <sequence id="15" spec="Sequence" taxon="15"  value="14,2,4,5,0"/>
+        <sequence id="16" spec="Sequence" taxon="16"  value="1,1,11,1,0"/>
+        <sequence id="17" spec="Sequence" taxon="17"  value="1,4,1,3,0"/>
+        <sequence id="18" spec="Sequence" taxon="18"  value="1,1,8,5,0"/>
+        <sequence id="19" spec="Sequence" taxon="19"  value="4,0,0,0,0"/>
+        <sequence id="20" spec="Sequence" taxon="20"  value="6,10,4,3,4"/>
+        <sequence id="21" spec="Sequence" taxon="21"  value="3,4,4,0,0"/>
+        <sequence id="22" spec="Sequence" taxon="22"  value="1,1,4,8,0"/>
+        <sequence id="23" spec="Sequence" taxon="23"  value="2,6,3,8,1"/>
+        <sequence id="24" spec="Sequence" taxon="24"  value="1,2,4,3,0"/>
+        <sequence id="25" spec="Sequence" taxon="25"  value="1,4,14,4,0"/>
+        <sequence id="26" spec="Sequence" taxon="26"  value="2,1,0,0,0"/>
+        <sequence id="27" spec="Sequence" taxon="27"  value="2,7,7,10,4"/>
+        <sequence id="28" spec="Sequence" taxon="28"  value="1,4,1,0,0"/>
+        <sequence id="29" spec="Sequence" taxon="29"  value="2,5,5,3,0"/>
+    </data>
+
+    <data  id="typewriterTest2" spec="Alignment" name="alignment2" >
+        <userDataType spec="beast.evolution.datatype.IntegerData"/>
+        <sequence id="30" spec="Sequence" taxon="0"  value="1,1,2,11,0"/>
+        <sequence id="31" spec="Sequence" taxon="1"  value="3,8,5,0,0"/>
+        <sequence id="32" spec="Sequence" taxon="2"  value="2,0,0,0,0"/>
+        <sequence id="33" spec="Sequence" taxon="3"  value="6,1,0,0,0"/>
+        <sequence id="34" spec="Sequence" taxon="4"  value="11,0,0,0,0"/>
+        <sequence id="35" spec="Sequence" taxon="5"  value="1,2,2,4,0"/>
+        <sequence id="36" spec="Sequence" taxon="6"  value="2,2,1,0,0"/>
+        <sequence id="37" spec="Sequence" taxon="7"  value="2,7,1,0,0"/>
+        <sequence id="38" spec="Sequence" taxon="8"  value="8,8,6,7,18"/>
+        <sequence id="39" spec="Sequence" taxon="9"  value="2,1,5,6,6"/>
+        <sequence id="40" spec="Sequence" taxon="10"  value="14,8,1,7,0"/>
+        <sequence id="41" spec="Sequence" taxon="11"  value="6,2,2,5,0"/>
+        <sequence id="42" spec="Sequence" taxon="12"  value="5,1,1,2,0"/>
+        <sequence id="43" spec="Sequence" taxon="13"  value="1,1,8,7,0"/>
+        <sequence id="44" spec="Sequence" taxon="14"  value="0,0,0,0,0"/>
+        <sequence id="45" spec="Sequence" taxon="15"  value="14,2,4,5,0"/>
+        <sequence id="46" spec="Sequence" taxon="16"  value="1,1,11,1,0"/>
+        <sequence id="47" spec="Sequence" taxon="17"  value="1,4,1,3,0"/>
+        <sequence id="48" spec="Sequence" taxon="18"  value="1,1,8,5,0"/>
+        <sequence id="49" spec="Sequence" taxon="19"  value="4,0,0,0,0"/>
+        <sequence id="50" spec="Sequence" taxon="20"  value="6,10,4,3,4"/>
+        <sequence id="51" spec="Sequence" taxon="21"  value="3,4,4,0,0"/>
+        <sequence id="52" spec="Sequence" taxon="22"  value="1,1,4,8,0"/>
+        <sequence id="53" spec="Sequence" taxon="23"  value="2,6,3,8,1"/>
+        <sequence id="54" spec="Sequence" taxon="24"  value="1,2,4,3,0"/>
+        <sequence id="55" spec="Sequence" taxon="25"  value="1,4,14,4,0"/>
+        <sequence id="56" spec="Sequence" taxon="26"  value="2,1,0,0,0"/>
+        <sequence id="57" spec="Sequence" taxon="27"  value="2,7,7,10,4"/>
+        <sequence id="58" spec="Sequence" taxon="28"  value="1,4,1,0,0"/>
+        <sequence id="59" spec="Sequence" taxon="29"  value="2,5,5,3,0"/>
+    </data>
+
+<!--    <data  id="typewriterTest" spec="feast.fileio.AlignmentFromNexus" name="alignment"-->
+<!--           fileName="simulate_alignment_given_tree.clockRate=0.13.seed=4.alignment.nexus">-->
+<!--        <userDataType spec="beast.evolution.datatype.IntegerData"/>-->
+<!--    </data>-->
+
+    <map name="Uniform" >beast.math.distributions.Uniform</map>
+    <map name="Exponential" >beast.math.distributions.Exponential</map>
+    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal" >beast.math.distributions.Normal</map>
+    <map name="Beta" >beast.math.distributions.Beta</map>
+    <map name="Gamma" >beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+    <map name="prior" >beast.math.distributions.Prior</map>
+    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
+
+
+    <traitSet id="dateTrait.t:alignment"
+              spec="beast.evolution.tree.TraitSet"
+              taxa="@TaxonSet.0" traitname="date-forward" value="0=50"
+    />
+
+    <taxa id="TaxonSet.0" spec="TaxonSet">
+        <alignment idref="typewriterTest1"/>
+    </taxa>
+
+    <taxa id="TaxonSet.1" spec="TaxonSet">
+        <alignment idref="typewriterTest2"/>
+    </taxa>
+
+    <run id="mcmc" spec="MCMC" chainLength="100000">
+
+            <state id="state" spec="State" storeEvery="1">
+
+                <tree id="Tree.t:typewriterTest" spec="beast.evolution.tree.Tree" name="stateNode">
+                        <taxonset idref="TaxonSet.0"/>
+                </tree>
+
+                <parameter id="insertFrequencies" spec="parameter.RealParameter" dimension="19" lower="0.0" name="stateNode" upper="Infinity"> 0.05263158  0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 </parameter>
+                <parameter id="clockRate.c:typewriterTest" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+                <parameter id="freqParameter.s:typewriterTest" spec="parameter.RealParameter" dimension="4" lower="0.0" name="stateNode" upper="1.0">0.25</parameter>
+                <parameter id="popsize" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="120000000">4000</parameter>
+                <parameter id="growthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="10">0.5599133</parameter>
+                <!-- setting up a shared site model-->
+
+            </state>
+
+
+            <init id="RandomTree.t:typewriterTest" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:typewriterTest" taxa="@typewriterTest1" rootHeight="50">
+                <populationModel id="ConstantPopulation0.t:tree" spec="ConstantPopulation">
+                    <parameter id="randomPopSize.t:tree" name="popSize">1.0</parameter>
+                </populationModel>
+            </init>
+
+            <distribution id="posterior" spec="util.CompoundDistribution">
+
+             <!-- tree priors -->
+            <distribution id="prior" spec="util.CompoundDistribution">
+
+                <distribution id="expCoal" spec="beast.evolution.tree.coalescent.Coalescent">
+                    <populationModel spec="beast.evolution.tree.coalescent.ExponentialGrowth" growthRate="@growthRate" popSize="@popsize" />
+                    <treeIntervals spec="beast.evolution.tree.coalescent.TreeIntervals" tree="@Tree.t:typewriterTest"/>
+                </distribution>
+
+                <!-- prior distributions on parameters -->
+
+                <prior id="popSizePrior" name="distribution" x="@popsize">
+                    <LogNormal id="LogNormalDistributionModel.3" name="distr">
+                        <parameter id="RealParameter.15" spec="parameter.RealParameter" estimate="false" name="M">8.29</parameter>
+                        <parameter id="RealParameter.16" spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="20.0">1.0</parameter>
+                    </LogNormal>
+                </prior>
+
+                <prior id="growthRatePrior" name="distribution" x="@growthRate">
+                    <LogNormal id="Beta.3" name="distr">
+                        <parameter id="RealParameter.11" spec="parameter.RealParameter" estimate="false" name="M">0.64</parameter>
+                        <parameter id="RealParameter.12" spec="parameter.RealParameter" estimate="false" name="S">1.25</parameter>
+                    </LogNormal>
+                </prior>
+
+                <prior id="ClockPrior.c:typewriterTest" name="distribution" x="@clockRate.c:typewriterTest">
+                    <LogNormal id="LogNorm1" name="distr">
+                        <parameter id="RealParameter.111" spec="parameter.RealParameter" estimate="false" name="M">-0.5799733</parameter>
+                        <parameter id="RealParameter.122" spec="parameter.RealParameter" estimate="false" name="S">0.5</parameter>
+                    </LogNormal>
+                </prior>
+
+            </distribution>
+
+
+
+                <!-- Tree likelihood -->
+                <distribution id="likelihood" spec="util.CompoundDistribution">
+                    <distribution id="treeLikelihood.typewriterTest0" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@typewriterTest1" tree="@Tree.t:typewriterTest" origin="60">
+                        <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel">
+                            <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
+                            <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+                            <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous" editfrequencies="@insertFrequencies">
+                                <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0" estimate="false"/>
+                            </substModel>
+                        </siteModel>
+                        <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:typewriterTest"/>
+                    </distribution>
+                    <distribution id="treeLikelihood.typewriterTest1" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@typewriterTest2" tree="@Tree.t:typewriterTest" origin="60" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest">
+                    </distribution>
+                </distribution>
+
+
+        </distribution>
+
+        <!-- tree operators -->
+
+         <operator spec="WilsonBalding" tree="@Tree.t:typewriterTest" weight="30.0"/>
+         <operator spec="Uniform" tree="@Tree.t:typewriterTest"
+                   weight="30.0"/>
+
+        <operator spec="Exchange"
+                  isNarrow="true" tree="@Tree.t:typewriterTest"
+                  weight="30.0"/>
+
+        <!-- clock rate operator -->
+        <operator id="StrictClockRateScaler" spec="ScaleOperator" parameter="@clockRate.c:typewriterTest" scaleFactor="0.75" weight="3.0"/>
+
+
+        <!-- phylodynamic operators -->
+        <operator id="popSizeScaler" spec="ScaleOperator" parameter="@popsize" scaleFactor="0.8" weight="3.0"/>
+
+        <operator id="growthRateScaler" spec="ScaleOperator" optimise="false" parameter="@growthRate" scaleAll="true" scaleFactor="0.9" weight="3.0"/>
+
+        <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="1">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+            <log idref="treeLikelihood.typewriterTest1"/>
+            <log id="treeHeight.t:typewriterTest" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:typewriterTest"/>
+            <log idref="popsize"/>
+            <log idref="growthRate"/>
+            <log idref="clockRate.c:typewriterTest"/>
+        </logger>
+
+        <logger id="screenlog" spec="Logger" logEvery="1">
+            <log idref="posterior"/>
+            <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+        </logger>
+
+        <logger id="treelog.t:typewriterTest" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="100" mode="tree">
+            <log idref="Tree.t:typewriterTest" printMetaData="true"/>
+        </logger>
+
+
+    </run>
+
+</beast>
+
