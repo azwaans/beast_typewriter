@@ -288,44 +288,47 @@ public class TypewriterTreeLikelihood extends Distribution {
     public double calculatePartialLikelihoodState(List<Integer> startState, Node childNode) {
 
         final double branchRate = branchRateModel.getRateForBranch(childNode);
-        double distance;
-
-        //initialise evolutionary distance
-        // TODO rename distance
-        if (childNode.isRoot()) {
-            distance = (originTime - childNode.getHeight()) * branchRate ;
-        }
-
-        else {
-            distance = childNode.getLength() * branchRate ;
-        }
-
-        // calculate partials
         double statePartialLikelihood = 0;
+        for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
+            final double jointBranchRate = m_siteModel.getRateForCategory(i, childNode) * branchRate;
 
-        if(childNode.isLeaf()) {
 
-            List<Integer> endState = ancestralStates.get(childNode.getNr()).get(0);
-            statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance);
+            double distance;
 
-        }
-        else {
+            //initialise evolutionary distance
+            // TODO rename distance
+            if (childNode.isRoot()) {
+                distance = (originTime - childNode.getHeight()) * jointBranchRate;
+            } else {
+                distance = childNode.getLength() * jointBranchRate;
+            }
 
-            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr()).size(); ++endStateIndex) {
+            // calculate partials
 
-                List<Integer> endState = ancestralStates.get(childNode.getNr()).get(endStateIndex);
 
-                // if the end state has non null partial likelihood
-                if (partialLikelihoods[childNode.getNr()][endStateIndex] != 0.0) {
+            if (childNode.isLeaf()) {
 
-                    statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance) *
-                            partialLikelihoods[childNode.getNr()][endStateIndex];
+                List<Integer> endState = ancestralStates.get(childNode.getNr()).get(0);
+                statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance);
 
+            } else {
+
+                for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr()).size(); ++endStateIndex) {
+
+                    List<Integer> endState = ancestralStates.get(childNode.getNr()).get(endStateIndex);
+
+                    // if the end state has non null partial likelihood
+                    if (partialLikelihoods[childNode.getNr()][endStateIndex] != 0.0) {
+
+                        statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance) *
+                                partialLikelihoods[childNode.getNr()][endStateIndex];
+
+                    }
                 }
             }
         }
 
-        return statePartialLikelihood;
+        return statePartialLikelihood / m_siteModel.getCategoryCount();
     }
 
     /**
