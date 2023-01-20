@@ -96,118 +96,146 @@
     </taxa>
 
     <taxa id="TaxonSet.1" spec="TaxonSet">
-        <alignment idref="typewriterTest2"/>
+        <alignment idref="typewriterTest1"/>
     </taxa>
 
 
-    <run id="mcmc" spec="MCMC" chainLength="100000">
+    <run id="mcmc" spec="MCMC" chainLength="10000000000">
         <state id="state" spec="State" storeEvery="1">
 
 
-            <tree id="Tree.t:typewriterTest" spec="beast.evolution.tree.Tree" name="stateNode">
+            <tree id="Tree" spec="beast.evolution.tree.Tree" name="stateNode">
                 <taxonset idref="TaxonSet.0"/>
             </tree>
 
+            <parameter id="insertRates" spec="parameter.RealParameter"
+                       dimension="19" lower="0.0" name="stateNode"
+                       upper="1000">
+                0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158
+            </parameter>
 
-             <parameter id="insertFrequencies" spec="parameter.RealParameter" dimension="19" lower="0.0" name="stateNode" upper="Infinity"> 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 </parameter>
-             <parameter id="clockRate.c:typewriterTest" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
-             <parameter id="freqParameter.s:typewriterTest" spec="parameter.RealParameter" dimension="4" lower="0.0" name="stateNode" upper="1.0">0.25</parameter>
-             <parameter id="popsize" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="120000000">4000</parameter>
-             <parameter id="growthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="10">0.5599133</parameter>
-         </state>
+            <parameter id="clockRate" spec="parameter.RealParameter"
+                       dimension="1" lower="0.0" name="stateNode"
+                       upper="1000"> 0.1 </parameter>
 
-
-            <init id="RandomTree.t:typewriterTest" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree.t:typewriterTest" taxa="@typewriterTest1" rootHeight="50">
-                <populationModel id="ConstantPopulation0.t:tree" spec="ConstantPopulation">
-                    <parameter id="randomPopSize.t:tree" name="popSize">1.0</parameter>
-                </populationModel>
-            </init>
+            <!-- population process parameters -->
+            <parameter id="birthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="Infinity">1</parameter>
 
 
+            <!--fix origin to experiment duration, e.g. 25 -->
+            <parameter id="origin"
+                       spec="parameter.RealParameter" name="stateNode">60
+            </parameter>
 
+            <!-- fix sampling proportion to truth -->
+            <parameter id="samplingProportion"
+                       spec="parameter.RealParameter" lower="0.0"
+                       name="stateNode" upper="1.0">0.0003 </parameter>
+
+            <parameter id="freqParameter.s:alignment"
+                       spec="parameter.RealParameter" dimension="4"
+                       lower="0.0" name="stateNode"
+                       upper="1.0">0.25</parameter>
+
+
+
+            <!-- gamma shape for the gamma categories -->
+            <parameter id="gammaShape" spec="parameter.RealParameter" lower="0.1" name="stateNode">1.0</parameter>
+        </state>
+
+        <!-- random starting tree -->
+        <init id="RandomTree" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@Tree" taxa="@typewriterTest1" rootHeight="50">
+            <populationModel id="ConstantPopulation0.t:tree" spec="ConstantPopulation">
+                <parameter id="randomPopSize.t:tree" name="popSize">1.0</parameter>
+            </populationModel>
+        </init>
+
+        <!-- define posterior -->
         <distribution id="posterior" spec="util.CompoundDistribution">
 
              <!-- tree priors -->
             <distribution id="prior" spec="util.CompoundDistribution">
 
-                <distribution id="expCoal" spec="beast.evolution.tree.coalescent.Coalescent">
-                    <populationModel spec="beast.evolution.tree.coalescent.ExponentialGrowth" growthRate="@growthRate" popSize="@popsize" />
-                    <treeIntervals spec="beast.evolution.tree.coalescent.TreeIntervals" tree="@Tree.t:typewriterTest"/>
+                <!-- tree prior -->
+                <distribution id="birth" spec="beast.evolution.speciation.YuleModel"
+                              birthDiffRate="@birthRate"
+                              tree="@Tree" originHeight="60">
                 </distribution>
 
                 <!-- prior distributions on parameters -->
 
-                <prior id="popSizePrior" name="distribution" x="@popsize">
-                    <LogNormal id="LogNormalDistributionModel.3" name="distr">
-                        <parameter id="RealParameter.15" spec="parameter.RealParameter" estimate="false" name="M">8.29</parameter>
-                        <parameter id="RealParameter.16" spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="20.0">1.0</parameter>
+                <!-- 95% HPD [0.1, 0.5, 2.8] -->
+                <prior id="birthRatePrior" name="distribution" x="@birthRate">
+                    <LogNormal name="distr">
+                        <parameter spec="parameter.RealParameter"
+                                   estimate="false" name="M">-0.6</parameter>
+                        <parameter spec="parameter.RealParameter"
+                                   estimate="false"  name="S">1</parameter>
                     </LogNormal>
                 </prior>
 
-
-                <prior id="growthRatePrior" name="distribution" x="@growthRate">
-                    <LogNormal id="Beta.3" name="distr">
-                        <parameter id="RealParameter.11" spec="parameter.RealParameter" estimate="false" name="M">0.64</parameter>
-                        <parameter id="RealParameter.12" spec="parameter.RealParameter" estimate="false" name="S">1.25</parameter>
-                    </LogNormal>
-                </prior>
-
-                <prior id="ClockPrior.c:typewriterTest" name="distribution" x="@clockRate.c:typewriterTest">
+                <!-- 95% HPD [0.12, 0.56, 1.51] -->
+                <prior id="ClockPrior.c:typewriterTest" name="distribution" x="@clockRate">
                     <LogNormal id="LogNorm1" name="distr">
                         <parameter id="RealParameter.111" spec="parameter.RealParameter" estimate="false" name="M">-0.5799733</parameter>
                         <parameter id="RealParameter.122" spec="parameter.RealParameter" estimate="false" name="S">0.5</parameter>
                     </LogNormal>
                 </prior>
 
+                <!-- 95% HPD [0.02, 0.693, 3.69] -->
+                <prior id="GammaShapePrior" name="distribution" x="@gammaShape">
+                    <Exponential id="Exponential.gammashape" name="distr">
+                        <parameter id="RealParameter.gammashape" spec="parameter.RealParameter" estimate="false" name="mean">1.0</parameter>
+                    </Exponential>
+                </prior>
+
             </distribution>
 
-
-
-            <!-- Tree likelihood -->
+            <!-- Typewriter Tree likelihood -->
             <distribution id="likelihood" spec="util.CompoundDistribution">
-                <distribution id="treeLikelihood.typewriterTest0" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@typewriterTest1" tree="@Tree.t:typewriterTest" origin="60">
-                    <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel">
+                <!-- Alignment 1 -->
+                <distribution id="treeLikelihood.typewriterTest0" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@typewriterTest1" tree="@Tree" origin="60">
+                    <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" gammaCategoryCount="4" shape="@gammaShape" >
                         <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous" editfrequencies="@insertFrequencies">
+                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous" editfrequencies="@insertRates">
                             <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
-                    <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:typewriterTest"/>
+                    <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate"/>
+                <!-- Alignment 2 -->
                 </distribution>
-                <distribution id="treeLikelihood.typewriterTest1" spec="lineageTree.distributions.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@typewriterTest2" tree="@Tree.t:typewriterTest" origin="60">
+                <distribution id="treeLikelihood.typewriterTest1" spec="lineageTree.distributions.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@typewriterTest2" tree="@Tree" origin="60">
                     </distribution>
             </distribution>
         </distribution>
 
         <!-- tree operators -->
-
-         <operator spec="WilsonBalding" tree="@Tree.t:typewriterTest" weight="30.0"/>
-         <operator spec="Uniform" tree="@Tree.t:typewriterTest"
+         <operator id="gammaShapeScalerX.s:1stpos" spec="beast.evolution.operators.ScaleOperator" parameter="@gammaShape" scaleFactor="0.5" upper="10.0" weight="0.1"/>
+         <operator spec="WilsonBalding" tree="@Tree" weight="30.0"/>
+         <operator spec="Uniform" tree="@Tree"
                    weight="30.0"/>
 
         <operator spec="Exchange"
-                  isNarrow="true" tree="@Tree.t:typewriterTest"
+                  isNarrow="true" tree="@Tree"
                   weight="30.0"/>
 
         <!-- clock rate operator -->
-        <operator id="StrictClockRateScaler" spec="ScaleOperator" parameter="@clockRate.c:typewriterTest" scaleFactor="0.75" weight="3.0"/>
+        <operator id="StrictClockRateScaler" spec="ScaleOperator" parameter="@clockRate" scaleFactor="0.75" weight="3.0"/>
 
 
         <!-- phylodynamic operators -->
-        <operator id="popSizeScaler" spec="ScaleOperator" parameter="@popsize" scaleFactor="0.8" weight="3.0"/>
-
-        <operator id="growthRateScaler" spec="ScaleOperator" optimise="false" parameter="@growthRate" scaleAll="true" scaleFactor="0.9" weight="3.0"/>
+        <operator id="birthRateScaler" spec="ScaleOperator" parameter="@birthRate" scaleFactor="0.8" weight="3.0"/>
 
         <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="1">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
-            <log idref="treeLikelihood.typewriterTest1"/>
-            <log id="treeHeight.t:typewriterTest" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:typewriterTest"/>
-            <log idref="popsize"/>
-            <log idref="growthRate"/>
-            <log idref="clockRate.c:typewriterTest"/>
+            <log idref="treeLikelihood.typewriterTest0"/>
+            <log id="treeHeight.t:typewriterTest" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree"/>
+            <log idref="clockRate"/>
+            <log idref="birthRate"/>
+
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="1">
@@ -218,7 +246,7 @@
         </logger>
 
         <logger id="treelog.t:typewriterTest" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="100" mode="tree">
-            <log idref="Tree.t:typewriterTest" printMetaData="true"/>
+            <log idref="Tree" printMetaData="true"/>
         </logger>
 
 
