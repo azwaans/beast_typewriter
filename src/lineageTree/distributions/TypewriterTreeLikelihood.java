@@ -9,6 +9,7 @@ import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -18,6 +19,8 @@ import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.TreeInterface;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
+
+import static java.lang.Math.log1p;
 
 
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
@@ -49,6 +52,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][] partialLikelihoods ;
+    public double[] categoryLogLikelihoods ;
     protected double[] scalingFactors;
     protected boolean useScaling = false;
 
@@ -62,6 +66,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         nodeCount = treeInput.get().getNodeCount();
         m_siteModel = (SiteModel.Base) siteModelInput.get();
+        categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
 
         substitutionModel = (TypewriterSubstitutionModelHomogeneous)  m_siteModel.substModelInput.get();
@@ -81,6 +86,8 @@ public class TypewriterTreeLikelihood extends Distribution {
         }
 
         partialLikelihoods = new double[nodeCount][];
+
+
 
         if(useScalingInput.get()){
             useScaling = true;
@@ -112,24 +119,53 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //2nd step : calculate likelihood with these ancestral states
         // size of the partial likelihoods at each node = nr of the ancestral states at that node.
-        traverseLikelihood(tree.getRoot());
 
 
+        for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
+            //adjust clock rate for the given category
+            traverseLikelihood(tree.getRoot(),i);
 
-        if(originTime == 0.0) {
-            //sum of all partial likelihoods at the root
-            logP = Math.log(Arrays.stream(partialLikelihoods[tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
-            return logP;
+            if (originTime == 0.0) {
+                //sum of all partial likelihoods at the root
+                categoryLogLikelihoods[i] = Math.log(Arrays.stream(partialLikelihoods[tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
+            } else {
+                //the tree log likelihood is the log(p) of unedited state at the origin
+                //TODO check that origin logP is calculated
+                categoryLogLikelihoods[i] = Math.log(calculateOriginPartial(tree.getRoot(),i)) + getLogScalingFactor();
+
+            }
         }
-        else {
-            //the tree log likelihood is the log(p) of unedited state at the origin
-            //TODO check that origin logP is calculated
-            logP = Math.log(calculateOriginPartial(tree.getRoot())) + getLogScalingFactor();
-            return logP;
-
-        }
-
+        logP =  log_sum(categoryLogLikelihoods, categoryLogLikelihoods.length) - Math.log(m_siteModel.getCategoryCount());
+        return logP;
     }
+
+    double log_sum(double la[], int num_elements)
+    {
+        // Assume index_of_max() finds the maximum element
+        // in the array and returns its index
+        double max = la[0];
+        int index = 0;
+        for (int i = 0; i < la.length; i++)
+        {
+            if (max < la[i])
+            {
+                max = la[i];
+                index = i;
+            }
+        }
+
+        double sum_exp = 0;
+        for (int i = 0; i < num_elements; i++) {
+            if (i == index) {
+                continue;
+            }
+            sum_exp += Math.exp(la[i] - la[index]);
+        }
+
+        return la[index] + log1p(sum_exp);
+    }
+
+
     /**
      * Scale the partials at a given node. This uses a scaling suggested by Ziheng Yang in
      * Yang (2000) J. Mol. Evol. 51: 423-432
@@ -209,7 +245,7 @@ public class TypewriterTreeLikelihood extends Distribution {
      * This function implements a postorder traversal of the tree to fill the partialLikelihood array
      *
      */
-    public void traverseLikelihood(Node node) {
+    public void traverseLikelihood(Node node, int categoryId) {
 
         if( node != null ) {
 
@@ -224,10 +260,10 @@ public class TypewriterTreeLikelihood extends Distribution {
                 final Node child1 = node.getLeft();
                 final Node child2 = node.getRight();
 
-                traverseLikelihood(child1);
-                traverseLikelihood(child2);
+                traverseLikelihood(child1, categoryId);
+                traverseLikelihood(child2, categoryId);
 
-                double[] partials = calculatePartials(node.getNr(),child1,child2);
+                double[] partials = calculatePartials(node.getNr(),child1,child2,categoryId);
                 partialLikelihoods[node.getNr()] = partials;
 
                 if (useScaling) {
@@ -246,7 +282,7 @@ public class TypewriterTreeLikelihood extends Distribution {
      *
      * @return partial likelihoods for states at node nodeNr
      */
-    public double[] calculatePartials(int nodeNr, Node child1, Node child2) {
+    public double[] calculatePartials(int nodeNr, Node child1, Node child2, int categoryId ) {
 
         //initialize an array for the partials
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
@@ -255,8 +291,8 @@ public class TypewriterTreeLikelihood extends Distribution {
                 
                 List<Integer> startState = ancestralStates.get(nodeNr).get(stateIndex);
                 
-                double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1);
-                double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2);
+                double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
+                double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
                 
                 partials[stateIndex] = child1PartialLikelihoodState * child2PartialLikelihoodState;
             }
@@ -271,10 +307,10 @@ public class TypewriterTreeLikelihood extends Distribution {
      * @return likelihood of the unedited barcode at t = origin
      */
 
-    public double calculateOriginPartial(Node rootNode) {
+    public double calculateOriginPartial(Node rootNode, int categoryId) {
         //the start state is the unedited typewriter barcode
         List<Integer> startState = Arrays.asList(0,0,0,0,0);
-        double partialAtOrigin = calculatePartialLikelihoodState(startState, rootNode);
+        double partialAtOrigin = calculatePartialLikelihoodState(startState, rootNode, categoryId);
         return partialAtOrigin;
 
     }
@@ -285,12 +321,14 @@ public class TypewriterTreeLikelihood extends Distribution {
      *
      * @return partial likelihood for a state at a node given partials at a node childNode
      */
-    public double calculatePartialLikelihoodState(List<Integer> startState, Node childNode) {
+    public double calculatePartialLikelihoodState(List<Integer> startState, Node childNode, int categoryId) {
 
         final double branchRate = branchRateModel.getRateForBranch(childNode);
         double statePartialLikelihood = 0;
-        for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
-            final double jointBranchRate = m_siteModel.getRateForCategory(i, childNode) * branchRate;
+//        for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
+            final double jointBranchRate = m_siteModel.getRateForCategory(categoryId, childNode) * branchRate;
+//            Log.info.println("site model rate" + m_siteModel.getRateForCategory(categoryId, childNode));
+//            Log.info.println("joint branch rate" + jointBranchRate);
 
 
             double distance;
@@ -326,9 +364,10 @@ public class TypewriterTreeLikelihood extends Distribution {
                     }
                 }
             }
-        }
+//        }
 
-        return statePartialLikelihood / m_siteModel.getCategoryCount();
+//        return statePartialLikelihood / m_siteModel.getCategoryCount();
+        return statePartialLikelihood ;
     }
 
     /**
