@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel.ScarringLoss:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+
+    <data  id="data_1" spec="Alignment" name="alignment" >
+        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="20"/>
+        <sequence spec="Sequence" taxon="0"  value="1,5,3,3,0"/>
+        <sequence spec="Sequence" taxon="1"  value="4,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="2"  value="1,3,4,0,0"/>
+        <sequence spec="Sequence" taxon="3"  value="14,2,8,2,5"/>
+        <sequence spec="Sequence" taxon="4"  value="12,2,4,0,0"/>
+        <sequence spec="Sequence" taxon="5"  value="4,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="6"  value="1,4,2,6,0"/>
+        <sequence spec="Sequence" taxon="7"  value="11,6,3,0,0"/>
+        <sequence spec="Sequence" taxon="8"  value="1,2,4,4,0"/>
+        <sequence spec="Sequence" taxon="9"  value="1,2,8,1,0"/>
+        <sequence spec="Sequence" taxon="10"  value="4,10,8,7,6"/>
+        <sequence spec="Sequence" taxon="11"  value="1,4,9,1,0"/>
+        <sequence spec="Sequence" taxon="12"  value="4,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="13"  value="6,1,9,6,0"/>
+        <sequence spec="Sequence" taxon="14"  value="2,1,9,4,10"/>
+        <sequence spec="Sequence" taxon="15"  value="2,6,7,1,7"/>
+        <sequence spec="Sequence" taxon="16"  value="5,9,1,12,6"/>
+        <sequence spec="Sequence" taxon="17"  value="1,4,3,6,0"/>
+        <sequence spec="Sequence" taxon="18"  value="14,14,0,0,0"/>
+        <sequence spec="Sequence" taxon="19"  value="2,3,4,4,0"/>
+        <sequence spec="Sequence" taxon="20"  value="14,2,3,5,1"/>
+        <sequence spec="Sequence" taxon="21"  value="5,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="22"  value="8,3,1,0,0"/>
+        <sequence spec="Sequence" taxon="23"  value="0,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="24"  value="3,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="25"  value="6,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="26"  value="1,10,4,0,0"/>
+        <sequence spec="Sequence" taxon="27"  value="1,3,11,4,0"/>
+        <sequence spec="Sequence" taxon="28"  value="2,1,4,7,0"/>
+        <sequence spec="Sequence" taxon="29"  value="10,1,2,0,0"/>
+        <sequence spec="Sequence" taxon="30"  value="1,6,3,7,8"/>
+        <sequence spec="Sequence" taxon="31"  value="1,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="32"  value="2,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="33"  value="2,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="34"  value="2,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="35"  value="2,1,8,8,13"/>
+        <sequence spec="Sequence" taxon="36"  value="2,6,6,3,0"/>
+        <sequence spec="Sequence" taxon="37"  value="2,7,0,0,0"/>
+        <sequence spec="Sequence" taxon="38"  value="1,3,2,0,0"/>
+        <sequence spec="Sequence" taxon="39"  value="14,1,3,1,0"/>
+        <sequence spec="Sequence" taxon="40"  value="14,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="41"  value="2,8,6,8,0"/>
+        <sequence spec="Sequence" taxon="42"  value="9,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="43"  value="2,1,2,1,16"/>
+        <sequence spec="Sequence" taxon="44"  value="14,5,11,4,11"/>
+        <sequence spec="Sequence" taxon="45"  value="2,1,7,5,16"/>
+        <sequence spec="Sequence" taxon="46"  value="2,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="47"  value="1,4,4,5,0"/>
+        <sequence spec="Sequence" taxon="48"  value="1,3,3,0,0"/>
+        <sequence spec="Sequence" taxon="49"  value="14,1,7,13,6"/>
+        <sequence spec="Sequence" taxon="50"  value="14,2,3,7,3"/>
+        <sequence spec="Sequence" taxon="51"  value="14,1,15,0,0"/>
+        <sequence spec="Sequence" taxon="52"  value="3,14,4,5,0"/>
+        <sequence spec="Sequence" taxon="53"  value="6,4,4,7,18"/>
+        <sequence spec="Sequence" taxon="54"  value="9,8,3,3,0"/>
+        <sequence spec="Sequence" taxon="55"  value="2,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="56"  value="14,2,3,18,4"/>
+        <sequence spec="Sequence" taxon="57"  value="6,5,1,11,0"/>
+        <sequence spec="Sequence" taxon="58"  value="1,3,5,0,0"/>
+        <sequence spec="Sequence" taxon="59"  value="3,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="60"  value="1,4,5,11,0"/>
+        <sequence spec="Sequence" taxon="61"  value="2,5,5,3,0"/>
+        <sequence spec="Sequence" taxon="62"  value="5,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="63"  value="1,7,9,0,0"/>
+        <sequence spec="Sequence" taxon="64"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="65"  value="6,2,1,8,0"/>
+        <sequence spec="Sequence" taxon="66"  value="2,6,7,9,3"/>
+        <sequence spec="Sequence" taxon="67"  value="1,3,12,6,0"/>
+        <sequence spec="Sequence" taxon="68"  value="2,7,7,6,3"/>
+        <sequence spec="Sequence" taxon="69"  value="5,5,1,0,0"/>
+        <sequence spec="Sequence" taxon="70"  value="6,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="71"  value="6,4,6,4,17"/>
+        <sequence spec="Sequence" taxon="72"  value="1,10,0,0,0"/>
+        <sequence spec="Sequence" taxon="73"  value="6,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="74"  value="6,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="75"  value="10,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="76"  value="4,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="77"  value="1,4,7,10,6"/>
+        <sequence spec="Sequence" taxon="78"  value="5,5,3,3,0"/>
+        <sequence spec="Sequence" taxon="79"  value="7,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="80"  value="6,12,8,12,7"/>
+        <sequence spec="Sequence" taxon="81"  value="1,4,1,0,0"/>
+        <sequence spec="Sequence" taxon="82"  value="8,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="83"  value="1,8,3,2,6"/>
+        <sequence spec="Sequence" taxon="84"  value="4,1,13,4,6"/>
+        <sequence spec="Sequence" taxon="85"  value="14,2,2,4,5"/>
+        <sequence spec="Sequence" taxon="86"  value="1,10,3,5,6"/>
+        <sequence spec="Sequence" taxon="87"  value="14,2,3,5,2"/>
+        <sequence spec="Sequence" taxon="88"  value="2,6,3,3,0"/>
+        <sequence spec="Sequence" taxon="89"  value="6,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="90"  value="1,5,2,1,0"/>
+        <sequence spec="Sequence" taxon="91"  value="1,5,13,6,3"/>
+        <sequence spec="Sequence" taxon="92"  value="3,4,3,2,0"/>
+        <sequence spec="Sequence" taxon="93"  value="2,4,3,0,0"/>
+        <sequence spec="Sequence" taxon="94"  value="2,6,4,7,4"/>
+        <sequence spec="Sequence" taxon="95"  value="2,3,1,0,0"/>
+        <sequence spec="Sequence" taxon="96"  value="2,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="97"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="98"  value="2,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="99"  value="2,2,0,0,0"/>
+    </data>
+
+    <data  id="data_2" spec="Alignment" name="alignment" >
+        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="20"/>
+        <sequence spec="Sequence" taxon="0"  value="6,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="1"  value="3,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="2"  value="6,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="3"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="4"  value="11,8,0,0,0"/>
+        <sequence spec="Sequence" taxon="5"  value="11,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="6"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="7"  value="2,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="8"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="9"  value="4,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="10"  value="1,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="11"  value="1,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="12"  value="6,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="13"  value="1,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="14"  value="6,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="15"  value="10,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="16"  value="15,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="17"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="18"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="19"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="20"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="21"  value="8,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="22"  value="6,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="23"  value="3,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="24"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="25"  value="2,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="26"  value="6,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="27"  value="8,7,0,0,0"/>
+        <sequence spec="Sequence" taxon="28"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="29"  value="11,7,0,0,0"/>
+        <sequence spec="Sequence" taxon="30"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="31"  value="5,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="32"  value="2,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="33"  value="3,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="34"  value="6,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="35"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="36"  value="4,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="37"  value="10,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="38"  value="6,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="39"  value="6,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="40"  value="8,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="41"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="42"  value="4,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="43"  value="6,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="44"  value="4,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="45"  value="15,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="46"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="47"  value="1,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="48"  value="10,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="49"  value="1,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="50"  value="5,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="51"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="52"  value="15,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="53"  value="1,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="54"  value="4,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="55"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="56"  value="4,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="57"  value="6,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="58"  value="1,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="59"  value="1,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="60"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="61"  value="11,7,0,0,0"/>
+        <sequence spec="Sequence" taxon="62"  value="6,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="63"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="64"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="65"  value="1,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="66"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="67"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="68"  value="4,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="69"  value="1,10,0,0,0"/>
+        <sequence spec="Sequence" taxon="70"  value="4,7,0,0,0"/>
+        <sequence spec="Sequence" taxon="71"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="72"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="73"  value="10,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="74"  value="3,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="75"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="76"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="77"  value="8,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="78"  value="10,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="79"  value="10,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="80"  value="7,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="81"  value="15,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="82"  value="9,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="83"  value="2,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="84"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="85"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="86"  value="1,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="87"  value="15,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="88"  value="4,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="89"  value="4,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="90"  value="11,10,0,0,0"/>
+        <sequence spec="Sequence" taxon="91"  value="3,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="92"  value="4,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="93"  value="4,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="94"  value="1,8,0,0,0"/>
+        <sequence spec="Sequence" taxon="95"  value="7,6,0,0,0"/>
+        <sequence spec="Sequence" taxon="96"  value="9,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="97"  value="2,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="98"  value="4,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="99"  value="4,1,0,0,0"/>
+    </data>
+
+    <data  id="data_3" spec="Alignment" name="alignment" >
+        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="20"/>
+        <sequence spec="Sequence" taxon="0"  value="1,12,4,4,4"/>
+        <sequence spec="Sequence" taxon="1"  value="3,4,2,12,0"/>
+        <sequence spec="Sequence" taxon="2"  value="0,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="3"  value="9,4,3,0,0"/>
+        <sequence spec="Sequence" taxon="4"  value="4,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="5"  value="12,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="6"  value="0,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="7"  value="3,12,0,0,0"/>
+        <sequence spec="Sequence" taxon="8"  value="1,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="9"  value="9,10,11,7,3"/>
+        <sequence spec="Sequence" taxon="10"  value="3,12,3,0,0"/>
+        <sequence spec="Sequence" taxon="11"  value="1,10,6,3,0"/>
+        <sequence spec="Sequence" taxon="12"  value="3,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="13"  value="3,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="14"  value="6,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="15"  value="4,2,13,2,7"/>
+        <sequence spec="Sequence" taxon="16"  value="1,8,9,9,10"/>
+        <sequence spec="Sequence" taxon="17"  value="1,12,2,0,0"/>
+        <sequence spec="Sequence" taxon="18"  value="4,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="19"  value="1,6,11,13,6"/>
+        <sequence spec="Sequence" taxon="20"  value="1,9,6,7,2"/>
+        <sequence spec="Sequence" taxon="21"  value="7,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="22"  value="7,9,2,4,0"/>
+        <sequence spec="Sequence" taxon="23"  value="3,5,1,7,0"/>
+        <sequence spec="Sequence" taxon="24"  value="1,12,0,0,0"/>
+        <sequence spec="Sequence" taxon="25"  value="6,11,0,0,0"/>
+        <sequence spec="Sequence" taxon="26"  value="9,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="27"  value="6,7,7,4,0"/>
+        <sequence spec="Sequence" taxon="28"  value="9,3,1,0,0"/>
+        <sequence spec="Sequence" taxon="29"  value="9,10,5,10,0"/>
+        <sequence spec="Sequence" taxon="30"  value="9,3,7,0,0"/>
+        <sequence spec="Sequence" taxon="31"  value="9,8,2,18,3"/>
+        <sequence spec="Sequence" taxon="32"  value="9,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="33"  value="4,3,3,0,0"/>
+        <sequence spec="Sequence" taxon="34"  value="9,2,7,0,0"/>
+        <sequence spec="Sequence" taxon="35"  value="12,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="36"  value="1,6,4,3,0"/>
+        <sequence spec="Sequence" taxon="37"  value="5,16,12,12,9"/>
+        <sequence spec="Sequence" taxon="38"  value="1,12,6,6,0"/>
+        <sequence spec="Sequence" taxon="39"  value="1,1,4,0,0"/>
+        <sequence spec="Sequence" taxon="40"  value="9,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="41"  value="1,7,8,0,0"/>
+        <sequence spec="Sequence" taxon="42"  value="9,8,1,9,7"/>
+        <sequence spec="Sequence" taxon="43"  value="1,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="44"  value="7,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="45"  value="11,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="46"  value="9,3,8,6,1"/>
+        <sequence spec="Sequence" taxon="47"  value="9,6,6,7,0"/>
+        <sequence spec="Sequence" taxon="48"  value="8,3,7,7,0"/>
+        <sequence spec="Sequence" taxon="49"  value="1,6,2,1,0"/>
+        <sequence spec="Sequence" taxon="50"  value="4,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="51"  value="7,3,4,6,0"/>
+        <sequence spec="Sequence" taxon="52"  value="6,7,2,2,4"/>
+        <sequence spec="Sequence" taxon="53"  value="6,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="54"  value="6,2,6,0,0"/>
+        <sequence spec="Sequence" taxon="55"  value="9,10,3,3,18"/>
+        <sequence spec="Sequence" taxon="56"  value="7,1,2,0,0"/>
+        <sequence spec="Sequence" taxon="57"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="58"  value="9,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="59"  value="9,10,10,0,0"/>
+        <sequence spec="Sequence" taxon="60"  value="9,4,4,6,0"/>
+        <sequence spec="Sequence" taxon="61"  value="9,2,4,0,0"/>
+        <sequence spec="Sequence" taxon="62"  value="1,11,7,0,0"/>
+        <sequence spec="Sequence" taxon="63"  value="12,1,3,2,0"/>
+        <sequence spec="Sequence" taxon="64"  value="4,2,4,0,0"/>
+        <sequence spec="Sequence" taxon="65"  value="3,1,17,6,19"/>
+        <sequence spec="Sequence" taxon="66"  value="7,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="67"  value="1,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="68"  value="2,12,0,0,0"/>
+        <sequence spec="Sequence" taxon="69"  value="1,11,7,0,0"/>
+        <sequence spec="Sequence" taxon="70"  value="4,11,8,0,0"/>
+        <sequence spec="Sequence" taxon="71"  value="1,5,3,3,12"/>
+        <sequence spec="Sequence" taxon="72"  value="5,5,10,0,0"/>
+        <sequence spec="Sequence" taxon="73"  value="9,10,13,2,6"/>
+        <sequence spec="Sequence" taxon="74"  value="0,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="75"  value="2,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="76"  value="9,1,1,2,4"/>
+        <sequence spec="Sequence" taxon="77"  value="3,4,6,0,0"/>
+        <sequence spec="Sequence" taxon="78"  value="3,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="79"  value="3,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="80"  value="1,3,10,0,0"/>
+        <sequence spec="Sequence" taxon="81"  value="1,7,2,2,18"/>
+        <sequence spec="Sequence" taxon="82"  value="3,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="83"  value="3,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="84"  value="2,5,0,0,0"/>
+        <sequence spec="Sequence" taxon="85"  value="6,2,5,4,17"/>
+        <sequence spec="Sequence" taxon="86"  value="4,7,7,4,0"/>
+        <sequence spec="Sequence" taxon="87"  value="9,6,4,1,0"/>
+        <sequence spec="Sequence" taxon="88"  value="9,10,4,3,3"/>
+        <sequence spec="Sequence" taxon="89"  value="9,7,0,0,0"/>
+        <sequence spec="Sequence" taxon="90"  value="6,3,5,1,17"/>
+        <sequence spec="Sequence" taxon="91"  value="7,4,5,0,0"/>
+        <sequence spec="Sequence" taxon="92"  value="7,2,10,0,0"/>
+        <sequence spec="Sequence" taxon="93"  value="9,8,1,9,7"/>
+        <sequence spec="Sequence" taxon="94"  value="9,2,10,7,7"/>
+        <sequence spec="Sequence" taxon="95"  value="3,10,0,0,0"/>
+        <sequence spec="Sequence" taxon="96"  value="1,11,1,0,0"/>
+        <sequence spec="Sequence" taxon="97"  value="2,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="98"  value="1,3,6,4,0"/>
+        <sequence spec="Sequence" taxon="99"  value="2,1,1,0,0"/>
+    </data>
+
+    <data  id="data_4" spec="Alignment" name="alignment" >
+        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="20"/>
+        <sequence spec="Sequence" taxon="0"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="1"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="2"  value="1,3,3,3,1"/>
+        <sequence spec="Sequence" taxon="3"  value="8,1,2,0,0"/>
+        <sequence spec="Sequence" taxon="4"  value="1,3,7,2,0"/>
+        <sequence spec="Sequence" taxon="5"  value="5,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="6"  value="14,7,3,14,0"/>
+        <sequence spec="Sequence" taxon="7"  value="1,8,1,0,0"/>
+        <sequence spec="Sequence" taxon="8"  value="1,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="9"  value="1,1,15,0,0"/>
+        <sequence spec="Sequence" taxon="10"  value="1,7,3,0,0"/>
+        <sequence spec="Sequence" taxon="11"  value="1,2,9,0,0"/>
+        <sequence spec="Sequence" taxon="12"  value="1,3,1,0,0"/>
+        <sequence spec="Sequence" taxon="13"  value="5,3,2,2,0"/>
+        <sequence spec="Sequence" taxon="14"  value="5,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="15"  value="14,14,13,0,0"/>
+        <sequence spec="Sequence" taxon="16"  value="1,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="17"  value="5,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="18"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="19"  value="11,2,15,2,0"/>
+        <sequence spec="Sequence" taxon="20"  value="14,7,1,4,0"/>
+        <sequence spec="Sequence" taxon="21"  value="11,2,3,3,0"/>
+        <sequence spec="Sequence" taxon="22"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="23"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="24"  value="5,3,4,1,0"/>
+        <sequence spec="Sequence" taxon="25"  value="2,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="26"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="27"  value="5,3,4,3,0"/>
+        <sequence spec="Sequence" taxon="28"  value="5,4,9,1,0"/>
+        <sequence spec="Sequence" taxon="29"  value="14,7,7,3,0"/>
+        <sequence spec="Sequence" taxon="30"  value="5,1,4,0,0"/>
+        <sequence spec="Sequence" taxon="31"  value="11,1,4,2,0"/>
+        <sequence spec="Sequence" taxon="32"  value="14,5,1,2,0"/>
+        <sequence spec="Sequence" taxon="33"  value="14,5,1,2,0"/>
+        <sequence spec="Sequence" taxon="34"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="35"  value="14,5,3,14,0"/>
+        <sequence spec="Sequence" taxon="36"  value="11,2,1,5,0"/>
+        <sequence spec="Sequence" taxon="37"  value="1,8,3,4,0"/>
+        <sequence spec="Sequence" taxon="38"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="39"  value="11,2,15,3,0"/>
+        <sequence spec="Sequence" taxon="40"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="41"  value="1,1,3,0,0"/>
+        <sequence spec="Sequence" taxon="42"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="43"  value="1,3,2,0,0"/>
+        <sequence spec="Sequence" taxon="44"  value="1,1,15,0,0"/>
+        <sequence spec="Sequence" taxon="45"  value="2,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="46"  value="7,1,3,0,0"/>
+        <sequence spec="Sequence" taxon="47"  value="5,4,7,4,0"/>
+        <sequence spec="Sequence" taxon="48"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="49"  value="5,3,3,1,0"/>
+        <sequence spec="Sequence" taxon="50"  value="5,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="51"  value="11,2,15,2,0"/>
+        <sequence spec="Sequence" taxon="52"  value="1,2,0,0,0"/>
+        <sequence spec="Sequence" taxon="53"  value="7,5,1,0,0"/>
+        <sequence spec="Sequence" taxon="54"  value="14,7,3,11,0"/>
+        <sequence spec="Sequence" taxon="55"  value="14,7,7,4,0"/>
+        <sequence spec="Sequence" taxon="56"  value="1,1,1,2,0"/>
+        <sequence spec="Sequence" taxon="57"  value="5,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="58"  value="8,3,0,0,0"/>
+        <sequence spec="Sequence" taxon="59"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="60"  value="1,4,0,0,0"/>
+        <sequence spec="Sequence" taxon="61"  value="11,2,1,5,0"/>
+        <sequence spec="Sequence" taxon="62"  value="5,4,4,2,0"/>
+        <sequence spec="Sequence" taxon="63"  value="14,5,9,5,0"/>
+        <sequence spec="Sequence" taxon="64"  value="14,7,3,4,0"/>
+        <sequence spec="Sequence" taxon="65"  value="1,8,5,8,0"/>
+        <sequence spec="Sequence" taxon="66"  value="1,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="67"  value="4,8,0,0,0"/>
+        <sequence spec="Sequence" taxon="68"  value="1,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="69"  value="11,1,0,0,0"/>
+        <sequence spec="Sequence" taxon="70"  value="9,2,1,9,0"/>
+        <sequence spec="Sequence" taxon="71"  value="14,14,5,0,0"/>
+        <sequence spec="Sequence" taxon="72"  value="1,11,3,3,0"/>
+        <sequence spec="Sequence" taxon="73"  value="5,1,7,3,0"/>
+        <sequence spec="Sequence" taxon="74"  value="0,0,0,0,0"/>
+        <sequence spec="Sequence" taxon="75"  value="1,1,8,0,0"/>
+        <sequence spec="Sequence" taxon="76"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="77"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="78"  value="1,7,4,0,0"/>
+        <sequence spec="Sequence" taxon="79"  value="5,3,15,4,0"/>
+        <sequence spec="Sequence" taxon="80"  value="14,7,7,14,0"/>
+        <sequence spec="Sequence" taxon="81"  value="1,1,2,0,0"/>
+        <sequence spec="Sequence" taxon="82"  value="14,5,1,2,0"/>
+        <sequence spec="Sequence" taxon="83"  value="14,5,2,3,0"/>
+        <sequence spec="Sequence" taxon="84"  value="1,9,0,0,0"/>
+        <sequence spec="Sequence" taxon="85"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="86"  value="5,1,15,1,0"/>
+        <sequence spec="Sequence" taxon="87"  value="14,7,3,14,0"/>
+        <sequence spec="Sequence" taxon="88"  value="11,1,4,2,0"/>
+        <sequence spec="Sequence" taxon="89"  value="1,3,3,2,0"/>
+        <sequence spec="Sequence" taxon="90"  value="1,3,4,2,0"/>
+        <sequence spec="Sequence" taxon="91"  value="11,1,4,2,0"/>
+        <sequence spec="Sequence" taxon="92"  value="14,7,2,2,0"/>
+        <sequence spec="Sequence" taxon="93"  value="11,2,15,3,0"/>
+        <sequence spec="Sequence" taxon="94"  value="1,8,3,0,0"/>
+        <sequence spec="Sequence" taxon="95"  value="1,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="96"  value="14,7,7,4,0"/>
+        <sequence spec="Sequence" taxon="97"  value="14,15,0,0,0"/>
+        <sequence spec="Sequence" taxon="98"  value="1,1,1,0,0"/>
+        <sequence spec="Sequence" taxon="99"  value="1,3,5,0,0"/>
+    </data>
+
+    <map name="Uniform" >beast.math.distributions.Uniform</map>
+    <map name="Exponential" >beast.math.distributions.Exponential</map>
+    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal" >beast.math.distributions.Normal</map>
+    <map name="Beta" >beast.math.distributions.Beta</map>
+    <map name="Gamma" >beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+    <map name="prior" >beast.math.distributions.Prior</map>
+    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
+
+    <!-- set all tip dates, time points of sampling to 25 time units -->
+    <traitSet id="dateTrait.t:alignment"
+              spec="beast.evolution.tree.TraitSet"
+              taxa="@TaxonSet.0" traitname="date-forward" value="0=25"
+    />
+    <!-- set of all cells -->
+    <taxa id="TaxonSet.0" spec="TaxonSet">
+        <alignment idref="data_1"/>
+    </taxa>
+
+    <!-- run MCMC with 10^9 steps -->
+    <run id="mcmc" spec="MCMC" chainLength="1000000000">
+        <state id="state" spec="State" storeEvery="5000">
+
+            <!-- build starting tree -->
+            <!--stateNode id="typewriterTree"
+                       spec="feast.fileio.TreeFromNewickFile"
+                       IsLabelledNewick='true' adjustTipHeights='false'
+                       fileName="/Users/seidels/Projects/typewriter_analysis/results/simulation/simulate_tree/simulate_tree.4.newick"
+            /-->
+
+<!--            <tree id="typewriterTree" spec="beast.evolution.tree.Tree" name="stateNode">-->
+<!--                <taxonset idref="TaxonSet.0"/>-->
+<!--            </tree>-->
+
+            <stateNode id="typewriterTree"  spec="lineageTree.tree.startingTree" rootHeight="20"
+                       taxa="@data_1" scarringHeight="20"
+                       scarringDuration="5" sequencesAreClustered="false">
+                <trait idref="dateTrait.t:alignment"/>
+                <taxonset idref="TaxonSet.0"/>
+            </stateNode>
+
+<!--            <stateNode id="typewriterTree"-->
+<!--                       spec="feast.fileio.TreeFromNexusFile"-->
+<!--                       IsLabelledNewick='true' adjustTipHeights='false'-->
+<!--                       fileName="/Users/seidels/Projects/typewriter_analysis/results/simulation/simulate_tree/simulate_tree.4.trees"-->
+<!--            />-->
+
+            <!-- editing model parameters -->
+            <parameter id="insertRates" spec="parameter.RealParameter"
+                       lower="0.0" name="stateNode"
+                       upper="1000">
+
+                0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.82
+
+            </parameter>
+
+            <parameter id="clockRate" spec="parameter.RealParameter"
+                       dimension="1" lower="0.0" name="stateNode"
+                       upper="1000"> 0.1 </parameter>
+
+            <!-- population process parameters -->
+            <parameter id="birthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="Infinity">0.5</parameter>
+
+            <parameter id="deathRate" spec="parameter.RealParameter"
+                       dimension="1" lower="0.0" name="stateNode"
+                       upper="Infinity">0.4</parameter>
+
+            <!-- The sampling rate through time is set to 0 as we only
+                 sample at the end of the experiment with sampling
+                 proportion rho -->
+            <parameter id="samplingRate" spec="parameter.RealParameter"
+                       dimension="1" lower="0.0" name="stateNode"
+                       upper="1.0">0.0</parameter>
+
+            <!--fix origin to experiment duration, e.g. 25 -->
+            <parameter id="origin"
+                       spec="parameter.RealParameter" name="stateNode">25
+            </parameter>
+
+            <!-- fix sampling proportion to truth -->
+            <parameter id="samplingProportion"
+                       spec="parameter.RealParameter" lower="0.0"
+                       name="stateNode" upper="1.0">0.00003 </parameter>
+
+            <parameter id="freqParameter.s:alignment"
+                       spec="parameter.RealParameter" dimension="4"
+                       lower="0.0" name="stateNode"
+                       upper="1.0">0.25</parameter>
+        </state>
+
+<!--        <init id="RandomTree.t:typewriterTest" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@typewriterTree" taxa="@data_1">-->
+<!--            <populationModel id="ConstantPopulation0.t:tree" spec="ConstantPopulation">-->
+<!--                <parameter id="randomPopSize.t:tree" name="popSize">1.0</parameter>-->
+<!--            </populationModel>-->
+<!--        </init>-->
+
+        <!-- define posterior -->
+        <distribution id="posterior" spec="util.CompoundDistribution">
+
+            <!-- tree prior or phylodynamic model. Here, we use a birth-death sampling
+            model -->
+            <distribution id="prior" spec="util.CompoundDistribution">
+                <distribution id="birthDeathMigration.t:alignment" spec="beast.evolution.speciation.BirthDeathSkylineModel"
+                              birthRate="@birthRate" deathRate="@deathRate" samplingRate="@samplingRate"
+                              contemp="true" origin="@origin" rho="@samplingProportion"
+                              tree="@typewriterTree" conditionOnSurvival="true">
+                </distribution>
+
+                <!-- prior distribution on phylogenetic parameters -->
+                <!--prior spec="bdmmprime.util.priors.SmartZeroExcludingPrior"
+                       id="insertRatesPrior" name="distribution"
+                       x="@insertRates">
+                    <Exponential name="distr">
+                        <parameter  spec="parameter.RealParameter"
+                                    estimate="false"
+                                    name="mean">2.0</parameter>
+                    </Exponential>
+                </prior-->
+
+                <prior
+                        id="insertRatesPrior" name="distribution"
+                        x="@insertRates">
+                    <Dirichlet name="distr" spec="beast.math.distributions.Dirichlet">
+                        <parameter  spec="parameter.RealParameter"
+                                    estimate="false"
+                                    name="alpha">
+                            1.5 1.5 1.5 1.5 1.5
+                            1.5 1.5 1.5 1.5 1.5
+                            1.5 1.5 1.5 1.5 1.5
+                            1.5 1.5 1.5 1.5
+                        </parameter>
+                    </Dirichlet>
+                </prior>
+
+                <!--prior spec="bdmmprime.util.priors.SmartZeroExcludingPrior"
+                       id="insertRatesPrior" name="distribution"
+                       x="@insertRates">
+                    <Beta name="distr">
+                        <parameter  spec="parameter.RealParameter"
+                                    estimate="false"
+                                    name="mean">2.0</parameter>
+                    </Beta>
+                </prior-->
+
+                <!-- 95% HPD [0.06, 0.13, 0.3] -->
+                <prior id="ClockPrior.c:alignment" name="distribution" x="@clockRate">
+                    <LogNormal name="distr" M="-2" S="0.5"/>
+                </prior>
+
+                <!-- prior distributions on phylodynamic parameters -->
+                <!-- 95% HPD [0.1, 0.5, 2.8] -->
+                <prior id="birthRatePrior" name="distribution" x="@birthRate">
+                    <LogNormal name="distr">
+                        <parameter spec="parameter.RealParameter"
+                                   estimate="false" name="M">-0.6</parameter>
+                        <parameter spec="parameter.RealParameter"
+                                   estimate="false"  name="S">1</parameter>
+                    </LogNormal>
+                </prior>
+
+                <!-- 95% HPD [0.03, 0.14, 0.7] -->
+                <prior id="deathRatePrior" name="distribution" x="@deathRate">
+                    <LogNormal  name="distr">
+                        <parameter spec="parameter.RealParameter"
+                                   estimate="false" name="M">-2</parameter>
+                        <parameter spec="parameter.RealParameter"
+                                   estimate="false"  name="S">1</parameter>
+                    </LogNormal>
+                </prior>
+            </distribution>
+
+            <!-- Typewriter tree likelihood -->
+        <distribution id="likelihood" spec="util.CompoundDistribution">
+            <!-- Alignment 1 -->
+            <distribution id="treeLikelihood.1" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@data_1" tree="@typewriterTree" origin="@origin" useScaling="true">
+                <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" >
+                    <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
+                    <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+                    <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous" editfrequencies="@insertRates">
+                        <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0" estimate="false"/>
+                    </substModel>
+                </siteModel>
+                <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate"/>
+            <!-- Alignment 2 -->
+            </distribution>
+            <distribution id="treeLikelihood.2" spec="lineageTree.distributions.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_2" tree="@typewriterTree" origin="@origin" useScaling="true">
+            </distribution>
+            <!-- Alignment 3 -->
+            <distribution id="treeLikelihood.3" spec="lineageTree.distributions.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_3" tree="@typewriterTree" origin="@origin" useScaling="true">
+            </distribution>
+            <!-- Alignment 4 -->
+            <distribution id="treeLikelihood.4" spec="lineageTree.distributions.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_4" tree="@typewriterTree" origin="@origin" useScaling="true">
+            </distribution>
+        </distribution>
+        </distribution>
+
+        <!-- phylogenetic operators -->
+        <operator id="insertProbabilitiesOperator"
+                  spec="DeltaExchangeOperator"
+                  parameter="@insertRates"
+                  weight="10.0"/>
+
+        <operator id="clockRateScaler" spec="ScaleOperator"
+                  parameter="@clockRate" scaleFactor="0.8" weight="3.0"/>
+
+
+        <!-- Phylodynamic operators -->
+        <operator id="birthRateScaler" spec="ScaleOperator" parameter="@birthRate" scaleFactor="0.8" weight="3.0"/>
+
+        <!--operator id="deathRateScaler" spec="ScaleOperator" optimise="false" parameter="@deathRate" scaleAll="true" scaleFactor="0.9" weight="3.0"/-->
+
+        <operator id="deathRateScaler" spec="ScaleOperator" parameter="@deathRate" scaleFactor="0.8" weight="3.0"/>
+
+        <operator id="updownBR" spec="UpDownOperator" scaleFactor="0.9" weight="3.0">
+            <up idref="birthRate"/>
+            <down idref="deathRate"/>
+        </operator>
+
+        <!-- Loggers -->
+        <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="5000">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+            <log id="treeHeight.t:alignment" spec="beast.evolution.tree.TreeHeightLogger" tree="@typewriterTree"/>
+            <log id="treeLength.t:alignment" spec="multitypetree.util.TreeLengthLogger" tree="@typewriterTree"/>
+            <log idref="insertRates"/>
+            <log idref="birthRate"/>
+            <log idref="samplingProportion"/>
+            <log idref="deathRate"/>
+            <log idref="clockRate"/>
+        </logger>
+
+        <logger id="screenlog" spec="Logger" logEvery="1000">
+            <log idref="posterior"/>
+            <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+        </logger>
+
+        <logger id="treelog.t:alignment" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="5000" mode="tree">
+            <log idref="typewriterTree" printMetaData="true"/>
+        </logger>
+
+
+    </run>
+
+</beast>
