@@ -20,14 +20,14 @@
     <parameter id="insertRates"
                spec="feast.fileio.RealParameterFromXSV"
                name="stateNode"
-               fileName="/Users/azwaans/all_beasts/beast_typewriter/examples/validation_multiple_bcodes/simParams_2.csv"
+               fileName="/Users/azwaans/all_beasts/beast_typewriter/examples/multiple_bcodes/simulated_data/simParams_2.csv"
                sep="," startRow="1" rowCount="13"
                startCol="1" colCount="1" />
 
     <parameter id="clockRate"
                spec="feast.fileio.RealParameterFromXSV"
                name="stateNode"
-               fileName="/Users/azwaans/all_beasts/beast_typewriter/examples/validation_multiple_bcodes/simParams_2.csv"
+               fileName="/Users/azwaans/all_beasts/beast_typewriter/examples/multiple_bcodes/simulated_data/simParams_2.csv"
                sep="," startRow="14" rowCount="1"
                startCol="1" colCount="1" />
 
@@ -47,13 +47,13 @@
 
         <!-- simulate sequence -->
         <simulationObject id="seqAlign" spec="lineageTree.simulation.SimulatedTypeWriterAlignment"
-                          outputFileName="/Users/azwaans/all_beasts/beast_typewriter/examples/validation_multiple_bcodes/$(filebase).clock=0.08.seed=$(seed).alignment.nexus"
+                          outputFileName="/Users/azwaans/all_beasts/beast_typewriter/examples/multiple_bcodes/simulated_data/seed$(seed).clock0165.alignment.nexus"
                           numberOfTargets="1" nrOfInsertionsPerTarget="5"
                           tree="@simulatedTree" origin="@origin">
 
             <userDataType spec="beast.evolution.datatype.IntegerData"/>
 
-            <siteModel spec="beast.evolution.sitemodel.SiteModel">
+            <siteModel spec="beast.evolution.sitemodel.SiteModel" >
 
                 <mutationRate idref="clockRate"/>
 

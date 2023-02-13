@@ -327,8 +327,8 @@ public class TypewriterTreeLikelihood extends Distribution {
         double statePartialLikelihood = 0;
 //        for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             final double jointBranchRate = m_siteModel.getRateForCategory(categoryId, childNode) * branchRate;
-//            Log.info.println("site model rate" + m_siteModel.getRateForCategory(categoryId, childNode));
-//            Log.info.println("joint branch rate" + jointBranchRate);
+           Log.info.println("site model rate at category"+"i = " + m_siteModel.getRateForCategory(categoryId, childNode));
+            Log.info.println("joint branch rate" + jointBranchRate);
 
 
             double distance;
