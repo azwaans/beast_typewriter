@@ -8,6 +8,7 @@ import beast.core.Distribution;
 import beast.core.Input;
 import beast.core.Input.Validate;
 import beast.core.State;
+import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
 import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
@@ -40,6 +41,8 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
+    final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC");
+
     final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
             Validate.OPTIONAL);
 
@@ -49,6 +52,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected double[] m_branchLengths;
     protected double originTime;
     protected int nodeCount;
+    protected int arrayLength;
 
     protected int hasDirt;
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
@@ -65,12 +69,14 @@ public class TypewriterTreeLikelihood extends Distribution {
     @Override
     public void initAndValidate() {
 
+        arrayLength = arrayLengthInput.get().getValue();
         nodeCount = treeInput.get().getNodeCount();
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
 
         substitutionModel = (TypewriterSubstitutionModelHomogeneous)  m_siteModel.substModelInput.get();
+        substitutionModel.targetBClength = arrayLength;
         m_branchLengths = new double[nodeCount];
 
 
