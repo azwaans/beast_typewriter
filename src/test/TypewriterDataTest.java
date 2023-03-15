@@ -570,7 +570,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -645,7 +645,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -716,7 +716,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -786,7 +786,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -866,7 +866,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -947,7 +947,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
 
 
@@ -1003,7 +1003,7 @@ public void testGetPossibleAncestors() {
         likelihood.initByName("data",alignment,"tree",tree1,"siteModel",siteM,"branchRateModel",clockModel,"origin",origin,"arrayLength",arrayLength);
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
 
         double LogPCalc = likelihood.calculateLogP();
@@ -1054,7 +1054,7 @@ public void testGetPossibleAncestors() {
 
 
         //initialise partialLikelihoods
-        likelihood.partialLikelihoods = new double[tree1.getNodeCount()][];
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
 
         //Manually calc the likelihood for that tree:
 
@@ -1085,68 +1085,68 @@ public void testGetPossibleAncestors() {
 
         double LogPCalc = likelihood.calculateLogP();
 
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);
 
         likelihoods.add(LogPCalc);
         freqs = new RealParameter("0.8 0.2");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.7 0.3");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.7 0.3");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.6 0.4");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.6 0.4");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.5 0.5");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.5 0.5");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.4 0.6");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.4 0.6");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.3 0.7");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.3 0.7");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.2 0.8");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.2 0.8");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);        freqs = new RealParameter("0.1 0.9");
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);        freqs = new RealParameter("0.1 0.9");
         substitutionModel.initByName("editfrequencies", freqs, "frequencies", frequencies);
         LogPCalc = likelihood.calculateLogP();
         likelihoods.add(LogPCalc);
-        partial2200internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -3]);
+        partial2200internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -3]);
 
-        partial2000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -2]);
-        partial0000internals.add(likelihood.partialLikelihoods[2][likelihood.partialLikelihoods[2].length -1]);
+        partial2000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -2]);
+        partial0000internals.add(likelihood.partialLikelihoods[0][2][likelihood.partialLikelihoods[0][2].length -1]);
 
 
 

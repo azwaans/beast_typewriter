@@ -21,6 +21,7 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
+import org.jblas.DoubleMatrix;
 
 import static java.lang.Math.log1p;
 
@@ -82,13 +83,16 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
-    public double[][] partialLikelihoods ;
+    public double[][][] partialLikelihoods ;
     public double[] categoryLogLikelihoods ;
     protected double[] scalingFactors;
     protected boolean useScaling = false;
 
 
     private double scalingThreshold = 1.0E-100;
+
+    protected int[] currentPartialsIndex;
+    protected int[] storedPartialsIndex;
 
 
 
@@ -112,7 +116,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         //TODO check that state count from alignment (i.e. data type) and substitution model are the same
         //TODO INITIALISE EVERYTHING TO THE NUMBER OF NODES + MAX NUMBER OF STATES.
         ancestralStates = new Hashtable<>() ;
-        partialLikelihoods = new double[nodeCount][];
+        partialLikelihoods = new double[2][nodeCount][];
 
 
 
@@ -187,7 +191,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
             if (originTime == 0.0) {
                 //sum of all partial likelihoods at the root
-                categoryLogLikelihoods[i] = Math.log(Arrays.stream(partialLikelihoods[tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
+                categoryLogLikelihoods[i] = Math.log(Arrays.stream(partialLikelihoods[0][tree.getRoot().getNr()]).sum()) + getLogScalingFactor();
             } else {
                 //the tree log likelihood is the log(p) of unedited state at the origin
                 //TODO check that origin logP is calculated
@@ -248,18 +252,18 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         //find the highest partial likelihood
         //is node number same as nodeIndex
-        for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
-            if(partialLikelihoods[nodeNumber][k] > scaleFactor) {
-                scaleFactor = partialLikelihoods[nodeNumber][k];
+        for (int k = 0; k < partialLikelihoods[0][nodeNumber].length; k++) {
+            if(partialLikelihoods[0][nodeNumber][k] > scaleFactor) {
+                scaleFactor = partialLikelihoods[0][nodeNumber][k];
             }
 
         }
         //if this partial is smaller than the threshold, scale the partials
         if (scaleFactor < scalingThreshold) {
 
-            for (int k = 0; k < partialLikelihoods[nodeNumber].length; k++) {
+            for (int k = 0; k < partialLikelihoods[0][nodeNumber].length; k++) {
 
-                partialLikelihoods[nodeNumber][k] /= scaleFactor;
+                partialLikelihoods[0][nodeNumber][k] /= scaleFactor;
 
             }
             // save the log(scaling factors)
@@ -309,7 +313,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
             //TODO think of whether to initi that in init and validate instead
             double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(nodeNr).size());
-            partialLikelihoods[nodeNr] = leafPartialLikelihoods;
+            partialLikelihoods[0][nodeNr] = leafPartialLikelihoods;
 
     }
 
@@ -321,6 +325,40 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     }
 
+//    @Override
+//    public void setNodePartialsForUpdate(int nodeIndex) {
+//        currentPartialsIndex[nodeIndex] = 1 - currentPartialsIndex[nodeIndex];
+//    }
+
+//    /**
+//     * Sets partials for a node
+//     */
+//    @Override
+//    public void setNodePartials(int nodeIndex, double[] partials) {
+//
+//        if (this.partials[0][nodeIndex] == null) {
+//            createNodePartials(nodeIndex);
+//        }
+//        if (partials.length < partialsSize) {
+//            int k = 0;
+//            for (int i = 0; i < nrOfMatrices; i++) {
+//                System.arraycopy(partials, 0, this.partials[0][nodeIndex], k, partials.length);
+//                k += partials.length;
+//            }
+//        } else {
+//            System.arraycopy(partials, 0, this.partials[0][nodeIndex], 0, partials.length);
+//        }
+//    }
+
+//    /**
+//     * Allocates partials for a node
+//     */
+//    @Override
+//    public void createNodePartials(int nodeIndex) {
+//
+//        this.partials[0][nodeIndex] = new double[partialsSize];
+//        this.partials[1][nodeIndex] = new double[partialsSize];
+//    }
 
 
     /**
@@ -353,7 +391,7 @@ public class TypewriterTreeLikelihood extends Distribution {
             traverseLikelihood(child2, categoryId);
 
             double[] partials = calculatePartials(node.getNr(),child1,child2,categoryId);
-            partialLikelihoods[node.getNr()] = partials;
+            partialLikelihoods[0][node.getNr()] = partials;
 
 
             if (useScaling) {
@@ -447,10 +485,10 @@ public class TypewriterTreeLikelihood extends Distribution {
                     List<Integer> endState = ancestralStates.get(childNode.getNr()).get(endStateIndex);
 
                     // if the end state has non null partial likelihood
-                    if (partialLikelihoods[childNode.getNr()][endStateIndex] != 0.0) {
+                    if (partialLikelihoods[0][childNode.getNr()][endStateIndex] != 0.0) {
 
                         statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance) *
-                                partialLikelihoods[childNode.getNr()][endStateIndex];
+                                partialLikelihoods[0][childNode.getNr()][endStateIndex];
 
                     }
                 }
@@ -546,6 +584,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 //        }
         super.store();
         System.arraycopy(m_branchLengths, 0, storedBranchLengths, 0, m_branchLengths.length);
+        System.arraycopy(currentPartialsIndex, 0, storedPartialsIndex, 0, nodeCount);
     }
 
     @Override
@@ -558,6 +597,10 @@ public class TypewriterTreeLikelihood extends Distribution {
         double[] tmp = m_branchLengths;
         m_branchLengths = storedBranchLengths;
         storedBranchLengths = tmp;
+
+        int[] tmp2 = currentPartialsIndex;
+        currentPartialsIndex = storedPartialsIndex;
+        storedPartialsIndex = tmp2;
     }
 
 
