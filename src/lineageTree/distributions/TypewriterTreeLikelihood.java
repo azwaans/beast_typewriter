@@ -118,6 +118,10 @@ public class TypewriterTreeLikelihood extends Distribution {
         ancestralStates = new Hashtable<>() ;
         partialLikelihoods = new double[2][nodeCount][];
 
+        currentPartialsIndex = new int[nodeCount];
+        storedPartialsIndex = new int[nodeCount];
+
+
 
 
         if (branchRateModelInput.get() != null) {
@@ -312,8 +316,12 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected void initLeafPartials(int nodeNr) {
 
             //TODO think of whether to initi that in init and validate instead
+            //create and fill tippartials
             double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(nodeNr).size());
-            partialLikelihoods[0][nodeNr] = leafPartialLikelihoods;
+            //partialLikelihoods[0][nodeNr] = leafPartialLikelihoods;
+            this.partialLikelihoods[0][nodeNr] = new double[leafPartialLikelihoods.length];
+            this.partialLikelihoods[1][nodeNr] = new double[leafPartialLikelihoods.length];
+            System.arraycopy(leafPartialLikelihoods, 0, this.partialLikelihoods[0][nodeNr], 0, leafPartialLikelihoods.length);
 
     }
 
@@ -385,19 +393,28 @@ public class TypewriterTreeLikelihood extends Distribution {
         if(!node.isLeaf()) {
             //TODO IF has dirt != IS_CLEAN, update partials.
             final Node child1 = node.getLeft();
+            final int update1 = traverseLikelihood(child1, categoryId);
             final Node child2 = node.getRight();
+            final int update2 = traverseLikelihood(child2, categoryId);
+
             //TODO have condititional statement with the update flags.
-            traverseLikelihood(child1, categoryId);
-            traverseLikelihood(child2, categoryId);
-
-            double[] partials = calculatePartials(node.getNr(),child1,child2,categoryId);
-            partialLikelihoods[0][node.getNr()] = partials;
 
 
-            if (useScaling) {
-                scalePartials(node.getNr());
+            // If either child node was updated then update this node too
+            if (update1 != Tree.IS_CLEAN || update2 != Tree.IS_CLEAN) {
+
+                update |= (update1 | update2);
+                setNodePartialsForUpdate(nodeIndex);
+
+                calculatePartials(node.getNr(), child1, child2, categoryId);
+                //partialLikelihoods[0][node.getNr()] = partials;
+
+
+                if (useScaling) {
+                    scalePartials(node.getNr());
+                }
+
             }
-
         }
 
         return update;
@@ -406,12 +423,19 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     }
 
+
+    public void setNodePartialsForUpdate(int nodeIndex) {
+        currentPartialsIndex[nodeIndex] = 1 - currentPartialsIndex[nodeIndex];
+    }
+
+
+
     /**
      * This function calculates partial likelihoods for all possible states at node given its children partials
      *
      * @return partial likelihoods for states at node nodeNr
      */
-    public double[] calculatePartials(int nodeNr, Node child1, Node child2, int categoryId ) {
+    public void calculatePartials(int nodeNr, Node child1, Node child2, int categoryId ) {
 
         //initialize an array for the partials
         double[] partials = new double[ancestralStates.get(nodeNr).size()];
@@ -422,10 +446,12 @@ public class TypewriterTreeLikelihood extends Distribution {
                 
                 double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
                 double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
-                
+
                 partials[stateIndex] = child1PartialLikelihoodState * child2PartialLikelihoodState;
             }
-        return partials;
+
+        partialLikelihoods[currentPartialsIndex[nodeNr]][nodeNr] = partials;
+            //return partials;
 
     }
 
@@ -485,10 +511,11 @@ public class TypewriterTreeLikelihood extends Distribution {
                     List<Integer> endState = ancestralStates.get(childNode.getNr()).get(endStateIndex);
 
                     // if the end state has non null partial likelihood
-                    if (partialLikelihoods[0][childNode.getNr()][endStateIndex] != 0.0) {
+                    Log.info.println("which node are we blocked at " + childNode.getNr());
+                    if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
 
                         statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance) *
-                                partialLikelihoods[0][childNode.getNr()][endStateIndex];
+                                partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex];
 
                     }
                 }
