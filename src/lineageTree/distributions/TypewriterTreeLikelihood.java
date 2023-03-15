@@ -24,6 +24,12 @@ import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 
 import static java.lang.Math.log1p;
 
+//NOTES FOR IMPLEMENTATION OF THE CACHING:
+//if the ancestral states are changed at all, the partial SIZES might have to change.
+// to do (1) implement has dirt and how it is dealt with internally
+// (1) test this at run time, after each move, how this is found!
+// (2) implement store restore etc
+
 
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
         "a beast tree and a branch rate model. This is a brute-force approach with no use of BEAST treelikelihood architecture ")
@@ -49,12 +55,32 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected TypewriterSubstitutionModelHomogeneous substitutionModel;
     protected BranchRateModel.Base branchRateModel;
     protected SiteModel.Base m_siteModel;
-    protected double[] m_branchLengths;
     protected double originTime;
     protected int nodeCount;
     protected int arrayLength;
 
+
+    /**
+     * flag to indicate the
+     * // when CLEAN=0, nothing needs to be recalculated for the node
+     * // when DIRTY=1 indicates a node partial needs to be recalculated
+     * // when FILTHY=2 indicates the indices for the node need to be recalculated
+     * // (often not necessary while node partial recalculation is required)
+     */
     protected int hasDirt;
+
+    /**
+     * Lengths of the branches in the tree associated with each of the nodes
+     * in the tree through their node  numbers. By comparing whether the
+     * current branch length differs from stored branch lengths, it is tested
+     * whether a node is dirty and needs to be recomputed (there may be other
+     * reasons as well...).
+     * These lengths take branch rate models in account.
+     */
+    protected double[] m_branchLengths;
+    protected double[] storedBranchLengths;
+
+
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][] partialLikelihoods ;
     public double[] categoryLogLikelihoods ;
@@ -63,6 +89,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
     private double scalingThreshold = 1.0E-100;
+
 
 
 
@@ -77,13 +104,17 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         substitutionModel = (TypewriterSubstitutionModelHomogeneous)  m_siteModel.substModelInput.get();
         substitutionModel.targetBClength = arrayLength;
+
         m_branchLengths = new double[nodeCount];
+        storedBranchLengths = new double[nodeCount];
 
 
         //TODO check that state count from alignment (i.e. data type) and substitution model are the same
         //TODO INITIALISE EVERYTHING TO THE NUMBER OF NODES + MAX NUMBER OF STATES.
         ancestralStates = new Hashtable<>() ;
         partialLikelihoods = new double[nodeCount][];
+
+
 
         if (branchRateModelInput.get() != null) {
             branchRateModel = branchRateModelInput.get();
@@ -103,6 +134,25 @@ public class TypewriterTreeLikelihood extends Distribution {
             useScaling = true;
             scalingFactors = new double[nodeCount];
         }
+
+        //INITIALIZE PARTIALS:
+        //
+        // current vs stored for both ancestral states and partials
+        // Initiliaze states
+        //
+
+        //initialize has dirt flag (this is updated by requires recalcuations):
+        hasDirt = Tree.IS_FILTHY;
+
+        for (int i=0; i< treeInput.get().getLeafNodeCount(); i++) {
+            initLeafAncestors(i);
+        }
+
+        for (int i=0; i< treeInput.get().getLeafNodeCount(); i++) {
+            initLeafPartials(i);
+        }
+
+
 
 
 
@@ -228,13 +278,9 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     public void traverseAncestral(Node node) {
 
-        if (node.isLeaf() ) {
-            //TODO think of data struCture that has fixed initialized size of max 5. Full data structure size is number of nodes
-            // initialize that in init and validate instead
-            List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(node.getNr()));
-            ancestralStates.put(node.getNr(), possibleLeafAncestors);
 
-        } else {
+
+       if(!node.isLeaf()) {
             //TODO HERE COMES THE CACHING PART: USE DIRTY FLAGS TO. DIRTY WE DON'T CHANGE, FILTHY WE DO.
             // set ancestral states, calculate anc states.
             final Node child1 = node.getLeft();
@@ -252,44 +298,71 @@ public class TypewriterTreeLikelihood extends Distribution {
 
             ancestralStates.put(node.getNr(), ancSetNode);
 
-        }
+       }
 
 
     }
+
+
+
+    protected void initLeafPartials(int nodeNr) {
+
+            //TODO think of whether to initi that in init and validate instead
+            double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(nodeNr).size());
+            partialLikelihoods[nodeNr] = leafPartialLikelihoods;
+
+    }
+
+    protected void initLeafAncestors(int nodeNr) {
+
+        //TODO think of whether to initi that in init and validate instead
+        List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(nodeNr));
+        ancestralStates.put(nodeNr, possibleLeafAncestors);
+
+    }
+
+
 
     /**
      * This function implements a postorder traversal of the tree to fill the partialLikelihood array
      *
      */
     //TODO have this return the dirtyness flag. (int)
-    public void traverseLikelihood(Node node, int categoryId) {
+    protected int traverseLikelihood(Node node, int categoryId) {
 
-        if( node != null ) {
-
-            if (node.isLeaf()) {
-                //TODO think of whether to initi that in init and validate instead
-                double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(node.getNr()).size());
-                partialLikelihoods[node.getNr()] = leafPartialLikelihoods;
+        int update = (node.isDirty() | hasDirt);
+        int nodeIndex = node.getNr();
 
 
-            } else {
-                //TODO IF has dirt != IS_CLEAN, update partials.
-                final Node child1 = node.getLeft();
-                final Node child2 = node.getRight();
-                //TODO have condititional statement with the update flags.
-                traverseLikelihood(child1, categoryId);
-                traverseLikelihood(child2, categoryId);
-
-                double[] partials = calculatePartials(node.getNr(),child1,child2,categoryId);
-                partialLikelihoods[node.getNr()] = partials;
+        final double branchRate = branchRateModel.getRateForBranch(node);
+        final double branchTime = node.getLength() * branchRate;
 
 
-                if (useScaling) {
-                    scalePartials(node.getNr());
-                }
-
-            }
+        if (!node.isRoot() && (update != Tree.IS_CLEAN || branchTime != m_branchLengths[nodeIndex])) {
+            m_branchLengths[nodeIndex] = branchTime;
+            //ANTOINE read: update = update | Tree.IS_DIRTY
+            update |= Tree.IS_DIRTY;
         }
+
+        if(!node.isLeaf()) {
+            //TODO IF has dirt != IS_CLEAN, update partials.
+            final Node child1 = node.getLeft();
+            final Node child2 = node.getRight();
+            //TODO have condititional statement with the update flags.
+            traverseLikelihood(child1, categoryId);
+            traverseLikelihood(child2, categoryId);
+
+            double[] partials = calculatePartials(node.getNr(),child1,child2,categoryId);
+            partialLikelihoods[node.getNr()] = partials;
+
+
+            if (useScaling) {
+                scalePartials(node.getNr());
+            }
+
+        }
+
+        return update;
 
 
 
@@ -446,11 +519,9 @@ public class TypewriterTreeLikelihood extends Distribution {
     /**
      * check state for changed variables and update temp results if necessary *
      */
+    //requires recalculation if the data has changed, if the sitemodel (or sub model has changed), the branch rate model, or the tree has changed.
     @Override
     protected boolean requiresRecalculation() {
-//        if (beagle != null) {
-//            return beagle.requiresRecalculation();
-//        }
         hasDirt = Tree.IS_CLEAN;
 
         if (dataInput.get().isDirtyCalculation()) {
@@ -466,6 +537,27 @@ public class TypewriterTreeLikelihood extends Distribution {
             return true;
         }
         return treeInput.get().somethingIsDirty();
+    }
+
+    @Override
+    public void store() {
+//        if (likelihoodCore != null) {
+//            likelihoodCore.store();
+//        }
+        super.store();
+        System.arraycopy(m_branchLengths, 0, storedBranchLengths, 0, m_branchLengths.length);
+    }
+
+    @Override
+    public void restore() {
+
+//        if (likelihoodCore != null) {
+//            likelihoodCore.restore();
+//        }
+        super.restore();
+        double[] tmp = m_branchLengths;
+        m_branchLengths = storedBranchLengths;
+        storedBranchLengths = tmp;
     }
 
 
