@@ -246,8 +246,10 @@ public class TypewriterSubstModelTest {
     }
 
     @Test
-    public void testPoissonDist(){
-        //this is to test this pacakge iimplementation against probabilities obtained in R
+    public void testPoissonDistAgainstR(){
+        // This validates that the PoissonDistributionImpl we use to calculate the poisson probabilities
+        // behaves as expected. We test this by comparing against the values by Rpois
+
 
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
         double p0 = dist.probability(0);
