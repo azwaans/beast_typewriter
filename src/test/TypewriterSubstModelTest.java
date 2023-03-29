@@ -91,7 +91,7 @@ public class TypewriterSubstModelTest {
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
         Double expectedProbability = dist.probability(1) * 0.2 ;
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
         // Assert
         assertEquals(expectedProbability, calculatedProbability,0.00001);
@@ -100,17 +100,13 @@ public class TypewriterSubstModelTest {
 
 
     @Test
-    public void testTransitionProbabilitiesHomogeneousno_edit(){
-
-        // Arrange
-        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
-
+    public void testTransitionProbabilitiesNoEdit(){
 
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        typewritermodel.targetBClength = 5;
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,0,0,0");
@@ -119,35 +115,27 @@ public class TypewriterSubstModelTest {
         alignment.initByName("sequence", a, "dataType", "integer");
         alignment.initByName("sequence", b, "dataType", "integer");
 
-        //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
-        // expectedProbability : draw 0 event on a Poisson process bounded to 3
-        // P(0)
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
-        Double expectedProbability = dist.probability(0);
+        Double expectedProbability = 0.6065306597126334;
 
-        //
-        assertEquals(expectedProbability, calculatedProbability, 0.00001);
-
+        assertEquals(expectedProbability, calculatedProbability, 1e-10);
 
     }
 
     @Test
-    public void testTransitionProbabilitiesHomogeneoussingle_edit(){
+    public void testTransitionProbabilitiesSingleEdit(){
 
         // Arrange
-        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
-
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        typewritermodel.targetBClength = 5;
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,0,0");
@@ -161,33 +149,28 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
-        // expectedProbability : draw 1 event on a Poisson process bounded to 3, with event frequency 0.8
+        // expectedProbability : draw 1 event on a Poisson process, with event frequency 0.8
         // P(1) * 0.8
+        Double expectedProbability = 0.2426122638850534;
 
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
 
-        Double expectedProbability = dist.probability(1)*0.8;
-
-        //
-        assertEquals(expectedProbability, calculatedProbability, 0.00001);
+        assertEquals(expectedProbability, calculatedProbability, 1e-10);
 
 
     }
 
 
     @Test
-    public void testTransitionProbabilitiesHomogeneousMulti_edits(){
+    public void testTransitionProbabilities2Edits(){
 
         // Arrange
-        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
-
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        typewritermodel.targetBClength = 5;
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,0");
@@ -201,29 +184,26 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
-        // expectedProbability : draw 2 events on a Poisson process bounded to 3, with event frequency 0.8
+        // expectedProbability : draw 2 events on a Poisson process, with event probabilities 0.8 and 0.2 resp
         // P(2) * 0.8 * 0.2
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
-        Double expectedProbability = dist.probability(2) * 0.8 * 0.2;
+        Double expectedProbability = 0.012130613194252673;
 
-        assertEquals(expectedProbability, calculatedProbability, 0.00001);
+        assertEquals(expectedProbability, calculatedProbability, 1e-10);
 
 
     }
 
     @Test
-    public void testTransitionProbabilitiesHomogeneousSaturation(){
+    public void testTransitionProbabilitiesEditsAndSaturation(){
 
         // Arrange
-        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
-
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        typewritermodel.targetBClength = 5;
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,2");
@@ -237,16 +217,14 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
-        org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
 
         // expectedProbability : draw 3 events on a Poisson process bounded to 3:
         // with event frequency 0.8, 0.2
-        // 1 - sum(P(n)) * (0.2*0.2*0.8)
+        // (1 - P(0) + P(1) + P(2)) * (0.2*0.2*0.8)
+        Double expectedProbability = 4.6040569494306294E-4;
 
-        Double expectedProbability = (1 - (dist.probability(0) + dist.probability(1 ) + dist.probability(2))) * 0.8 * 0.2 * 0.2 ;
-
-        assertEquals(expectedProbability, calculatedProbability, 0.00001);
+        assertEquals(expectedProbability, calculatedProbability, 1e-10);
 
 
     }
@@ -254,14 +232,11 @@ public class TypewriterSubstModelTest {
     @Test
     public void testTransitionProbabilitiesNonsensical(){
 
-        // Arrange
-        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
-
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        typewritermodel.targetBClength = 5;
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,0,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,0,0,0");
@@ -276,7 +251,7 @@ public class TypewriterSubstModelTest {
 
 
 
-        Double calculatedProbability = typewritermodel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
 
         // expectedProbability : draw 1 event on a Poisson process bounded to 4:
