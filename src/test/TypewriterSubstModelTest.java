@@ -7,6 +7,7 @@ import beast.evolution.alignment.Sequence;
 import beast.evolution.substitutionmodel.Frequencies;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,16 +18,61 @@ import static junit.framework.Assert.assertEquals;
 @Description("Test substitution model")
 public class TypewriterSubstModelTest {
 
+    // test that inputs are handled as expected
+
+    TypewriterSubstitutionModelHomogeneous substModel;
+
+    @Before
+    public void setUp(){
+        substModel = new TypewriterSubstitutionModelHomogeneous();
+    }
+
+    //----------------------------------------------------------------------------------//
+    // test valid inputs
+    @Test (expected = RuntimeException.class)
+    public void testExceptionForNegEditFreqInput(){
+
+        RealParameter editFreqs = new RealParameter("-1 2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", editFreqs, "estimate", false);
+
+        // this should fail
+        substModel.initByName("editfrequencies", editFreqs, "frequencies", frequencies);
+    }
+
+    @Test (expected = RuntimeException.class)
+    public void testExceptionForEditFreqSumNot1(){
+
+        RealParameter editFreqs = new RealParameter("0.6 0.2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", editFreqs, "estimate", false);
+
+        // this should fail
+        substModel.initByName("editfrequencies", editFreqs, "frequencies", frequencies);
+    }
+
+    @Test (expected = RuntimeException.class)
+    public void testExceptionForEmptyEditFreqInput(){
+
+        RealParameter editFreqs = new RealParameter();
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", editFreqs, "estimate", false);
+
+        // this should fail
+        substModel.initByName("editfrequencies", editFreqs, "frequencies", frequencies);
+    }
+
+    //----------------------------------------------------------------------------------//
+    // test transition probability calculations
     @Test
     public void testTransitionProbabilities(){
 
-        TypewriterSubstitutionModelHomogeneous typewritermodel = new TypewriterSubstitutionModelHomogeneous();
 
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        typewritermodel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
-        typewritermodel.targetBClength = 5;
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "1,2,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,2,0,0");
@@ -249,7 +295,6 @@ public class TypewriterSubstModelTest {
     public void testPoissonDistAgainstR(){
         // This validates that the PoissonDistributionImpl we use to calculate the poisson probabilities
         // behaves as expected. We test this by comparing against the values by Rpois
-
 
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
         double p0 = dist.probability(0);
