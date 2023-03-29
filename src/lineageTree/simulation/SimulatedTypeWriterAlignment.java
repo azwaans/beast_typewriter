@@ -3,6 +3,7 @@ package lineageTree.simulation;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.alignment.TaxonSet;
@@ -81,6 +82,8 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
             tree = treeInput.get();
             siteModel = siteModelInput.get();
+            Log.info.println("category rates: " + Arrays.toString(siteModel.getCategoryRates(tree.getRoot())));
+
             numberOfTargets = 1; //TODO rewrite for arbitrary #targets
             nrOfInsertionsPerTarget = nrOfInsertionsPerTargetInput.get();
             sequences.clear();
@@ -129,6 +132,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 // then parent sequence is sequence at origin and we evolve sequence first down to the root
                 double deltaT = originHeight - root.getHeight();
                 double clockRate = siteModel.getRateForCategory(0, root);
+                Log.info.println("clock rates: " + clockRate);
 
                 int nPossibleInserts = 5;
                 //TODO rename to inserts, i.e nrOfNewInserts

@@ -26,10 +26,13 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      * edit insertion rate  *
      */
     protected RealParameter insertFrequencies;
+    public int targetBClength;
 
 
     @Override
     public void initAndValidate() {
+        //default targetBC length is 5
+        //TODO implement this cleanly!
         super.initAndValidate();
         updateMatrix = true;
         //TODO nrOfStates +1 because of unedited
@@ -110,7 +113,8 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
 
         //available positions are 5 - number of edited positions
-        int nrOfPossibleInserts = 5 - startState.size();
+        //TODO add here a parameter that might be changed from the likelihood class?
+        int nrOfPossibleInserts = targetBClength - startState.size();
 
         //initialise the poisson distribution with mean rate * distance
         org.apache.commons.math.distribution.PoissonDistribution poissonDistribution = new PoissonDistributionImpl(distance);
