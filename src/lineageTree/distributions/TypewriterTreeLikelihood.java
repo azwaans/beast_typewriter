@@ -95,7 +95,17 @@ public class TypewriterTreeLikelihood extends Distribution {
     public void initAndValidate() {
 
         arrayLength = arrayLengthInput.get().getValue();
+        if(arrayLength < 1 || (dataInput.get().getSiteCount() != arrayLength)) {
+            throw new IllegalArgumentException(String.format(
+                    "Invalid array length: Ensure that length >= 1 and matches alignment "));
+
+
+        }
         nodeCount = treeInput.get().getNodeCount();
+        if(nodeCount <=2) {
+            throw new IllegalArgumentException(String.format(
+                    "Invalid tree input: single node/branch. Ensure that #nodes>2 "));
+        }
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
@@ -126,6 +136,10 @@ public class TypewriterTreeLikelihood extends Distribution {
         originTime = 0.0;
         if (originTimeInput.get() != null) {
             originTime = originTimeInput.get().getValue();
+            if (originTime < 0.0) {
+                throw new IllegalArgumentException(String.format(
+                        "Invalid origin time input: ensure that origin>0"));
+            }
         }
 
         if(useScalingInput.get()){
