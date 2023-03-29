@@ -230,6 +230,37 @@ public class TypewriterSubstModelTest {
     }
 
     @Test
+    public void test1ProbabilityForFullySaturated(){
+
+        // Arrange
+        RealParameter freqs = new RealParameter("0.8 0.2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.targetBClength = 5;
+
+        Sequence a = new Sequence("cell1", "2,1,1,2,2");
+        Sequence b = new Sequence("cell2", "2,1,1,2,2");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        //internal representation of the sequences for the package:
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+        List<Integer> sequence_b = alignment.getCounts().get(1);
+
+
+        Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
+
+        Double expectedProbability = 1.0;
+
+        assertEquals(expectedProbability, calculatedProbability, 1e-10);
+
+
+    }
+
+    @Test
     public void test0ProbabilityForForbiddenTransition(){
 
         RealParameter freqs = new RealParameter("0.8 0.2");
