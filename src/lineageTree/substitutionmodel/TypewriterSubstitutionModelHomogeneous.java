@@ -19,8 +19,7 @@ import java.util.List;
 @Description("Allows to calculate transition probabilities for a Typewriter modelled as a Poisson process on the number of edits")
 public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Base {
     final public Input<RealParameter> frequenciesInput = new Input<>("editfrequencies",
-            "Edit frequencies for the typewriter process",
-            (RealParameter) null);
+            "Edit frequencies for the typewriter process", Input.Validate.REQUIRED);
 
     /**
      * edit insertion rate  *
@@ -37,8 +36,9 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         updateMatrix = true;
         //TODO nrOfStates +1 because of unedited
         nrOfStates = frequencies.getFreqs().length;
-        insertFrequencies = frequenciesInput.get();
 
+        // Get edit frequencies and check correct input
+        insertFrequencies = frequenciesInput.get();
         double[] insertProbabilities = insertFrequencies.getDoubleValues();
 
         double insertProbabilitiesSum = Arrays.stream(insertProbabilities).sum();
@@ -47,7 +47,6 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
                     "sum of insert probabilities is not 1"));
 
         }
-
 
         for( double insertProbability : insertProbabilities) {
             if(insertProbability>1 || insertProbability<0) {
