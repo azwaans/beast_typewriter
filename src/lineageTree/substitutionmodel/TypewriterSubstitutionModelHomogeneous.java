@@ -16,7 +16,9 @@ import java.util.List;
 
 
 
-@Description("Allows to calculate transition probabilities for a Typewriter modelled as a Poisson process on the number of edits")
+@Description("Calculates transition probabilities sequence transitions from an ancestral node to a child node. " +
+        "Assume that the sequences proposed represent valid transition pairs.")
+
 public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Base {
     final public Input<RealParameter> frequenciesInput = new Input<>("editfrequencies",
             "Edit frequencies for the typewriter process", Input.Validate.REQUIRED);
