@@ -16,40 +16,40 @@ import java.util.List;
 
 
 
-@Description("Allows to calculate transition probabilities for a Typewriter modelled as a Poisson process on the number of edits")
+@Description("Calculates transition probabilities sequence transitions from an ancestral node to a child node. " +
+        "Assume that the sequences proposed represent valid transition pairs.")
+
 public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Base {
     final public Input<RealParameter> frequenciesInput = new Input<>("editfrequencies",
-            "Edit frequencies for the typewriter process",
-            (RealParameter) null);
+            "Edit frequencies for the typewriter process", Input.Validate.REQUIRED);
 
     /**
      * edit insertion rate  *
      */
     protected RealParameter insertFrequencies;
+    double[] insertFreqs;
     public int targetBClength;
 
 
     @Override
     public void initAndValidate() {
-        //default targetBC length is 5
-        //TODO implement this cleanly!
+
         super.initAndValidate();
-        updateMatrix = true;
-        //TODO nrOfStates +1 because of unedited
-        nrOfStates = frequencies.getFreqs().length;
+        //TODO check if we want to initialize that. The total number of states depends on the targetBC length, which may change
+        nrOfStates = frequencies.getFreqs().length +1;
+
+        // Get edit frequencies and check correct input
         insertFrequencies = frequenciesInput.get();
+        insertFreqs = insertFrequencies.getDoubleValues();
 
-        double[] insertProbabilities = insertFrequencies.getDoubleValues();
-
-        double insertProbabilitiesSum = Arrays.stream(insertProbabilities).sum();
+        double insertProbabilitiesSum = Arrays.stream(insertFreqs).sum();
         if (Math.abs(insertProbabilitiesSum - 1.0) > 1e-6) {
             throw new IllegalArgumentException(String.format(
                     "sum of insert probabilities is not 1"));
 
         }
 
-
-        for( double insertProbability : insertProbabilities) {
+        for( double insertProbability : insertFreqs) {
             if(insertProbability>1 || insertProbability<0) {
                 throw new IllegalArgumentException(String.format(
                         "insert probabilities is not between 0 and 1"));
@@ -59,9 +59,6 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
 
     }
-
-    protected boolean updateMatrix = true;
-    private boolean storedUpdateMatrix = true;
 
 
     /**
@@ -87,33 +84,13 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         if(startState.size() > endState.size() ){
             return 0.0;
         }
-        //todo here, we check if we have any sequence transitions that violate ordering/do weird things
-        //specifically, if there is already editing in startState, all edits in startState should be found in end state.
-//        else if (startState.size() != 0){
-//            //if there is already editing in startState, all edits in startState should be found in end state.
-//            boolean sharedEdits = true;
-//            for(int i=0; i<startState.size(); i++){
-//                if(endState.get(i) != startState.get(i)) {
-//                    sharedEdits = false;
-//                }
-//            }
-//            if(sharedEdits == false) {
-//                Log.info.println("there are no shared edits where there should be");
-//                Log.info.println("startseq : " + startSequence);
-//                Log.info.println("endseq : " + endSequence);
-//            }
 
-//        }
         //subtracting start sequence from end sequence: edits introduced
         // if start state has identical elements to end state remove
         startState.forEach(endState::remove);
         List<Integer> newInserts = endState;
-        //TODO foor loop over positions, make explicit checks, compare if that has the same result as above
 
-
-
-        //available positions are 5 - number of edited positions
-        //TODO add here a parameter that might be changed from the likelihood class?
+        //available positions are targetBClength length - number of edited positions
         int nrOfPossibleInserts = targetBClength - startState.size();
 
         //initialise the poisson distribution with mean rate * distance
@@ -138,7 +115,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
         }
     }
 
-    //TODO function getNewInserts
+
 
     /**
      * This function calculates the probability of reaching/editing the last unedited position in the barcode with nbrOfPossibleInserts
@@ -165,7 +142,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     public double combinedInsertProbabilities(List<Integer> inserts) {
 
         double factor = 1.0;
-        double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
+        double[] insertFrequenciesValue = insertFreqs;
 
         for(Integer i : inserts){
             //inserts are in {1, ..., nInserts}; insertProbabilities are in {0, ..., nInserts - 1}
@@ -177,17 +154,12 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
 
     /**
      * Function to obtain the array of insert probabilities
-     * TODO : Check in initAndValidate: a) value in [0,1]; b) sum=1;
+     *
      */
     public double[] getInsertProbabilities() {
-
-        double[] insertFrequenciesValue = insertFrequencies.getDoubleValues();
-        return insertFrequenciesValue;
+        return insertFreqs;
 
     }
-
-
-
 
 
     /**
@@ -195,9 +167,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     @Override
     public void store() {
-        storedUpdateMatrix = updateMatrix;
-//      System.arraycopy(relativeRates, 0, storedRelativeRates, 0, relativeRates.length);
-
+        insertFreqs = insertFrequencies.getDoubleValues();
         super.store();
     }
 
@@ -206,12 +176,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     @Override
     public void restore() {
-
-        updateMatrix = storedUpdateMatrix;
-//      To restore all this stuff just swap the pointers...
-//      double[] tmp1 = storedRelativeRates;
-//      storedRelativeRates = relativeRates;
-//      relativeRates = tmp1;
+        insertFreqs = insertFrequencies.getDoubleValues();
         super.restore();
 
     }
@@ -219,7 +184,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     @Override
     protected boolean requiresRecalculation() {
         // we only get here if something is dirty
-        updateMatrix = true;
+        insertFreqs = insertFrequencies.getDoubleValues();
         return true;
     }
 
