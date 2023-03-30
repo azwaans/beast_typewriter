@@ -5,7 +5,7 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.substitutionmodel.Frequencies;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +20,11 @@ public class TypewriterSubstModelTest {
 
     // test that inputs are handled as expected
 
-    TypewriterSubstitutionModelHomogeneous substModel;
+    TypewriterSubstitutionModel substModel;
 
     @Before
     public void setUp(){
-        substModel = new TypewriterSubstitutionModelHomogeneous();
+        substModel = new TypewriterSubstitutionModel();
     }
 
     //----------------------------------------------------------------------------------//
@@ -252,7 +252,6 @@ public class TypewriterSubstModelTest {
 
 
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5);
-
         Double expectedProbability = 1.0;
 
         assertEquals(expectedProbability, calculatedProbability, 1e-10);
