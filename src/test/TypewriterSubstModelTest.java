@@ -32,34 +32,34 @@ public class TypewriterSubstModelTest {
     @Test (expected = RuntimeException.class)
     public void testExceptionForNegEditFreqInput(){
 
-        RealParameter editFreqs = new RealParameter("-1 2");
+        RealParameter editprobs = new RealParameter("-1 2");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editFreqs, "estimate", false);
+        frequencies.initByName("frequencies", editprobs, "estimate", false);
 
         // this should fail
-        substModel.initByName("editfrequencies", editFreqs, "frequencies", frequencies);
+        substModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
     }
 
     @Test (expected = RuntimeException.class)
     public void testExceptionForEditFreqSumNot1(){
 
-        RealParameter editFreqs = new RealParameter("0.6 0.2");
+        RealParameter editprobs = new RealParameter("0.6 0.2");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editFreqs, "estimate", false);
+        frequencies.initByName("frequencies", editprobs, "estimate", false);
 
         // this should fail
-        substModel.initByName("editfrequencies", editFreqs, "frequencies", frequencies);
+        substModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
     }
 
     @Test (expected = RuntimeException.class)
     public void testExceptionForEmptyEditFreqInput(){
 
-        RealParameter editFreqs = new RealParameter();
+        RealParameter editprobs = new RealParameter();
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editFreqs, "estimate", false);
+        frequencies.initByName("frequencies", editprobs, "estimate", false);
 
         // this should fail
-        substModel.initByName("editfrequencies", editFreqs, "frequencies", frequencies);
+        substModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
     }
 
     //----------------------------------------------------------------------------------//
@@ -71,7 +71,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "1,2,0,0,0");
@@ -105,7 +105,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
@@ -134,7 +134,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
@@ -169,7 +169,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
@@ -202,7 +202,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
@@ -236,7 +236,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,1,2,2");
@@ -265,7 +265,7 @@ public class TypewriterSubstModelTest {
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editfrequencies", freqs, "frequencies" ,frequencies);
+        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
         substModel.targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,0,0,0,0");
