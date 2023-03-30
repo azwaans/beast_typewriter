@@ -3,7 +3,6 @@ package test;
 import beast.core.Description;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -12,8 +11,7 @@ import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
 import lineageTree.distributions.TypewriterTreeLikelihood;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
-import org.apache.commons.math.distribution.PoissonDistributionImpl;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 public class TypewriterLikelihoodTest {
 
     TypewriterTreeLikelihood typewriterLikelihood;
-    TypewriterSubstitutionModelHomogeneous substModel;
+    TypewriterSubstitutionModel substModel;
     SiteModel siteM;
     StrictClockModel clockModel;
     RealParameter origin;
@@ -35,8 +33,8 @@ public class TypewriterLikelihoodTest {
     @Before
     public void setUp() {
         typewriterLikelihood = new TypewriterTreeLikelihood();
-        substModel = new TypewriterSubstitutionModelHomogeneous();
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        substModel = new TypewriterSubstitutionModel();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
@@ -261,7 +259,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
@@ -319,7 +317,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -393,7 +391,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -465,7 +463,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -539,7 +537,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
         RealParameter freqs = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -615,7 +613,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
         RealParameter freqs = new RealParameter("0.5 0.5");
         Frequencies frequencies = new Frequencies();
@@ -700,7 +698,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
@@ -774,7 +772,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
@@ -845,7 +843,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
@@ -913,7 +911,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("0.8 0.2");
 
         Frequencies frequencies = new Frequencies();
@@ -987,7 +985,7 @@ public class TypewriterLikelihoodTest {
         TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModelHomogeneous substitutionModel = new TypewriterSubstitutionModelHomogeneous();
+        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter freqs = new RealParameter("0.8 0.2");
 
 
