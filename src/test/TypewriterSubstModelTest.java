@@ -72,7 +72,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "1,2,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,2,0,0");
@@ -106,7 +106,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,0,0,0");
@@ -135,7 +135,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,0,0");
@@ -170,7 +170,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,0");
@@ -203,7 +203,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,2");
@@ -237,7 +237,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,1,1,2,2");
         Sequence b = new Sequence("cell2", "2,1,1,2,2");
@@ -266,7 +266,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
-        substModel.targetBClength = 5;
+        substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,0,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,0,0,0");
