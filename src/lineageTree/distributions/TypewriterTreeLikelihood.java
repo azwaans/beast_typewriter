@@ -20,7 +20,8 @@ import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
+import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
+//TODO put the jblas lib into typewriter to not depend on MTT!
 import org.jblas.DoubleMatrix;
 
 import static java.lang.Math.log1p;
@@ -46,7 +47,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
             Validate.OPTIONAL);
 
-    protected TypewriterSubstitutionModelHomogeneous substitutionModel;
+    protected TypewriterSubstitutionModel substitutionModel;
     protected BranchRateModel.Base branchRateModel;
     protected SiteModel.Base m_siteModel;
     protected double originTime;
@@ -100,7 +101,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
 
-        substitutionModel = (TypewriterSubstitutionModelHomogeneous)  m_siteModel.substModelInput.get();
+        substitutionModel = (TypewriterSubstitutionModel)  m_siteModel.substModelInput.get();
         substitutionModel.targetBClength = arrayLength;
 
         m_branchLengths = new double[nodeCount];
