@@ -39,7 +39,7 @@ public class SimulatedAlignmentTest {
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
-        submodel.initByName("editfrequencies", insertrates, "frequencies", frequencies);
+        submodel.initByName("editProbabilities", insertrates, "frequencies", frequencies);
         submodel.targetBClength = 1;
 
         //site model
