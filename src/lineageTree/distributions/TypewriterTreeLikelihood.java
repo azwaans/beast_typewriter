@@ -10,7 +10,6 @@ import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -21,8 +20,6 @@ import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
-//TODO put the jblas lib into typewriter to not depend on MTT!
-import org.jblas.DoubleMatrix;
 
 import static java.lang.Math.log1p;
 
