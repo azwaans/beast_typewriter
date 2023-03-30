@@ -20,14 +20,14 @@ import java.util.List;
         "Assume that the sequences proposed represent valid transition pairs.")
 
 public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Base {
-    final public Input<RealParameter> frequenciesInput = new Input<>("editfrequencies",
-            "Edit frequencies for the typewriter process", Input.Validate.REQUIRED);
+    final public Input<RealParameter> editProbabilitiesInput = new Input<>("editProbabilities",
+            "Edit probabilities for the typewriter process", Input.Validate.REQUIRED);
 
     /**
      * edit insertion rate  *
      */
-    protected RealParameter insertFrequencies;
-    double[] insertFreqs;
+    protected RealParameter editProbabilities;
+    double[] editProbs;
     public int targetBClength;
 
 
@@ -35,21 +35,21 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     public void initAndValidate() {
 
         super.initAndValidate();
-        //TODO check if we want to initialize that. The total number of states depends on the targetBC length, which may change
+        //Here, nrOfStates represents the number of possible edits at each position of the TargetBCs + the unedited state
         nrOfStates = frequencies.getFreqs().length +1;
 
         // Get edit frequencies and check correct input
-        insertFrequencies = frequenciesInput.get();
-        insertFreqs = insertFrequencies.getDoubleValues();
+        editProbabilities = editProbabilitiesInput.get();
+        editProbs = editProbabilities.getDoubleValues();
 
-        double insertProbabilitiesSum = Arrays.stream(insertFreqs).sum();
+        double insertProbabilitiesSum = Arrays.stream(editProbs).sum();
         if (Math.abs(insertProbabilitiesSum - 1.0) > 1e-6) {
             throw new IllegalArgumentException(String.format(
                     "sum of insert probabilities is not 1"));
 
         }
 
-        for( double insertProbability : insertFreqs) {
+        for( double insertProbability : editProbs) {
             if(insertProbability>1 || insertProbability<0) {
                 throw new IllegalArgumentException(String.format(
                         "insert probabilities is not between 0 and 1"));
@@ -142,11 +142,11 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     public double combinedInsertProbabilities(List<Integer> inserts) {
 
         double factor = 1.0;
-        double[] insertFrequenciesValue = insertFreqs;
+        double[] editProbabilitiesValue = editProbs;
 
         for(Integer i : inserts){
             //inserts are in {1, ..., nInserts}; insertProbabilities are in {0, ..., nInserts - 1}
-            factor = factor * insertFrequenciesValue[i-1];
+            factor = factor * editProbabilitiesValue[i-1];
         }
         return factor;
 
@@ -157,7 +157,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      *
      */
     public double[] getInsertProbabilities() {
-        return insertFreqs;
+        return editProbs;
 
     }
 
@@ -167,7 +167,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     @Override
     public void store() {
-        insertFreqs = insertFrequencies.getDoubleValues();
+        editProbs = editProbabilities.getDoubleValues();
         super.store();
     }
 
@@ -176,7 +176,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
      */
     @Override
     public void restore() {
-        insertFreqs = insertFrequencies.getDoubleValues();
+        editProbs = editProbabilities.getDoubleValues();
         super.restore();
 
     }
@@ -184,7 +184,7 @@ public class TypewriterSubstitutionModelHomogeneous extends SubstitutionModel.Ba
     @Override
     protected boolean requiresRecalculation() {
         // we only get here if something is dirty
-        insertFreqs = insertFrequencies.getDoubleValues();
+        editProbs = editProbabilities.getDoubleValues();
         return true;
     }
 
