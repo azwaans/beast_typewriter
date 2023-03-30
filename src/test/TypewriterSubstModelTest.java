@@ -68,11 +68,13 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilities(){
 
 
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
+
 
         Sequence a = new Sequence("cell1", "1,2,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,2,0,0");
@@ -102,11 +104,13 @@ public class TypewriterSubstModelTest {
     @Test
     public void testTransitionProbabilitiesNoEdit(){
 
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
+
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,0,0,0");
@@ -131,11 +135,14 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilitiesSingleEdit(){
 
         // Arrange
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
+
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,0,0");
@@ -166,11 +173,14 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilities2Edits(){
 
         // Arrange
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
+
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,0");
@@ -199,11 +209,13 @@ public class TypewriterSubstModelTest {
     public void testTransitionProbabilitiesEditsAndSaturation(){
 
         // Arrange
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
+
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,2");
@@ -233,10 +245,11 @@ public class TypewriterSubstModelTest {
     public void test1ProbabilityForFullySaturated(){
 
         // Arrange
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
 
         Sequence a = new Sequence("cell1", "2,1,1,2,2");
@@ -256,17 +269,20 @@ public class TypewriterSubstModelTest {
 
         assertEquals(expectedProbability, calculatedProbability, 1e-10);
 
-
     }
 
     @Test
     public void test0ProbabilityForForbiddenTransition(){
 
-        RealParameter freqs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs, "estimate", false);
-        substModel.initByName( "editProbabilities", freqs, "frequencies" ,frequencies);
+        RealParameter editProbabilities = new RealParameter("0.8 0.2");
+
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
         substModel.setTargetBClength(5);
+
+
 
         Sequence a = new Sequence("cell1", "2,0,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,0,0,0");
