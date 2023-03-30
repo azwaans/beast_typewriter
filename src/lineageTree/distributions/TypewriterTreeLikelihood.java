@@ -96,7 +96,17 @@ public class TypewriterTreeLikelihood extends Distribution {
     public void initAndValidate() {
 
         arrayLength = arrayLengthInput.get().getValue();
+        if(arrayLength < 1 || (dataInput.get().getSiteCount() != arrayLength)) {
+            throw new IllegalArgumentException(String.format(
+                    "Invalid array length: Ensure that length >= 1 and matches alignment "));
+
+
+        }
         nodeCount = treeInput.get().getNodeCount();
+        if(nodeCount <=2) {
+            throw new IllegalArgumentException(String.format(
+                    "Invalid tree input: single node/branch. Ensure that #nodes>2 "));
+        }
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
@@ -127,6 +137,10 @@ public class TypewriterTreeLikelihood extends Distribution {
         originTime = 0.0;
         if (originTimeInput.get() != null) {
             originTime = originTimeInput.get().getValue();
+            if (originTime < 0.0) {
+                throw new IllegalArgumentException(String.format(
+                        "Invalid origin time input: ensure that origin>0"));
+            }
         }
 
         if(useScalingInput.get()){
@@ -273,7 +287,7 @@ public class TypewriterTreeLikelihood extends Distribution {
             List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
             ancSetNode.retainAll(ancSetChild2);
 
-            ancestralStates.put(node.getNr(), ancSetNode);
+            ancestralStates.put(node.getNr()+1, ancSetNode);
 
        }
 
@@ -284,7 +298,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected void initLeafPartials(int nodeNr) {
 
         //create and fill tip partials
-        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(nodeNr + currentStatesIndex[nodeNr]*nodeNr).size());
+        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr +1)).size());
         this.partialLikelihoods[0][nodeNr] = new double[leafPartialLikelihoods.length];
         this.partialLikelihoods[1][nodeNr] = new double[leafPartialLikelihoods.length];
         System.arraycopy(leafPartialLikelihoods, 0, this.partialLikelihoods[0][nodeNr], 0, leafPartialLikelihoods.length);
@@ -294,7 +308,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected void initLeafAncestors(int nodeNr) {
 
         List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(nodeNr));
-        ancestralStates.put(nodeNr, possibleLeafAncestors);
+        ancestralStates.put(nodeNr+1, possibleLeafAncestors);
 
     }
 
@@ -346,14 +360,14 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     public void calculateStates(int nodeNr, int child1Nr, int child2Nr) {
 
-        List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr + currentStatesIndex[child1Nr]*child1Nr);
-        List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr + currentStatesIndex[child2Nr]*child2Nr);
+        List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr +1 + currentStatesIndex[child1Nr]*(child1Nr+1));
+        List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr +1 + currentStatesIndex[child2Nr]*(child2Nr+1));
 
         List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
         // intersection of children ancestral states
         ancSetNode.retainAll(ancSetChild2);
 
-        ancestralStates.put(nodeNr + currentStatesIndex[nodeNr]*nodeNr, ancSetNode);
+        ancestralStates.put((nodeNr +1) + currentStatesIndex[nodeNr]*(nodeNr+1), ancSetNode);
     }
 
     public void setNodePartialsForUpdate(int nodeIndex) {
@@ -374,11 +388,11 @@ public class TypewriterTreeLikelihood extends Distribution {
     public void calculatePartials(int nodeNr, Node child1, Node child2, int categoryId ) {
 
         //initialize an array for the partials
-        double[] partials = new double[ancestralStates.get(nodeNr + currentStatesIndex[nodeNr]*nodeNr).size()];
+        double[] partials = new double[ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr +1)).size()];
 
-            for (int stateIndex = 0; stateIndex < ancestralStates.get(nodeNr + currentStatesIndex[nodeNr]*nodeNr).size(); ++stateIndex) {
+            for (int stateIndex = 0; stateIndex < ancestralStates.get((nodeNr +1) + currentStatesIndex[nodeNr]*(nodeNr+1)).size(); ++stateIndex) {
                 
-                List<Integer> startState = ancestralStates.get(nodeNr + currentStatesIndex[nodeNr]*nodeNr).get(stateIndex);
+                List<Integer> startState = ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr+1)).get(stateIndex);
                 
                 double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
                 double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
@@ -429,14 +443,14 @@ public class TypewriterTreeLikelihood extends Distribution {
 
         if (childNode.isLeaf()) {
 
-            List<Integer> endState = ancestralStates.get(childNode.getNr() + currentStatesIndex[childNode.getNr()]*childNode.getNr()).get(0);
+            List<Integer> endState = ancestralStates.get(childNode.getNr()+1 + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(0);
             statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance);
 
         } else {
 
-            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr() + currentStatesIndex[childNode.getNr()]*childNode.getNr()).size(); ++endStateIndex) {
+            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr()+1 + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).size(); ++endStateIndex) {
 
-                List<Integer> endState = ancestralStates.get(childNode.getNr() + currentStatesIndex[childNode.getNr()]*childNode.getNr()).get(endStateIndex);
+                List<Integer> endState = ancestralStates.get(childNode.getNr() +1  + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(endStateIndex);
 
                 // if the end state has non null partial likelihood
                 if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
