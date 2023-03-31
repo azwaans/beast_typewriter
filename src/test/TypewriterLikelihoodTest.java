@@ -36,8 +36,9 @@ public class TypewriterLikelihoodTest {
         substModel = new TypewriterSubstitutionModel();
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0.0 0.0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -260,9 +261,10 @@ public class TypewriterLikelihoodTest {
 
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
-        RealParameter editprobs = new RealParameter("1.0 0 0 0 0");
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);        //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
@@ -319,9 +321,10 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
-        RealParameter editprobs = new RealParameter("1.0 0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -393,9 +396,10 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
-        RealParameter editprobs = new RealParameter("1.0 0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -465,9 +469,10 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
-        RealParameter editprobs = new RealParameter("1.0 0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -539,9 +544,10 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
-        RealParameter editprobs = new RealParameter("1.0 0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -616,8 +622,9 @@ public class TypewriterLikelihoodTest {
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
 
         RealParameter editprobs = new RealParameter("0.5 0.5");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -700,8 +707,9 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -773,9 +781,10 @@ public class TypewriterLikelihoodTest {
 
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         RealParameter editprobs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -844,9 +853,10 @@ public class TypewriterLikelihoodTest {
 
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         RealParameter editprobs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model
@@ -913,9 +923,9 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
-
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
         //site model
         SiteModel siteM = new SiteModel();
@@ -987,10 +997,9 @@ public class TypewriterLikelihoodTest {
         //create a sub model with values
         TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
-
-
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", editprobs, "estimate", false);
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
 
         //site model

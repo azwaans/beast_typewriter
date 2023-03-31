@@ -72,7 +72,8 @@ public class TypewriterTreeLikelihood extends Distribution {
     protected double[] m_branchLengths;
     protected double[] storedBranchLengths;
 
-
+    //to be able to have current/stored states in an analog way to the partials array, ancestral states are we get/add
+    //states with key : (NodeNr + 1) + (current ? 0:1) * (NodeNr+1)
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][][] partialLikelihoods ;
     public double[] categoryLogLikelihoods ;
@@ -109,7 +110,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         m_siteModel.setDataType(dataInput.get().getDataType());
 
         substitutionModel = (TypewriterSubstitutionModel)  m_siteModel.substModelInput.get();
-        substitutionModel.targetBClength = arrayLength;
+        substitutionModel.setTargetBClength(arrayLength);
 
         m_branchLengths = new double[nodeCount];
         storedBranchLengths = new double[nodeCount];
@@ -173,6 +174,7 @@ public class TypewriterTreeLikelihood extends Distribution {
     public double calculateLogP() {
 
         final TreeInterface tree = treeInput.get();
+        substitutionModel.setTargetBClength(arrayLength);
 
         for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             //adjust clock rate for the given category
@@ -338,10 +340,13 @@ public class TypewriterTreeLikelihood extends Distribution {
             if (update1 != Tree.IS_CLEAN || update2 != Tree.IS_CLEAN) {
 
                 update |= (update1 | update2);
-                setNodePartialsForUpdate(nodeIndex);
-                setNodeStatesForUpdate(nodeIndex);
 
-                calculateStates(nodeIndex, child1.getNr(), child2.getNr());
+                if (update >= Tree.IS_FILTHY) {
+                    setNodeStatesForUpdate(nodeIndex);
+                    calculateStates(nodeIndex, child1.getNr(), child2.getNr());
+                }
+
+                setNodePartialsForUpdate(nodeIndex);
                 calculatePartials(nodeIndex, child1, child2, categoryId);
 
                 if (useScaling) {

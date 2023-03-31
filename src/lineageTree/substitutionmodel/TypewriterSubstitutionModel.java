@@ -28,7 +28,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
      */
     protected RealParameter editProbabilities;
     double[] editProbs;
-    public int targetBClength;
+     int targetBClength;
 
 
     @Override
@@ -163,7 +163,14 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
      */
     public double[] getInsertProbabilities() {
         return editProbs;
+    }
 
+    /**
+     * Function to set the array length for a particular alignment.
+     *
+     */
+    public void setTargetBClength(int length) {
+        targetBClength = length;
     }
 
 
