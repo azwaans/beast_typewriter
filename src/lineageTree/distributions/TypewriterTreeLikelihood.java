@@ -39,7 +39,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
-    final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC");
+    final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC", Validate.REQUIRED);
 
     final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
             Validate.OPTIONAL);

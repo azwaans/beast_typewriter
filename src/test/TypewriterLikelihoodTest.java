@@ -30,6 +30,8 @@ public class TypewriterLikelihoodTest {
     RealParameter origin;
     IntegerParameter arraylength;
 
+    // TODO test for input of an empty arrayLength 
+
     @Before
     public void setUp() {
         typewriterLikelihood = new TypewriterTreeLikelihood();
