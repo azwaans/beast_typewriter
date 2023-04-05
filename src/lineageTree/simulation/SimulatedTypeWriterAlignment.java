@@ -22,7 +22,6 @@ import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -118,7 +117,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
         private void simulate() {
             int nTaxa = tree.getLeafNodeCount();
 
-            TypewriterSubstitutionModelHomogeneous substModel = (TypewriterSubstitutionModelHomogeneous) siteModel.getSubstitutionModel();
+            TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
 
             double[] transitionProbs = substModel.getInsertProbabilities();
 

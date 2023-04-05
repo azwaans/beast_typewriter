@@ -6222,8 +6222,8 @@
                 <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" >
                     <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                     <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                    <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous" editfrequencies="@insertRates">
-                        <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0" estimate="false"/>
+                    <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@insertRates">
+                        <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                     </substModel>
                 </siteModel>
                 <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate"/>
