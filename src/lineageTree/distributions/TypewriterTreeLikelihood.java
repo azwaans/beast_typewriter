@@ -10,6 +10,7 @@ import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
+import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -39,7 +40,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
-    final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC");
+    final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC", Validate.REQUIRED);
 
     final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
             Validate.OPTIONAL);
@@ -170,9 +171,7 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     @Override
     public double calculateLogP() {
-
         final TreeInterface tree = treeInput.get();
-
         for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             //adjust clock rate for the given category
             traverseLikelihood(tree.getRoot(),i);
@@ -553,7 +552,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         System.arraycopy(currentStatesIndex, 0, storedStatesIndex, 0, nodeCount);
     }
 
-    //TODO do we need unstore??? 
+    //TODO do we need unstore???
 //    public void unstore() {
 //        System.arraycopy(storedPartialsIndex, 0, currentPartialsIndex, 0, nodeCount);
 //    }

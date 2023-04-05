@@ -92,8 +92,8 @@ public class TypewriterSubstModelTest {
 
         org.apache.commons.math.distribution.PoissonDistribution dist = new PoissonDistributionImpl(0.5);
         Double expectedProbability = dist.probability(1) * 0.2 ;
-
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5,targetBClength);
+
 
         // Assert
         assertEquals(expectedProbability, calculatedProbability,0.00001);
@@ -112,6 +112,7 @@ public class TypewriterSubstModelTest {
         int targetBClength = 5;
 
 
+
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,0,0,0");
 
@@ -122,9 +123,7 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
-
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5, targetBClength);
-
         Double expectedProbability = 0.6065306597126334;
 
         assertEquals(expectedProbability, calculatedProbability, 1e-10);
@@ -144,6 +143,7 @@ public class TypewriterSubstModelTest {
         int targetBClength = 5;
 
 
+
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,0,0");
 
@@ -155,9 +155,7 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
-
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5, targetBClength);
-
         // expectedProbability : draw 1 event on a Poisson process, with event frequency 0.8
         // P(1) * 0.8
         Double expectedProbability = 0.2426122638850534;
@@ -179,8 +177,8 @@ public class TypewriterSubstModelTest {
         RealParameter editProbabilities = new RealParameter("0.8 0.2");
         frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
-        int targetBClength = 5;
 
+        int targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,0");
@@ -192,7 +190,6 @@ public class TypewriterSubstModelTest {
         //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
-
 
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5, targetBClength);
 
@@ -214,8 +211,8 @@ public class TypewriterSubstModelTest {
         RealParameter editProbabilities = new RealParameter("0.8 0.2");
         frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
-        int targetBClength = 5;
 
+        int targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,0,0,0");
         Sequence b = new Sequence("cell2", "2,1,1,2,2");
@@ -227,7 +224,6 @@ public class TypewriterSubstModelTest {
         //internal representation of the sequences for the package:
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
-
 
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5, targetBClength);
 
@@ -250,6 +246,7 @@ public class TypewriterSubstModelTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
+
         int targetBClength = 5;
 
         Sequence a = new Sequence("cell1", "2,1,1,2,2");
@@ -263,8 +260,8 @@ public class TypewriterSubstModelTest {
         List<Integer> sequence_a = alignment.getCounts().get(0);
         List<Integer> sequence_b = alignment.getCounts().get(1);
 
-
         Double calculatedProbability = substModel.getSequenceTransitionProbability( sequence_a, sequence_b,0.5, targetBClength);
+
         Double expectedProbability = 1.0;
 
         assertEquals(expectedProbability, calculatedProbability, 1e-10);
@@ -280,9 +277,8 @@ public class TypewriterSubstModelTest {
 
         frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
         substModel.initByName( "editProbabilities", editProbabilities, "frequencies" ,frequencies);
+
         int targetBClength = 5;
-
-
 
         Sequence a = new Sequence("cell1", "2,0,0,0,0");
         Sequence b = new Sequence("cell2", "1,2,0,0,0");

@@ -29,7 +29,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     protected RealParameter editProbabilities;
     double[] editProbs;
 
-
     @Override
     public void initAndValidate() {
 
@@ -163,6 +162,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     public double[] getInsertProbabilities() {
         return editProbs;
     }
+
 
 
     /**

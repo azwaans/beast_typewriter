@@ -3,17 +3,14 @@ package test.lineageTree.simulation;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.IntegerData;
-import beast.evolution.datatype.UserDataType;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.tree.Tree;
 import beast.util.Randomizer;
 import beast.util.TreeParser;
 import feast.fileio.AlignmentFromNexus;
-import feast.simulation.SimulatedAlignment;
 import lineageTree.simulation.SimulatedTypeWriterAlignment;
 import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
-import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -40,7 +37,6 @@ public class SimulatedAlignmentTest {
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs, "estimate", false);
         submodel.initByName("editProbabilities", insertrates, "frequencies", frequencies);
-
 
         //site model
         SiteModel siteM = new SiteModel();

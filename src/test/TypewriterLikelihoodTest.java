@@ -30,6 +30,8 @@ public class TypewriterLikelihoodTest {
     RealParameter origin;
     IntegerParameter arraylength;
 
+    // TODO test for input of an empty arrayLength 
+
     @Before
     public void setUp() {
         typewriterLikelihood = new TypewriterTreeLikelihood();
@@ -117,7 +119,7 @@ public class TypewriterLikelihoodTest {
 
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test (expected = RuntimeException.class)
     public void testExceptionForOriginSmallerThanTreeHeightInput() {
         String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
@@ -274,6 +276,7 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -336,6 +339,7 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -411,6 +415,7 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -484,6 +489,7 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -559,6 +565,7 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -636,6 +643,7 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
 
@@ -723,6 +731,8 @@ public class TypewriterLikelihoodTest {
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("6");
         IntegerParameter arraylength = new IntegerParameter("5");
+
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
         
 
@@ -797,6 +807,8 @@ public class TypewriterLikelihoodTest {
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("6");
         IntegerParameter arraylength = new IntegerParameter("5");
+
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
 
 
@@ -869,6 +881,7 @@ public class TypewriterLikelihoodTest {
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("6");
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
 
 
@@ -881,10 +894,10 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
         double clockRate = 0.5;
 
-        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate, 5);
+        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate,5) * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate,5);
 
         //root node
-        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5);
+        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,5);
 
         //loglikelihood
         double LogPExpected = Math.log(partialOrigin);
@@ -937,6 +950,7 @@ public class TypewriterLikelihoodTest {
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("4");
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
 
 
@@ -951,6 +965,7 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         double clockRate = 0.5;
+
 
         double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5);
         double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5);
@@ -1013,6 +1028,7 @@ public class TypewriterLikelihoodTest {
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("4");
         IntegerParameter arrayLength = new IntegerParameter("5");
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
 
 
