@@ -34,11 +34,7 @@
         <sequence id="28" spec="Sequence" taxon="28"  value="1,4,1,0,0"/>
         <sequence id="29" spec="Sequence" taxon="29"  value="2,5,5,3,0"/>
     </data>
-
-<!--    <data  id="typewriterTest" spec="feast.fileio.AlignmentFromNexus" name="alignment"-->
-<!--           fileName="simulate_alignment_given_tree.seed=1.alignment.nexus">-->
-<!--        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="14"/>-->
-<!--    </data>-->
+    
 
     <map name="Uniform" >beast.math.distributions.Uniform</map>
     <map name="Exponential" >beast.math.distributions.Exponential</map>
