@@ -133,7 +133,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 double clockRate = siteModel.getRateForCategory(0, root);
                 Log.info.println("clock rates: " + clockRate);
 
-                int nPossibleInserts = 5;
+                int nPossibleInserts = nrOfInsertionsPerTarget;
                 //TODO rename to inserts, i.e nrOfNewInserts
                 long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
 
