@@ -10,7 +10,6 @@ import beast.core.Input.Validate;
 import beast.core.State;
 import beast.core.parameter.IntegerParameter;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
@@ -114,9 +113,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         m_branchLengths = new double[nodeCount];
         storedBranchLengths = new double[nodeCount];
 
-
         //TODO check that state count from alignment (i.e. data type) and substitution model are the same
-        //TODO INITIALISE EVERYTHING TO THE NUMBER OF NODES + MAX NUMBER OF STATES.
         ancestralStates = new Hashtable<>() ;
         partialLikelihoods = new double[2][nodeCount][];
 
@@ -174,7 +171,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         final TreeInterface tree = treeInput.get();
         for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             //adjust clock rate for the given category
-            traverseLikelihood(tree.getRoot(),i);
+            traverse(tree.getRoot(),i);
 
             if (originTime == 0.0) {
                 //sum of all partial likelihoods at the root
@@ -186,11 +183,18 @@ public class TypewriterTreeLikelihood extends Distribution {
 
             }
         }
-        logP =  log_sum(categoryLogLikelihoods, categoryLogLikelihoods.length) - Math.log(m_siteModel.getCategoryCount());
+        logP =  logSum(categoryLogLikelihoods, categoryLogLikelihoods.length) - Math.log(m_siteModel.getCategoryCount());
         return logP;
     }
 
-    double log_sum(double la[], int num_elements)
+    /**
+     * Calculates the log of the sum of a collection from the collection of log transformed values
+     * without having to exponentiate all elements
+     *
+     * @param la array of log 
+     * @param la size
+     */
+    double logSum(double la[], int numElements)
     {
         // Assume index_of_max() finds the maximum element
         // in the array and returns its index
@@ -206,7 +210,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         }
 
         double sum_exp = 0;
-        for (int i = 0; i < num_elements; i++) {
+        for (int i = 0; i < numElements; i++) {
             if (i == index) {
                 continue;
             }
@@ -232,7 +236,6 @@ public class TypewriterTreeLikelihood extends Distribution {
      *
      * @param nodeNumber
      */
-    //TODO be careful: if consecutive scaling was added: needed store and restore!
     protected void scalePartials(int nodeNumber) {
 
         double scaleFactor = 0.0;
@@ -261,34 +264,6 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     }
 
-    /**
-     * This function implements a postorder traversal of the tree to obtain all possible sets of ancestral state sets. This is only used for testing purposes
-     */
-
-    public void traverseAncestral(Node node) {
-
-       if(!node.isLeaf()) {
-
-            final Node child1 = node.getLeft();
-            final Node child2 = node.getRight();
-
-            traverseAncestral(child1);
-            traverseAncestral(child2);
-
-            List<List<Integer>> ancSetChild1 = ancestralStates.get(child1.getNr() );
-            List<List<Integer>> ancSetChild2 = ancestralStates.get(child2.getNr() );
-
-           // intersection of children ancestral states
-            List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
-            ancSetNode.retainAll(ancSetChild2);
-
-            ancestralStates.put(node.getNr()+1, ancSetNode);
-
-       }
-
-    }
-
-
 
     protected void initLeafPartials(int nodeNr) {
 
@@ -309,10 +284,10 @@ public class TypewriterTreeLikelihood extends Distribution {
 
 
     /**
-     * This function implements a postorder traversal of the tree to fill the partialLikelihood array
+     * This function implements a postorder traversal of the tree to fill the ancestralStates hashmap and corresponding partialLikelihood array.
      *
      */
-    protected int traverseLikelihood(Node node, int categoryId) {
+    protected int traverse(Node node, int categoryId) {
 
         int update = (node.isDirty() | hasDirt);
         int nodeIndex = node.getNr();
@@ -328,9 +303,9 @@ public class TypewriterTreeLikelihood extends Distribution {
         if(!node.isLeaf()) {
 
             final Node child1 = node.getLeft();
-            final int update1 = traverseLikelihood(child1, categoryId);
+            final int update1 = traverse(child1, categoryId);
             final Node child2 = node.getRight();
-            final int update2 = traverseLikelihood(child2, categoryId);
+            final int update2 = traverse(child2, categoryId);
 
             // If either child node was updated then update this node too
             if (update1 != Tree.IS_CLEAN || update2 != Tree.IS_CLEAN) {
@@ -542,29 +517,18 @@ public class TypewriterTreeLikelihood extends Distribution {
 
     @Override
     public void store() {
-//        Log.info.println("store");
-//        if (likelihoodCore != null) {
-//            likelihoodCore.store();
-//        }
+
         super.store();
         System.arraycopy(m_branchLengths, 0, storedBranchLengths, 0, m_branchLengths.length);
         System.arraycopy(currentPartialsIndex, 0, storedPartialsIndex, 0, nodeCount);
         System.arraycopy(currentStatesIndex, 0, storedStatesIndex, 0, nodeCount);
     }
 
-    //TODO do we need unstore???
-//    public void unstore() {
-//        System.arraycopy(storedPartialsIndex, 0, currentPartialsIndex, 0, nodeCount);
-//    }
+    //TODO do we need unstore??? We think we don't because when scaling is active, it is for the entire likelihood
 
     @Override
     public void restore() {
 
-//        Log.info.println("restore");
-
-//        if (likelihoodCore != null) {
-//            likelihoodCore.restore();
-//        }
         super.restore();
         double[] tmp = m_branchLengths;
         m_branchLengths = storedBranchLengths;

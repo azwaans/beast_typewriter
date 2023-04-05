@@ -4,7 +4,6 @@ package lineageTree.substitutionmodel;
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.core.util.Log;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.EigenDecomposition;
 import beast.evolution.substitutionmodel.SubstitutionModel;
@@ -128,11 +127,13 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
      * @param dist is the poisson
      */
     public double calculateAbsorbingStateProbability(org.apache.commons.math.distribution.PoissonDistribution dist,int nbrOfPossibleInserts) {
+
         double absorbingStateProbability = 1.0;
-        //TODO use cumulative distribution until nrOfPossible inserts
+
         for(int i = 0;  i < nbrOfPossibleInserts ; i++) {
             absorbingStateProbability -= dist.probability(i);
         }
+
         return absorbingStateProbability;
 
     }
@@ -192,7 +193,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
     }
 
     /**
-     * TODO: Ask Tim: How to deal with this class in the inheritance scheme and what to do with these
+     * TODO: remove this (may require inheriting from another superclass)
      * methods that we do not need.
      * this not used in the current implementation because we do not use a matrix format
      */

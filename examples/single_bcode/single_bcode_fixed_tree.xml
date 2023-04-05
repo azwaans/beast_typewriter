@@ -2,7 +2,7 @@
 
 <!--    this is an alignment simulated on the fixed tree-->
     <data  id="simulatedAlignment" spec="Alignment" name="alignment" >
-        <userDataType spec="beast.evolution.datatype.IntegerData"/>
+        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="20"/>
         <sequence id="0" spec="Sequence" taxon="0"  value="5,6,7,12,5"/>
         <sequence id="1" spec="Sequence" taxon="1"  value="5,6,7,3,6"/>
         <sequence id="2" spec="Sequence" taxon="2"  value="5,6,7,5,5"/>
@@ -367,15 +367,14 @@
 
 
       <!-- editing model parameters -->
-      <parameter id="insertRates" spec="parameter.RealParameter"
-		   lower="0.0" name="stateNode"
-		   upper="1000"> 
+        <!-- editing model parameters -->
+        <parameter id="insertRates" spec="parameter.RealParameter"
+                   lower="0.0" name="stateNode"
+                   upper="1000">
 
-	0.1 0.1 0.1 0.1 0.1
-	0.025 0.025 0.025 0.025 0.1
-	0.1 0.1 0.1
-	
-      </parameter>
+            0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.01 0.82
+
+        </parameter>
 
       <parameter id="clockRate" spec="parameter.RealParameter"
 			   dimension="1" lower="0.0" name="stateNode"
@@ -437,9 +436,7 @@
                     <parameter  spec="parameter.RealParameter"
                                 estimate="false"
                                 name="alpha">
-                      1.5 1.5 1.5 1.5 1.5
-		      1.5 1.5 1.5 1.5 1.5
-		      1.5 1.5 1.5 
+                      1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5
                     </parameter>
                 </Dirichlet>
             </prior>
@@ -474,28 +471,16 @@
 	
         <!-- TiDesimulatedTree tree likelihood -->
         <distribution id="likelihood" spec="util.CompoundDistribution">
-          <distribution id="treeLikelihood"
-                  spec="lineageTree.distributions.TypewriterTreeLikelihood"
-                  data="@simulatedAlignment" tree="@simulatedTree"
-                  origin="@origin" useScaling="true">
+          <distribution id="treeLikelihood" spec="lineageTree.distributions.TypewriterTreeLikelihood" data="@simulatedAlignment" tree="@simulatedTree" origin="@origin" useScaling="true" arrayLength="5">
+                <siteModel id="SiteModel.s:simulatedAlignment" spec="SiteModel">
+                    <mutationRate idref="clockRate"/>
+                    <parameter id="proportionInvariant.s:simulatedAlignment" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0 </parameter>
+                    <substModel spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@insertRates">
+                            <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
+                    </substModel>
 
-                    <siteModel id="SiteModel.s:simulatedAlignment" spec="SiteModel">
-                        <mutationRate idref="clockRate"/>
-                        <parameter id="proportionInvariant.s:simulatedAlignment"
-                       spec="parameter.RealParameter"
-                       estimate="false" lower="0.0"
-                       name="proportionInvariant"
-                       upper="1.0">0.0
-                </parameter>
-
-                        <substModel
-                spec="lineageTree.substitutionmodel.TypewriterSubstitutionModelHomogeneous"
-                editfrequencies="@insertRates">
-                          <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0" estimate="false"/>
-                        </substModel>
-
-                    </siteModel>
-                    <branchRateModel id="StrictClock.c:simulatedAlignment" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="1.0"/>
+                </siteModel>
+                <branchRateModel id="StrictClock.c:simulatedAlignment" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="1.0"/>
                 </distribution>
             </distribution>
     </distribution>
