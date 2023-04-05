@@ -28,7 +28,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
      */
     protected RealParameter editProbabilities;
     double[] editProbs;
-     int targetBClength;
 
 
     @Override
@@ -73,7 +72,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
      * @param startSequence  is a sequence state at a parent node
      * @param endSequence is a sequence state at a child node
      */
-    public double getSequenceTransitionProbability(final List<Integer> startSequence, final List<Integer> endSequence, double distance) {
+    public double getSequenceTransitionProbability(final List<Integer> startSequence, final List<Integer> endSequence, double distance, int arrayLength) {
 
         List<Integer> startState = new ArrayList(startSequence);
         List<Integer> endState = new ArrayList(endSequence);
@@ -96,7 +95,7 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
         List<Integer> newInserts = endState;
 
         //available positions are targetBClength length - number of edited positions
-        int nrOfPossibleInserts = targetBClength - startState.size();
+        int nrOfPossibleInserts = arrayLength - startState.size();
 
         //initialise the poisson distribution with mean rate * distance
         org.apache.commons.math.distribution.PoissonDistribution poissonDistribution = new PoissonDistributionImpl(distance);
@@ -163,14 +162,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
      */
     public double[] getInsertProbabilities() {
         return editProbs;
-    }
-
-    /**
-     * Function to set the array length for a particular alignment.
-     *
-     */
-    public void setTargetBClength(int length) {
-        targetBClength = length;
     }
 
 

@@ -108,9 +108,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
-
         substitutionModel = (TypewriterSubstitutionModel)  m_siteModel.substModelInput.get();
-        substitutionModel.setTargetBClength(arrayLength);
 
         m_branchLengths = new double[nodeCount];
         storedBranchLengths = new double[nodeCount];
@@ -174,7 +172,6 @@ public class TypewriterTreeLikelihood extends Distribution {
     public double calculateLogP() {
 
         final TreeInterface tree = treeInput.get();
-        substitutionModel.setTargetBClength(arrayLength);
 
         for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             //adjust clock rate for the given category
@@ -446,7 +443,7 @@ public class TypewriterTreeLikelihood extends Distribution {
         if (childNode.isLeaf()) {
 
             List<Integer> endState = ancestralStates.get(childNode.getNr()+1 + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(0);
-            statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance);
+            statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength);
 
         } else {
 
@@ -457,7 +454,7 @@ public class TypewriterTreeLikelihood extends Distribution {
                 // if the end state has non null partial likelihood
                 if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
 
-                    statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance) *
+                    statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength) *
                             partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex];
 
                 }
