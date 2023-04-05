@@ -119,7 +119,7 @@ public class TypewriterLikelihoodTest {
 
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test (expected = RuntimeException.class)
     public void testExceptionForOriginSmallerThanTreeHeightInput() {
         String newick = "(CHILD1:5,CHILD2:5)";
         Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
@@ -275,7 +275,10 @@ public class TypewriterLikelihoodTest {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
+        
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -337,7 +340,9 @@ public class TypewriterLikelihoodTest {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -412,7 +417,9 @@ public class TypewriterLikelihoodTest {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -485,7 +492,9 @@ public class TypewriterLikelihoodTest {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -560,7 +569,9 @@ public class TypewriterLikelihoodTest {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
         //test ancestral states sets calculations
@@ -637,7 +648,9 @@ public class TypewriterLikelihoodTest {
         RealParameter meanRate = new RealParameter("0.5");
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
 
 
@@ -724,7 +737,10 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("6");
-        IntegerParameter arraylength = new IntegerParameter("5");
+               IntegerParameter arraylength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
 
 
@@ -739,12 +755,12 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         double clockRate = 0.5;
 
-        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate);
-        double partial1000Internal = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate);
-        double partial1200Internal = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate);
+        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate,arrayLength_calc);
+        double partial1000Internal = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate,arrayLength_calc);
+        double partial1200Internal = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate,arrayLength_calc);
 
         //root node
-        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate) + partial1000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate) + partial1200Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate);
+        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,arrayLength_calc) + partial1000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate,arrayLength_calc) + partial1200Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate,arrayLength_calc);
 
         //loglikelihood
         double LogPExpected = Math.log(partialOrigin);
@@ -799,6 +815,9 @@ public class TypewriterLikelihoodTest {
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("6");
         IntegerParameter arraylength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
+
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
 
 
@@ -814,12 +833,12 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         double clockRate = 0.5;
 
-        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele0, allele122, 5 * clockRate);
-        double partial1000Internal = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele1, allele122, 5 * clockRate);
-        double partial1200Internal = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele12, allele122, 5 * clockRate);
+        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele0, allele122, 5 * clockRate,arrayLength_calc);
+        double partial1000Internal = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele1, allele122, 5 * clockRate,arrayLength_calc);
+        double partial1200Internal = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele12, allele122, 5 * clockRate,arrayLength_calc);
 
         //root node
-        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate) + partial1000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate) + partial1200Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate);
+        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,arrayLength_calc) + partial1000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate,arrayLength_calc) + partial1200Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate,arrayLength_calc);
 
         //loglikelihood
         double LogPExpected = Math.log(partialOrigin);
@@ -870,7 +889,9 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("6");
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
 
 
@@ -883,10 +904,10 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
         double clockRate = 0.5;
 
-        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate);
+        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate,arrayLength_calc);
 
         //root node
-        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate);
+        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,arrayLength_calc);
 
         //loglikelihood
         double LogPExpected = Math.log(partialOrigin);
@@ -938,7 +959,9 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("4");
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
 
 
@@ -954,15 +977,15 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         double clockRate = 0.5;
 
-        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate);
-        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate);
+        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate,arrayLength_calc);
+        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate,arrayLength_calc);
 
-        double partial1200Internal1 = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate);
+        double partial1200Internal1 = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate,arrayLength_calc);
 
-        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate) + partial1200Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate));
+        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,arrayLength_calc) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate,arrayLength_calc) + partial1200Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate,arrayLength_calc)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate,arrayLength_calc));
 
         //root node
-        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate);
+        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate,arrayLength_calc);
 
         //loglikelihood
         double LogPExpected = Math.log(partialOrigin);
@@ -1014,7 +1037,9 @@ public class TypewriterLikelihoodTest {
         StrictClockModel clockModel = new StrictClockModel();
         clockModel.initByName("clock.rate", meanRate);
         RealParameter origin = new RealParameter("4");
-        IntegerParameter arrayLength = new IntegerParameter("5");
+               IntegerParameter arrayLength = new IntegerParameter("5");
+        int arrayLength_calc = 5;
+     
         likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
 
 
@@ -1031,14 +1056,14 @@ public class TypewriterLikelihoodTest {
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
         double clockRate = 0.5;
 
-        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele0, allele11, 1 * clockRate);
-        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate) * substitutionModel.getSequenceTransitionProbability(allele1, allele11, 1 * clockRate);
+        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele0, allele11, 1 * clockRate,arrayLength_calc);
+        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate,arrayLength_calc) * substitutionModel.getSequenceTransitionProbability(allele1, allele11, 1 * clockRate,arrayLength_calc);
 
-        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate));
+        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,arrayLength_calc) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate,arrayLength_calc)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate,arrayLength_calc));
 
 
         //root node
-        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate);
+        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate,arrayLength_calc);
 
         //loglikelihood
         double LogPExpected = Math.log(partialOrigin);
