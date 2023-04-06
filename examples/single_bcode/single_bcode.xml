@@ -2,7 +2,7 @@
 
      dataType has to be set to integer and the value must contain a ',' s.t. the class recognizes it as a comma separated string of integers
     <data  id="typewriterTest" spec="Alignment" name="alignment" >
-        <userDataType spec="beast.evolution.datatype.IntegerData" nrOfStates="20"/>
+        <userDataType spec="beast.evolution.datatype.IntegerData"/>
         <sequence id="0" spec="Sequence" taxon="0"  value="1,1,2,11,0"/>
         <sequence id="1" spec="Sequence" taxon="1"  value="3,8,5,0,0"/>
         <sequence id="2" spec="Sequence" taxon="2"  value="2,0,0,0,0"/>
@@ -65,7 +65,7 @@
                 <taxonset idref="TaxonSet.0"/>
             </tree>
 
-            <parameter id="editProbabilities" spec="parameter.RealParameter"
+            <parameter id="editProbs" spec="parameter.RealParameter"
                        dimension="19" lower="0.0" name="stateNode"
                        upper="1.0">
                 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158
@@ -129,7 +129,7 @@
                     <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" gammaCategoryCount="2" shape="7.907">
                         <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbabilities">
+                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
@@ -166,6 +166,7 @@
             <log idref="popsize"/>
             <log idref="growthRate"/>
             <log idref="clockRate.c:typewriterTest"/>
+            <log idref="editProbs"/>
         </logger>
 
         <logger id="screenlog" spec="Logger" logEvery="1">

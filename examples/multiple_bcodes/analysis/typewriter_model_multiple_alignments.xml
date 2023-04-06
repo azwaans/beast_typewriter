@@ -6074,7 +6074,7 @@
             </stateNode>
             
             <!-- editing model parameters -->
-            <parameter id="insertProbabilities" spec="parameter.RealParameter"
+            <parameter id="editProbs" spec="parameter.RealParameter"
                        lower="0.0" name="stateNode"
                        upper="1000">
 
@@ -6133,8 +6133,8 @@
 
                 <!-- 95% HPD [0.00065, 0.25, 0.95] -->
                 <prior
-                        id="insertProbabilitiesPrior" name="distribution"
-                        x="@insertProbabilities">
+                        id="editProbsPrior" name="distribution"
+                        x="@editProbs">
                     <Dirichlet name="distr" spec="beast.math.distributions.Dirichlet">
                         <parameter  spec="parameter.RealParameter"
                                     estimate="false"
@@ -6182,7 +6182,7 @@
                     <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" >
                         <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@insertProbabilities">
+                        <substModel id="submodel.s:typewriterTest" spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
@@ -6225,9 +6225,9 @@
         </distribution>
 
         <!-- phylogenetic operators -->
-        <operator id="insertProbabilitiesOperator"
+        <operator id="editProbsOperator"
                   spec="DeltaExchangeOperator"
-                  parameter="@insertProbabilities"
+                  parameter="@editProbs"
                   weight="60.0"/>
 
         <operator id="clockRateScaler" spec="ScaleOperator"
@@ -6262,7 +6262,7 @@
             <log idref="prior"/>
             <log id="treeHeight.t:alignment" spec="beast.evolution.tree.TreeHeightLogger" tree="@typewriterTree"/>
             <log id="treeLength.t:alignment" spec="multitypetree.util.TreeLengthLogger" tree="@typewriterTree"/>
-            <log idref="insertProbabilities"/>
+            <log idref="editProbs"/>
             <log idref="birthRate"/>
             <log idref="samplingProportion"/>
             <log idref="deathRate"/>

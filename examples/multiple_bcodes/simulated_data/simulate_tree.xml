@@ -13,7 +13,8 @@
                  :feast.simulation
                  :bdmmprime.distribution
                  :bdmmprime.parameterization
-                 :bdmmprime.mapping">
+                 :bdmmprime.mapping
+                 :bdmmprime.trajectories">
 
 
     <run spec="GPSimulator" nSims="1">
@@ -55,19 +56,19 @@
         </simulationObject>
 
 
-        <logger spec="Logger" logEvery="1">
-            <log idref="finalSampleOffset"/>
-            <log idref="treeStat"/>
-        </logger>
+<!--        <logger spec="Logger" logEvery="1" >-->
+<!--            <log idref="finalSampleOffset"/>-->
+<!--            <log idref="treeStat"/>-->
+<!--        </logger>-->
 
-        <logger spec="Logger" logEvery="1" fileName="$(filebase).$(seed).log">
-            <log idref="finalSampleOffset"/>
-            <log id="treeStat" spec="beast.evolution.tree.TreeStatLogger" tree="@simulatedTree"/>
-        </logger>
+<!--        <logger spec="Logger" logEvery="1" fileName="$(filebase).$(seed).log">-->
+<!--            <log idref="finalSampleOffset"/>-->
+<!--            <log id="treeStat" spec="beast.evolution.tree.TreeStatLogger" tree="@simulatedTree"/>-->
+<!--        </logger>-->
 
-        <logger spec="Logger" mode="tree" logEvery="1" fileName="$(filebase).$(seed).trees">
-            <log idref="simulatedTree"/>
-        </logger>
+<!--        <logger spec="Logger" mode="tree" logEvery="1" fileName="$(filebase).$(seed).trees">-->
+<!--            <log idref="simulatedTree"/>-->
+<!--        </logger>-->
 
         <!-- <logger spec="Logger" logEvery="1" fileName="$(filebase).$(seed).traj"> -->
         <!--   <log id="trajectory" spec="bdmmprime.trajectories.simulation.SimulatedTrajectoryLogger"> -->

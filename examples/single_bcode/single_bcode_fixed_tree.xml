@@ -354,7 +354,7 @@
 
 
         <!-- editing model parameters -->
-        <parameter id="insertRates" spec="parameter.RealParameter"
+        <parameter id="editProbs" spec="parameter.RealParameter"
                    lower="0.0" name="stateNode"
                    upper="1000">
 
@@ -409,8 +409,8 @@
 	    
             <!-- prior distribution on phylogenetic parameters -->
             <prior
-                   id="insertRatesPrior" name="distribution"
-                   x="@insertRates">
+                   id="editProbsPrior" name="distribution"
+                   x="@editProbs">
                 <Dirichlet name="distr" spec="beast.math.distributions.Dirichlet">
                     <parameter  spec="parameter.RealParameter"
                                 estimate="false"
@@ -454,7 +454,7 @@
                 <siteModel id="SiteModel.s:simulatedAlignment" spec="SiteModel">
                     <mutationRate idref="clockRate"/>
                     <parameter id="proportionInvariant.s:simulatedAlignment" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0 </parameter>
-                    <substModel spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@insertRates">
+                    <substModel spec="lineageTree.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                     </substModel>
 
@@ -468,7 +468,7 @@
     <!-- phylogenetic operators -->
     <operator id="insertProbabilitiesOperator"
 	      spec="DeltaExchangeOperator"
-	      parameter="@insertRates"
+	      parameter="@editProbs"
 	      weight="10.0"/>
 
     <operator id="clockRateScaler" spec="ScaleOperator"
@@ -493,7 +493,7 @@
         <log idref="treeLikelihood"/>
         <log id="treeHeight.t:simulatedAlignment" spec="beast.evolution.tree.TreeHeightLogger" tree="@simulatedTree"/>
         <log id="treeLength.t:simulatedAlignment" spec="multitypetree.util.TreeLengthLogger" tree="@simulatedTree"/>
-        <log idref="insertRates"/>
+        <log idref="editProbs"/>
         <log idref="birthRate"/>
         <log idref="samplingProportion"/>
         <log idref="deathRate"/>
