@@ -2,7 +2,7 @@
 
      dataType has to be set to integer and the value must contain a ',' s.t. the class recognizes it as a comma separated string of integers
     <data  id="typewriterTest" spec="Alignment" name="alignment" >
-        <userDataType spec="beast.evolution.datatype.ScarData" nrOfStates="20"/>
+        <userDataType spec="beast.evolution.datatype.IntegerData" nrOfStates="20"/>
         <sequence id="0" spec="Sequence" taxon="0"  value="1,1,2,11,0"/>
         <sequence id="1" spec="Sequence" taxon="1"  value="3,8,5,0,0"/>
         <sequence id="2" spec="Sequence" taxon="2"  value="2,0,0,0,0"/>
