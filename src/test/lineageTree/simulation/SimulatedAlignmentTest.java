@@ -1,16 +1,16 @@
 package test.lineageTree.simulation;
 
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
-import beast.evolution.datatype.IntegerData;
-import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.tree.Tree;
-import beast.util.Randomizer;
-import beast.util.TreeParser;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.DataType;
+import beast.base.evolution.datatype.IntegerData;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.Randomizer;
+import beast.base.evolution.tree.TreeParser;
 import feast.fileio.AlignmentFromNexus;
-import lineageTree.simulation.SimulatedTypeWriterAlignment;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
+import typewriter.simulation.SimulatedTypeWriterAlignment;
+import typewriter.substitutionmodel.TypewriterSubstitutionModel;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

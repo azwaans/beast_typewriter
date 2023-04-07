@@ -1,17 +1,16 @@
 package test;
 
-import beast.core.Description;
-import beast.core.parameter.IntegerParameter;
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.branchratemodel.StrictClockModel;
-import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.tree.Tree;
-import beast.util.TreeParser;
-import lineageTree.distributions.TypewriterTreeLikelihood;
-import lineageTree.substitutionmodel.TypewriterSubstitutionModel;
+import beast.base.inference.parameter.IntegerParameter;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.branchratemodel.StrictClockModel;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeParser;
+import typewriter.likelihood.TypewriterTreeLikelihood;
+import typewriter.substitutionmodel.TypewriterSubstitutionModel;
 import org.junit.Before;
 import org.junit.Test;
 

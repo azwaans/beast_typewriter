@@ -1,6 +1,6 @@
 package test;
 
-import beast.core.Description;
+import beast.base.core.Description;
 
 
 @Description("Tests for Typewriter Data on the ancestral state reconstruction and the likelihood")

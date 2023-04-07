@@ -1,7 +1,7 @@
-package beast.evolution.datatype;
+package typewriter.datatype;
 
-import beast.core.Description;
-import beast.evolution.datatype.DataType.Base;
+import beast.base.core.Description;
+import beast.base.evolution.datatype.DataType.Base;
 
 @Description("Datatype for Typewriter Data")
 public class TypewriterData extends Base {

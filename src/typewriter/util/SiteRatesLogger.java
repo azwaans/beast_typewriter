@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package lineageTree.util;
+package typewriter.util;
 
-import beast.core.BEASTObject;
-import beast.core.Input;
-import beast.core.Input.Validate;
-import beast.core.Loggable;
-import beast.core.Logger;
-import beast.core.util.ESS;
-import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.tree.Tree;
-import beast.math.statistic.DiscreteStatistics;
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+import beast.base.core.Input.Validate;
+import beast.base.core.Loggable;
+import beast.base.inference.Logger;
+import beast.base.inference.util.ESS;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.tree.Tree;
+import beast.base.util.DiscreteStatistics;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
