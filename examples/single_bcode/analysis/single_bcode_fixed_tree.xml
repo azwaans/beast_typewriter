@@ -450,11 +450,11 @@
 	
         <!-- TiDesimulatedTree tree likelihood -->
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
-          <distribution id="treeLikelihood" spec="typewriter.likelihood.TypewriterTreeLikelihood" data="@simulatedAlignment" tree="@simulatedTree" origin="@origin" useScaling="true" arrayLength="5">
+          <distribution id="treeLikelihood" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" data="@simulatedAlignment" tree="@simulatedTree" origin="@origin" useScaling="true" arrayLength="5">
                 <siteModel id="SiteModel.s:simulatedAlignment" spec="SiteModel">
                     <mutationRate idref="clockRate"/>
                     <parameter id="proportionInvariant.s:simulatedAlignment" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0 </parameter>
-                    <substModel spec="typewriter.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
+                    <substModel spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                     </substModel>
 

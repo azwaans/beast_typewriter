@@ -1,4 +1,4 @@
-package typewriter.simulation;
+package typewriter.evolution.simulation;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -17,7 +17,7 @@ import beast.base.util.Randomizer;
 import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
-import typewriter.substitutionmodel.TypewriterSubstitutionModel;
+import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;

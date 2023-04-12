@@ -1,4 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautistatus='' namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:bdsky" required="" version="2.7">
+    <beast version='2.0'
+           namespace='beast.base.inference
+                 :beast.base.inference.parameter
+                 :beast.base.inference.operator
+                 :beast.base.evolution.operator
+                 :beast.base.evolution.alignment
+                 :bdsky.evolution
+                 :beast.base.evolution.sitemodel
+                 :beast.base.evolution.tree.TreeLengthLogger'
+            >
+
+
 
     <data  id="data_ATGGTAAG" spec="Alignment" name="alignment" >
         <userDataType spec="beast.base.evolution.datatype.IntegerData"/>
@@ -6066,7 +6077,7 @@
         <state id="state" spec="State" storeEvery="5000">
 
             <!--starting tree -->
-            <stateNode id="typewriterTree" spec="typewriter.tree.startingTree" rootHeight="20"
+            <stateNode id="typewriterTree" spec="typewriter.evolution.tree.startingTree" rootHeight="20"
                        taxa="@data_ATGGTAAG" scarringHeight="20"
                        scarringDuration="5" sequencesAreClustered="false">
                 <trait idref="dateTrait.t:alignment"/>
@@ -6178,48 +6189,48 @@
             <!-- Typewriter tree likelihood -->
             <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
                 <!-- Alignment 1 -->
-                <distribution id="treeLikelihood.1" spec="typewriter.likelihood.TypewriterTreeLikelihood" data="@data_ATGGTAAG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.1" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" data="@data_ATGGTAAG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                     <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" >
                         <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="typewriter.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
+                        <substModel id="submodel.s:typewriterTest" spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
                     <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate"/>
                     <!-- Alignment 2 -->
                 </distribution>
-                <distribution id="treeLikelihood.2" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_ATTTATAT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.2" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_ATTTATAT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 3 -->
-                <distribution id="treeLikelihood.3" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_ATTTGGTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.3" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_ATTTGGTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 4 -->
-                <distribution id="treeLikelihood.4" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_GCAGGGTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.4" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_GCAGGGTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 5 -->
-                <distribution id="treeLikelihood.5" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_GTAAAGAT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.5" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_GTAAAGAT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 6 -->
-                <distribution id="treeLikelihood.6" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TAGATTTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.6" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TAGATTTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 7 -->
-                <distribution id="treeLikelihood.7" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGCGATTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.7" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGCGATTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 8 -->
-                <distribution id="treeLikelihood.8" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGGACGAC" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
+                <distribution id="treeLikelihood.8" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGGACGAC" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
                 </distribution>
                 <!-- Alignment 9 -->
-                <distribution id="treeLikelihood.9" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGGTTTTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
+                <distribution id="treeLikelihood.9" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGGTTTTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
                 </distribution>
                 <!-- Alignment 10 -->
-                <distribution id="treeLikelihood.10" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTAGATTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.10" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTAGATTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 11 -->
-                <distribution id="treeLikelihood.11" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTGAGGTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.11" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTGAGGTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 12 -->
-                <distribution id="treeLikelihood.12" spec="typewriter.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTTCGTGA" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
+                <distribution id="treeLikelihood.12" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTTCGTGA" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
                 </distribution>
             </distribution>
         </distribution>
@@ -6261,7 +6272,7 @@
             <log idref="likelihood"/>
             <log idref="prior"/>
             <log id="treeHeight.t:alignment" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@typewriterTree"/>
-            <log id="treeLength.t:alignment" spec="multitypetree.util.TreeLengthLogger" tree="@typewriterTree"/>
+            <log id="treeLength.t:alignment" spec="beast.base.evolution.tree.TreeStatLogger" logHeigth="true" tree="@typewriterTree"/>
             <log idref="editProbs"/>
             <log idref="birthRate"/>
             <log idref="samplingProportion"/>

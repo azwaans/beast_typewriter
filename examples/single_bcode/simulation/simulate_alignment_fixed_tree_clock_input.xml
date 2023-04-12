@@ -39,7 +39,7 @@
     <run spec="GPSimulator" nSims="1">
 
         <!-- simulate sequence -->
-        <simulationObject id="seqAlign" spec="typewriter.simulation.SimulatedTypeWriterAlignment"
+        <simulationObject id="seqAlign" spec="typewriter.evolution.simulation.SimulatedTypeWriterAlignment"
                           outputFileName="./typewriter_data.clock$(clock).seed$(seed).alignment.nexus"
                           numberOfTargets="1" nrOfInsertionsPerTarget="5"
                           tree="@simulatedTree" origin="@origin">
@@ -50,7 +50,7 @@
 
 
                 <substModel id="TypeWriterSubstModel"
-                            spec="typewriter.substitutionmodel.TypewriterSubstitutionModel"
+                            spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel"
                             editProbabilities="@editProbs" >
                     <frequencies id="freq"
                                  spec="beast.base.evolution.substitutionmodel.Frequencies"

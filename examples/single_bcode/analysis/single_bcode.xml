@@ -125,11 +125,11 @@
 
             <!-- Tree likelihood -->
             <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
-                <distribution id="treeLikelihood.typewriterTest" spec="typewriter.likelihood.TypewriterTreeLikelihood" data="@typewriterTest" tree="@Tree.t:typewriterTest" origin="60" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.typewriterTest" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" data="@typewriterTest" tree="@Tree.t:typewriterTest" origin="60" useScaling="true" arrayLength="5">
                     <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" gammaCategoryCount="2" shape="7.907">
                         <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="typewriter.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
+                        <substModel id="submodel.s:typewriterTest" spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                         </substModel>
                     </siteModel>

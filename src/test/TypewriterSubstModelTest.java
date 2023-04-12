@@ -5,7 +5,7 @@ import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.substitutionmodel.Frequencies;
-import typewriter.substitutionmodel.TypewriterSubstitutionModel;
+import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.junit.Before;
 import org.junit.Test;

@@ -9,8 +9,8 @@ import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeParser;
-import typewriter.likelihood.TypewriterTreeLikelihood;
-import typewriter.substitutionmodel.TypewriterSubstitutionModel;
+import typewriter.evolution.likelihood.TypewriterTreeLikelihood;
+import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
 import org.junit.Before;
 import org.junit.Test;
 

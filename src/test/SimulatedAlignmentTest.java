@@ -1,19 +1,17 @@
-package test.lineageTree.simulation;
-
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.IntegerData;
 import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Tree;
-import beast.base.util.Randomizer;
 import beast.base.evolution.tree.TreeParser;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.util.Randomizer;
 import feast.fileio.AlignmentFromNexus;
-import typewriter.simulation.SimulatedTypeWriterAlignment;
-import typewriter.substitutionmodel.TypewriterSubstitutionModel;
 import org.junit.Test;
-
 import static junit.framework.Assert.assertEquals;
+
+import typewriter.evolution.simulation.SimulatedTypeWriterAlignment;
+import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
 
 public class SimulatedAlignmentTest {
 
@@ -22,7 +20,7 @@ public class SimulatedAlignmentTest {
     public void testSimulationOnCherry(){
 
         Integer sequenceLength = 1;
-        String outputFileName = "./src/test/lineageTree/simulation/simAl.nexus";
+        String outputFileName = "/Users/azwaans/all_beasts2.7/typewriter/src/test/simAl.nexus";
         String newick = "((CHILD1:5,CHILD2:5)INTERNAL:1):0.0";
 
         Tree tree = new TreeParser();
@@ -60,7 +58,7 @@ public class SimulatedAlignmentTest {
 
         AlignmentFromNexus expectedAlignment = new AlignmentFromNexus();
         expectedAlignment.initByName("fileName",
-                "src/test/lineageTree/simulation/expectedAlignment.nexus",
+                "/Users/azwaans/all_beasts2.7/typewriter/src/test/expectedAlignment.nexus",
                 "userDataType", integerData);
 
 

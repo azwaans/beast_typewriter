@@ -1,4 +1,4 @@
-package typewriter.likelihood;
+package typewriter.evolution.likelihood;
 
 
 import java.util.*;
@@ -19,7 +19,7 @@ import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
-import typewriter.substitutionmodel.TypewriterSubstitutionModel;
+import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
 
 import static java.lang.Math.log1p;
 

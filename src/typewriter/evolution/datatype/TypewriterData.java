@@ -1,4 +1,4 @@
-package typewriter.datatype;
+package typewriter.evolution.datatype;
 
 import beast.base.core.Description;
 import beast.base.evolution.datatype.DataType.Base;

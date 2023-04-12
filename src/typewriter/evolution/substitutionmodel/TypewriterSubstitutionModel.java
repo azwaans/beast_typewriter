@@ -1,4 +1,4 @@
-package typewriter.substitutionmodel;
+package typewriter.evolution.substitutionmodel;
 
 
 import beast.base.core.Description;
