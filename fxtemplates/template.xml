@@ -16,7 +16,8 @@
             <plugin spec='beast.base.evolution.tree.Tree' id='Tree.t:$(n)' taxonset='@TaxonSet.$(n)'/>
 
             <!--plugin spec='beast.base.evolution.tree.coalescent.RandomTree' id='RandomTree.t:$(n)' estimate='false' trait='@datetrait.$(n)' initial='@Tree.t:$(n)'-->
-            <plugin spec='beast.base.evolution.tree.coalescent.RandomTree' id='RandomTree.t:$(n)' estimate='false' initial='@Tree.t:$(n)'>
+            <plugin spec='beast.base.evolution.tree.coalescent.RandomTree' id='RandomTree.t:$(n)' rootHeight="25"
+            estimate='false' initial='@Tree.t:$(n)'>
                 <taxa idref='data'/>
                 <populationModel id='ConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
             		<popSize id='randomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
@@ -36,19 +37,22 @@
 					<userDataType spec='beast.base.evolution.datatype.IntegerData' id='integerDataType.$(n)' />
 				</data>
 				<siteModel spec='SiteModel' id="SiteModel.s:$(n)" gammaCategoryCount='0'>
-				        <mutationRate        spec='parameter.RealParameter' id='mutationRate.s:$(n)' value='1.0' estimate='true'/>
+				        <mutationRate        spec='parameter.RealParameter' id='mutationRate.s:$(n)' value='1.0' estimate='false'/>
 				        <shape               spec='parameter.RealParameter' id='gammaShape.s:$(n)' value='1.0' estimate='false'/>
                     <!-- Typewriter subst model -->
 					<substModel spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" id="TypewriterSubstmodel.s:$(n)">
-					    <parameter id="editProbabilities:$(n)" name="editProbabilities" value="0.1 0.2 0.3 0.4"
-					    estimate="true"/>
+					    <parameter id="editProbabilities.s:$(n)" name="editProbabilities" value="
+					    0.1 0.1 0.1 0.1 0.1
+					    0.1 0.1 0.1 0.1 0.025
+					    0.025 0.025 0.025"
+					    estimate="true" dimension="1"/>
 					    <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies"
-					    frequencies="1.0 0 0 0 0 " estimate="false"/>
+					    frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
 					</substModel>
 
 				</siteModel>
 				<branchRateModel id="StrictClock.c:$(n)" spec="beast.base.evolution.branchratemodel.StrictClockModel">
-					<parameter id="clockRate.c:$(n)" name="clock.rate" value="1.0" estimate='false'/>
+					<parameter id="clockRate.c:$(n)" name="clock.rate" value="1.0" estimate='true'/>
 				</branchRateModel>
 			</distribution>
 
@@ -57,9 +61,19 @@
                 <parameter name='birthDiffRate' id="birthRate.t:$(n)" value='1.0' estimate='true'/>
             </plugin>
 
+            <prior id='EditProbabilitiesPrior.s:$(n)' x='@editProbabilities.s:$(n)'>
+                <distr spec="beast.base.inference.distribution.Dirichlet" >
+                <parameter id="alpha.s:$(n)" name="alpha" value="
+                1.5 1.5 1.5 1.5 1.5
+                1.5 1.5 1.5 1.5 1.5
+                1.5 1.5 1.5" />
+                </distr>
+            </prior>
+
             <prior id='ClockPrior.c:$(n)' x='@clockRate.c:$(n)'>
                 <distr spec="beast.base.inference.distribution.Uniform" upper='Infinity'/>
-                </prior>
+            </prior>
+
             <prior id='MutationRatePrior.s:$(n)' x='@mutationRate.s:$(n)'>
                 <distr spec="OneOnX"/>
             </prior>
@@ -71,6 +85,7 @@
             </prior>
 
             <operator id='mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
+            <operator id='editProbabilitiesScaler.s:$(n)' spec='DeltaExchangeOperator' weight="4" parameter="@editProbabilities.s:$(n)" delta="0.1"/>
             <operator id='gammaShapeScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@gammaShape.s:$(n)"/>
 
             <operator id='allTipDatesRandomWalker.t:$(n)' spec='TipDatesRandomWalker' windowSize="1" weight="0" tree="@Tree.t:$(n)"/>
@@ -100,17 +115,19 @@
             <connect srcID='treelog.t:$(n)'                 targetID='mcmc' inputName='logger' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>
             <connect srcID='RandomTree.t:$(n)'                targetID='mcmc' inputName='init'   if='inposterior(Tree.t:$(n))'/>
 
-            <connect srcID='ClockPrior.c:$(n)'                targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
+            <connect srcID='ClockPrior.c:$(n)'                targetID='prior' inputName='distribution' if='clockRate.c:$(n)/estimate=true'/>
+            <connect srcID='EditProbabilitiesPrior.s:$(n)'    targetID='prior' inputName='distribution' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
             <!-- when FixMeanMutationRatesOperator, the prior is uniform due to the operator -->
             <connect srcID='MutationRatePrior.s:$(n)'         targetID='prior' inputName='distribution' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
 
             <connect srcID='Tree.t:$(n)'                      targetID='state' inputName='stateNode' if='inposterior(Tree.t:$(n))'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
+            <connect srcID='editProbabilities.s:$(n)'         targetID='state' inputName='stateNode' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
             <connect srcID='clockRate.c:$(n)'                 targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
             <connect srcID='birthRate.t:$(n)'                 targetID='state' inputName='stateNode' if='inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and birthRate.t:$(n)/estimate=true'/>
 
-
+            <connect srcID='editProbabilitiesScaler.s:$(n)'   targetID='mcmc' inputName='operator' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'>Changes the edit probabilities for partition s:$(n)</connect>
             <connect srcID='mutationRateScaler.s:$(n)'        targetID='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
             <connect srcID='gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
             <connect srcID='StrictClockRateScaler.c:$(n)'     targetID='mcmc' inputName='operator' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Scale clock rate of partition c:$(n)</connect>
@@ -132,6 +149,7 @@
 
             <connect srcID='TypewriterTreeLikelihood.$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(TypewriterTreeLikelihood.$(n))'/>
             <connect srcID='TreeHeight.t:$(n)'                targetID='tracelog' inputName='log' if='inposterior(Tree.t:$(n))'/>
+            <connect srcID='editProbabilities.s:$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
             <connect srcID='clockRate.c:$(n)'                 targetID='tracelog' inputName='log' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
@@ -149,7 +167,7 @@
 <mergewith point='substModelTemplates'>
 
     <!-- LewisMK substitution model -->
-    <subtemplate id='LewisMK_t' class='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel'
+    <subtemplate id='TypewriterSubstitutionModel' class='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel'
                  mainid='TypewriterSubstmodel.s:$(n)' >
         <![CDATA[
     <plugin spec='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel' id='TypewriterSubstmodel.s:$(n)'/>
