@@ -1,4 +1,4 @@
-package test;
+package typewriter;
 
 import beast.base.core.Description;
 
