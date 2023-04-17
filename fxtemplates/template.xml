@@ -1,35 +1,27 @@
 <beast version='2.0'
        namespace='beast.app.beauti:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.branchratemodel:beast.base.evolution.speciation:beast.evolution.Tree.t:coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.evolution:beast.base.math.distributions'>
 
+
 <mergewith point='aux-partitions-panels'>
-		<alignmentProvider id="Add Typewriter Data" spec='morphmodels.app.beauti.BeautiMorphModelAlignmentProvider'
+		<alignmentProvider id="Add Typewriter Data" spec='beastfx.app.inputeditor.BeautiAlignmentProvider'
                            template='@MKTrait_'/>
 
         <subtemplate id='MKTrait_' class='beast.base.evolution.alignment.Alignment' mainid='$(n)'
+
 >
 
 <![CDATA[
-            <!-- tree and its properties -->
+             <!-- tree and its properties -->
             <taxonset id='TaxonSet.$(n)' spec='beast.base.evolution.alignment.TaxonSet' alignment='@$(n)' />
             <plugin spec='beast.base.evolution.tree.Tree' id='Tree.t:$(n)' taxonset='@TaxonSet.$(n)'/>
 
-            <!--plugin spec='beast.base.evolution.tree.coalescent.RandomTree' id='startingTree.t:$(n)'
-            estimate='false' trait='@datetrait.$(n)' initial='@Tree.t:$(n)'-->
-
-            <plugin id="startingTree.t:$(n)" spec="typewriter.evolution.tree.startingTree" rootHeight="20"
-                       taxa="@data" scarringHeight="20"
-                       scarringDuration="5" sequencesAreClustered="false">
-                <trait idref="datetrait.$(n)"/>
-                <taxonset idref="TaxonSet.$(n)"/>
-            </plugin>
-
-            <!--plugin spec='typewriter.evolution.tree.startingTree' id='startingTree.t:$(n)'
-            estimate='false' initial='@Tree.t:$(n)'>
+            <!--plugin spec='beast.base.evolution.tree.coalescent.RandomTree' id='RandomTree.t:$(n)' estimate='false' trait='@datetrait.$(n)' initial='@Tree.t:$(n)'-->
+            <plugin spec='beast.base.evolution.tree.coalescent.RandomTree' id='RandomTree.t:$(n)' estimate='false' initial='@Tree.t:$(n)'>
                 <taxa idref='data'/>
                 <populationModel id='ConstantPopulation0.t:$(n)' spec='ConstantPopulation'>
             		<popSize id='randomPopSize.t:$(n)' spec='parameter.RealParameter' value='1'/>
 	            </populationModel>
-            </plugin-->
+            </plugin>
 
             <plugin id='TreeHeight.t:$(n)' spec='beast.base.evolution.tree.TreeHeightLogger' tree='@Tree.t:$(n)'/>
 
@@ -38,7 +30,8 @@
 	            </log>
             </logger>
 
-			<distribution id="TypewriterTreeLikelihood.$(n)" spec='typewriter.evolution.likelihood.TypewriterTreeLikelihood' tree='@Tree.t:$(n)'>
+			<distribution id="TypewriterTreeLikelihood.$(n)" spec='typewriter.evolution.likelihood.TypewriterTreeLikelihood' tree='@Tree.t:$(n)'
+			arrayLength="5" useScaling="true">
 				<data spec="beast.base.evolution.alignment.Alignment" id='$(n)'>
 					<userDataType spec='beast.base.evolution.datatype.IntegerData' id='integerDataType.$(n)' />
 				</data>
@@ -105,7 +98,7 @@
             <connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
 
             <connect srcID='treelog.t:$(n)'                 targetID='mcmc' inputName='logger' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'/>
-            <connect srcID='startingTree.t:$(n)'                targetID='mcmc' inputName='init'   if='inposterior(Tree.t:$(n))'/>
+            <connect srcID='RandomTree.t:$(n)'                targetID='mcmc' inputName='init'   if='inposterior(Tree.t:$(n))'/>
 
             <connect srcID='ClockPrior.c:$(n)'                targetID='prior' inputName='distribution' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
             <!-- when FixMeanMutationRatesOperator, the prior is uniform due to the operator -->
@@ -163,6 +156,7 @@
 ]]>
     </subtemplate>
 </mergewith>
+
 
 </beast>
 
