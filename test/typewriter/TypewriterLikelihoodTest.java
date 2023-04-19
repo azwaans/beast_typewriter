@@ -1,4 +1,4 @@
-package test;
+package typewriter;
 
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TypewriterLikelihoodTest {
 

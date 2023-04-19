@@ -3,6 +3,8 @@ package typewriter.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
+import beast.base.evolution.datatype.Binary;
+import beast.base.evolution.datatype.StandardData;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.substitutionmodel.EigenDecomposition;
@@ -208,7 +210,10 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType.getStateCount() != Integer.MAX_VALUE;
+        if (dataType instanceof StandardData || dataType instanceof Binary) {
+            return true;
+        }
+        return false;
     }
 
 }
