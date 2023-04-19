@@ -168,7 +168,8 @@
 
     <!-- LewisMK substitution model -->
     <subtemplate id='TypewriterSubstitutionModel' class='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel'
-                 mainid='TypewriterSubstmodel.s:$(n)' >
+                 mainid='TypewriterSubstmodel.s:$(n)'
+                 suppressInputs="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel.frequencies">
         <![CDATA[
     <plugin spec='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel' id='TypewriterSubstmodel.s:$(n)'/>
 ]]>
