@@ -4,6 +4,7 @@ package typewriter.evolution.likelihood;
 import java.util.*;
 
 import beast.base.core.Description;
+import beast.base.evolution.likelihood.GenericTreeLikelihood;
 import beast.base.inference.Distribution;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
@@ -26,16 +27,15 @@ import static java.lang.Math.log1p;
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
         "a beast tree and a branch rate model. This is a version of the Typewriter likelihood using caching without a likelihoodCore implementation ")
 
-public class TypewriterTreeLikelihood extends Distribution {
+public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
-    final public Input<Alignment> dataInput = new Input<>("data", "sequence data for the beast.tree", Validate.REQUIRED);
+    //final public Input<Alignment> dataInput = new Input<>("data", "sequence data for the beast.tree", Validate.REQUIRED);
 
-    final public Input<TreeInterface> treeInput = new Input<>("tree", "phylogenetic beast.tree with sequence data in the leafs", Validate.REQUIRED);
+    //final public Input<TreeInterface> treeInput = new Input<>("tree", "phylogenetic beast.tree with sequence data in the leafs", Validate.REQUIRED);
 
-    final public Input<SiteModelInterface> siteModelInput = new Input<>("siteModel", "site model for leafs in the beast.tree", Validate.REQUIRED);
+    //final public Input<SiteModelInterface> siteModelInput = new Input<>("siteModel", "site model for leafs in the beast.tree", Validate.REQUIRED);
 
-    final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel",
-            "A model describing the rates on the branches of the beast.tree.");
+    //final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel","A model describing the rates on the branches of the beast.tree.");
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
