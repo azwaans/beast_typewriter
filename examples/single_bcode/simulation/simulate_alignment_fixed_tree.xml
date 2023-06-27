@@ -27,7 +27,7 @@
     </parameter>
 
     <!-- origin -->
-    <origin id="origin" spec="RealParameter" value="25"/> <!-- Length of simulation -->
+    <origin id="origin" spec="parameter.RealParameter" value="25"/> <!-- Length of simulation -->
 
     <!-- tree input -->
     <stateNode spec='beast.base.evolution.tree.TreeParser' id='simulatedTree' IsLabelledNewick='true' adjustTipHeights='false'
@@ -59,7 +59,7 @@
                                  frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                 </substModel>
             </siteModel>
-            <branchRateModel id="StrictClock.c:h3n2_2deme" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="1.0"/>
+            <branchRateModel id="StrictClock" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="1.0"/>
 
         </simulationObject>
 
