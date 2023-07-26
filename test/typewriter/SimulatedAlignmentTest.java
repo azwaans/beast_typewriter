@@ -52,7 +52,7 @@ public class SimulatedAlignmentTest {
         simAlignment.initByName("tree", tree,
                 "siteModel", siteM,
                 "sequenceLength", sequenceLength,
-                "nrOfInsertionsPerTarget", 100,
+                "arrayLength", 100,
                 "numberOfTargets", 1,
                 "outputFileName", outputFileName,
                 "userDataType", integerData

@@ -42,7 +42,7 @@
         <!-- simulate sequence -->
         <simulationObject id="seqAlign" spec="typewriter.evolution.simulation.SimulatedTypeWriterAlignment"
                           outputFileName="./typewriter_data_seed$(seed).clock_0.1.alignment.nexus"
-                          numberOfTargets="1" nrOfInsertionsPerTarget="5"
+                          numberOfTargets="1" arrayLength="5"
                           tree="@simulatedTree" origin="@origin">
 
             <userDataType spec="beast.base.evolution.datatype.IntegerData"/>

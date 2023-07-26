@@ -45,8 +45,8 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 "Number of targets to simulate.",
                 Input.Validate.REQUIRED);
 
-        public Input<Integer> nrOfInsertionsPerTargetInput = new Input<>(
-            "nrOfInsertionsPerTarget",
+        public Input<Integer> arrayLengthInput = new Input<>(
+            "arrayLength",
             "Number of insertions to add per site",
             Input.Validate.REQUIRED);
 
@@ -62,7 +62,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
         private Tree tree;
         private SiteModel siteModel;
         private int numberOfTargets;
-        private int nrOfInsertionsPerTarget;
+        private int arrayLength;
         private DataType dataType;
         private double originHeight;
 
@@ -80,7 +80,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
             Log.info.println("category rates: " + Arrays.toString(siteModel.getCategoryRates(tree.getRoot())));
 
             numberOfTargets = 1; //TODO rewrite for arbitrary #targets
-            nrOfInsertionsPerTarget = nrOfInsertionsPerTargetInput.get();
+            arrayLength = arrayLengthInput.get();
             sequences.clear();
 
             if(originInput.get() != null){
@@ -117,11 +117,11 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
             double[] transitionProbs = substModel.getInsertProbabilities();
 
-            int[][] alignment = new int[nTaxa][nrOfInsertionsPerTarget];
+            int[][] alignment = new int[nTaxa][arrayLength];
 
             Node root = tree.getRoot();
 
-            int[] rootSequence = new int[nrOfInsertionsPerTarget];
+            int[] rootSequence = new int[arrayLength];
 
             if (originHeight != 0){
                 // then parent sequence is sequence at origin and we evolve sequence first down to the root
@@ -129,8 +129,7 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 double clockRate = siteModel.getRateForCategory(0, root);
                 Log.info.println("clock rates: " + clockRate);
 
-                int nPossibleInserts = nrOfInsertionsPerTarget;
-                //TODO rename to inserts, i.e nrOfNewInserts
+                int nPossibleInserts = arrayLength;
                 long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
 
                 int insertionIndex = 0;
@@ -192,16 +191,16 @@ public class SimulatedTypeWriterAlignment extends Alignment{
 
                 // find site where next insertion could happen, i.e. the next unedited state '0'
                 int insertionIndex = 0;
-                while ((insertionIndex < nrOfInsertionsPerTarget) && (childSequence[insertionIndex] !=0)){
+                while ((insertionIndex < arrayLength) && (childSequence[insertionIndex] !=0)){
                     insertionIndex++;
                 }
 
-                if (insertionIndex == nrOfInsertionsPerTarget){
+                if (insertionIndex == arrayLength){
                     // then sequence is fully edited, no further simulation necessary
                     ;
                 }else{
                     // sample number of new insertions
-                    int nPossibleInserts = nrOfInsertionsPerTarget - insertionIndex;
+                    int nPossibleInserts = arrayLength - insertionIndex;
                     long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
 
                     // Add potential inserts while there are still possible insertion positions
