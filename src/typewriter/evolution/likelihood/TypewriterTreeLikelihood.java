@@ -29,14 +29,6 @@ import static java.lang.Math.log1p;
 
 public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
-    //final public Input<Alignment> dataInput = new Input<>("data", "sequence data for the beast.tree", Validate.REQUIRED);
-
-    //final public Input<TreeInterface> treeInput = new Input<>("tree", "phylogenetic beast.tree with sequence data in the leafs", Validate.REQUIRED);
-
-    //final public Input<SiteModelInterface> siteModelInput = new Input<>("siteModel", "site model for leafs in the beast.tree", Validate.REQUIRED);
-
-    //final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel","A model describing the rates on the branches of the beast.tree.");
-
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
     final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC", Validate.REQUIRED);
@@ -72,7 +64,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     protected double[] m_branchLengths;
     protected double[] storedBranchLengths;
 
-    //to be able to have current/stored states in an analog way to the partials array, ancestral states are we get/add
+    //to be able to have current/stored states in an analog way to the partials array, ancestral states are accessed/added
     //states with key : (NodeNr + 1) + (current ? 0:1) * (NodeNr+1)
     public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
     public double[][][] partialLikelihoods ;
@@ -97,8 +89,6 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
         if(arrayLength < 1 || (dataInput.get().getSiteCount() != arrayLength)) {
             throw new IllegalArgumentException(String.format(
                     "Invalid array length: Ensure that length >= 1 and matches alignment "));
-
-
         }
         nodeCount = treeInput.get().getNodeCount();
         if(nodeCount <=2) {
@@ -142,7 +132,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
             scalingFactors = new double[2][nodeCount];
         }
 
-        //initialize has dirt flag (this is updated by requires recalcuations):
+
         hasDirt = Tree.IS_FILTHY;
 
         for (int i=0; i< treeInput.get().getLeafNodeCount(); i++) {
@@ -264,10 +254,11 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
     }
 
-
+    /**
+     * Calculate partial likelihoods for a given leaf node, and fill the corresponding partialLikelihood array
+     */
     protected void initLeafPartials(int nodeNr) {
 
-        //create and fill tip partials
         double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr +1)).size());
         this.partialLikelihoods[0][nodeNr] = new double[leafPartialLikelihoods.length];
         this.partialLikelihoods[1][nodeNr] = new double[leafPartialLikelihoods.length];
@@ -275,6 +266,9 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
     }
 
+    /**
+     * Calculate the set of ancestral states for a given leaf node, and fill the corresponding AncestralStates hashmap
+     */
     protected void initLeafAncestors(int nodeNr) {
 
         List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(nodeNr));
@@ -284,8 +278,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
 
     /**
-     * This function implements a postorder traversal of the tree to fill the ancestralStates hashmap and corresponding partialLikelihood array.
-     *
+     * This implements a postorder traversal of the tree to fill the ancestralStates hashmap and corresponding partialLikelihood array.
      */
     protected int traverse(Node node, int categoryId) {
 
@@ -330,13 +323,17 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
         return update;
     }
 
-
+    /**
+     * Construct a set of possible ancestral states at an internal node by intersection of children sets, updates the
+     * AncestralStates hashmap with the resulting set.
+     */
     public void calculateStates(int nodeNr, int child1Nr, int child2Nr) {
 
         List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr +1 + currentStatesIndex[child1Nr]*(child1Nr+1));
         List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr +1 + currentStatesIndex[child2Nr]*(child2Nr+1));
 
         List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
+
         // intersection of children ancestral states
         ancSetNode.retainAll(ancSetChild2);
 
@@ -354,9 +351,8 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
 
     /**
-     * This function calculates partial likelihoods for all possible states at node given its children partials
-     *
-     * @return partial likelihoods for states at node nodeNr
+     * This function calculates partial likelihoods for all possible states at a node given its children partials
+     * and sets the corresponding partial likelihoods, for all possible states at node nodeNr
      */
     public void calculatePartials(int nodeNr, Node child1, Node child2, int categoryId ) {
 
@@ -413,7 +409,6 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
             distance = childNode.getLength() * jointBranchRate;
         }
         // calculate partials
-
         if (childNode.isLeaf()) {
 
             List<Integer> endState = ancestralStates.get(childNode.getNr()+1 + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(0);
@@ -425,7 +420,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
                 List<Integer> endState = ancestralStates.get(childNode.getNr() +1  + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(endStateIndex);
 
-                // if the end state has non null partial likelihood
+                // if the end state has non-null partial likelihood
                 if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
 
                     statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength) *

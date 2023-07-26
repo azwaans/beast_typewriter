@@ -60,8 +60,6 @@ public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
             }
         }
 
-
-
     }
 
 
