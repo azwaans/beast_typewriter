@@ -169,6 +169,13 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     @Override
     public double calculateLogP() {
         final TreeInterface tree = treeInput.get();
+
+        if(originTime != 0.0) {
+            if (tree.getRoot().getHeight() >= originTime) {
+                return Double.NEGATIVE_INFINITY;
+            }
+        }
+
         for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             //adjust clock rate for the given category
             traverse(tree.getRoot(),i);
