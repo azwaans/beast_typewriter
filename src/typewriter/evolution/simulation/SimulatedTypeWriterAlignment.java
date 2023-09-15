@@ -27,25 +27,25 @@ import java.util.List;
 
 
 @Description("A more flexible alignment simulator adapted from Tim Vaughan's feast implementation")
-public class SimulatedTypeWriterAlignment extends Alignment{
+public class SimulatedTypeWriterAlignment extends Alignment {
 
-        public Input<Tree> treeInput = new Input<>(
-                "tree",
-                "Tree down which to simulate sequence evolution.",
-                Input.Validate.REQUIRED);
+    public Input<Tree> treeInput = new Input<>(
+            "tree",
+            "Tree down which to simulate sequence evolution.",
+            Input.Validate.REQUIRED);
 
-        public Input<SiteModel> siteModelInput = new Input<>(
-                "siteModel",
-                "Site model to use in simulation.",
-                Input.Validate.REQUIRED);
+    public Input<SiteModel> siteModelInput = new Input<>(
+            "siteModel",
+            "Site model to use in simulation.",
+            Input.Validate.REQUIRED);
 
-        //TODO rename number of targets
-        public Input<Integer> nrOfTargetsInput = new Input<>(
-                "numberOfTargets",
-                "Number of targets to simulate.",
-                Input.Validate.REQUIRED);
+    //TODO rename number of targets
+    public Input<Integer> nrOfTargetsInput = new Input<>(
+            "numberOfTargets",
+            "Number of targets to simulate.",
+            Input.Validate.REQUIRED);
 
-        public Input<Integer> arrayLengthInput = new Input<>(
+    public Input<Integer> arrayLengthInput = new Input<>(
             "arrayLength",
             "Number of insertions to add per site",
             Input.Validate.REQUIRED);
@@ -55,90 +55,159 @@ public class SimulatedTypeWriterAlignment extends Alignment{
             Input.Validate.OPTIONAL);
 
 
-        public Input<String> outputFileNameInput = new Input<>(
-                "outputFileName",
-                "Name of file (if any) simulated alignment should be saved to.");
+    public Input<String> outputFileNameInput = new Input<>(
+            "outputFileName",
+            "Name of file (if any) simulated alignment should be saved to.");
 
-        private Tree tree;
-        private SiteModel siteModel;
-        private int numberOfTargets;
-        private int arrayLength;
-        private DataType dataType;
-        private double originHeight;
+    private Tree tree;
+    private SiteModel siteModel;
+    private int numberOfTargets;
+    private int arrayLength;
+    private DataType dataType;
+    private double originHeight;
 
-        private String ancestralSeqStr;
+    private String ancestralSeqStr;
 
-        public SimulatedTypeWriterAlignment() {
-            sequenceInput.setRule(Input.Validate.OPTIONAL);
+    public SimulatedTypeWriterAlignment() {
+        sequenceInput.setRule(Input.Validate.OPTIONAL);
+    }
+
+    @Override
+    public void initAndValidate() {
+
+        tree = treeInput.get();
+        siteModel = siteModelInput.get();
+        Log.info.println("category rates: " + Arrays.toString(siteModel.getCategoryRates(tree.getRoot())));
+
+        numberOfTargets = 1; //TODO rewrite for arbitrary #targets
+        arrayLength = arrayLengthInput.get();
+        sequences.clear();
+
+        if (originInput.get() != null) {
+            originHeight = originInput.get().getValue();
         }
 
-        @Override
-        public void initAndValidate() {
+        grabDataType();
 
-            tree = treeInput.get();
-            siteModel = siteModelInput.get();
-            Log.info.println("category rates: " + Arrays.toString(siteModel.getCategoryRates(tree.getRoot())));
+        simulate();
 
-            numberOfTargets = 1; //TODO rewrite for arbitrary #targets
-            arrayLength = arrayLengthInput.get();
-            sequences.clear();
+        super.initAndValidate();
 
-            if(originInput.get() != null){
-                originHeight = originInput.get().getValue();
+        // Write simulated alignment to disk if required
+        if (outputFileNameInput.get() != null) {
+            try (PrintStream pstream = new PrintStream(outputFileNameInput.get())) {
+                NexusBuilder nb = new NexusBuilder();
+                nb.append(new TaxaBlock(new TaxonSet(this)));
+                nb.append(new CharactersBlock(this));
+                nb.write(pstream);
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException("Error writing to file "
+                        + outputFileNameInput.get() + ".");
             }
+        }
+    }
 
-            grabDataType();
+    /**
+     * Perform actual sequence simulation.
+     */
+    private void simulate() {
+        int nTaxa = tree.getLeafNodeCount();
 
-            simulate();
+        TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
 
-            super.initAndValidate();
+        double[] transitionProbs = substModel.getInsertProbabilities();
 
-            // Write simulated alignment to disk if required
-            if (outputFileNameInput.get() != null) {
-                try (PrintStream pstream = new PrintStream(outputFileNameInput.get())) {
-                    NexusBuilder nb = new NexusBuilder();
-                    nb.append(new TaxaBlock(new TaxonSet(this)));
-                    nb.append(new CharactersBlock(this));
-                    nb.write(pstream);
-                } catch (FileNotFoundException ex) {
-                    throw new RuntimeException("Error writing to file "
-                            + outputFileNameInput.get() + ".");
-                }
+        int[][] alignment = new int[nTaxa][arrayLength];
+
+        Node root = tree.getRoot();
+
+        int[] rootSequence = new int[arrayLength];
+
+        if (originHeight != 0) {
+            // then parent sequence is sequence at origin and we evolve sequence first down to the root
+            double deltaT = originHeight - root.getHeight();
+            double clockRate = siteModel.getRateForCategory(0, root);
+            Log.info.println("clock rates: " + clockRate);
+
+            int nPossibleInserts = arrayLength;
+            long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
+
+            int insertionIndex = 0;
+
+            // Add potential inserts while there are still possible insertion positions
+            while (nPossibleInserts > 0 && nPotentialInserts > 0) {
+
+                int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
+                rootSequence[insertionIndex] = newInsertion;
+
+                insertionIndex++;
+                nPossibleInserts--;
+                nPotentialInserts--;
             }
         }
 
-        /**
-         * Perform actual sequence simulation.
-         */
-        private void simulate() {
-            int nTaxa = tree.getLeafNodeCount();
+        //ancestralSeqStr = dataType.encodingToString(parentSequence);
 
-            TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
+        traverse(root, rootSequence,
+                transitionProbs,
+                alignment);
 
-            double[] transitionProbs = substModel.getInsertProbabilities();
+        for (int leafIdx = 0; leafIdx < nTaxa; leafIdx++) {
+            String seqString = dataType.encodingToString(alignment[leafIdx]);
 
-            int[][] alignment = new int[nTaxa][arrayLength];
+            String taxonName;
+            if (tree.getNode(leafIdx).getID() != null)
+                taxonName = tree.getNode(leafIdx).getID();
+            else
+                taxonName = "t" + leafIdx;
 
-            Node root = tree.getRoot();
+            sequenceInput.setValue(new Sequence(taxonName, seqString), this);
+        }
+    }
 
-            int[] rootSequence = new int[arrayLength];
+    /**
+     * Traverse a tree, simulating a sequence alignment down it.
+     *
+     * @param node            Node of the tree
+     * @param parentSequence  Sequence at the parent node in the tree
+     * @param transitionProbs transition probabilities
+     * @param regionAlignment alignment for particular region
+     */
+    private void traverse(Node node,
+                          int[] parentSequence,
+                          double[] transitionProbs,
+                          int[][] regionAlignment) {
 
-            if (originHeight != 0){
-                // then parent sequence is sequence at origin and we evolve sequence first down to the root
-                double deltaT = originHeight - root.getHeight();
-                double clockRate = siteModel.getRateForCategory(0, root);
-                Log.info.println("clock rates: " + clockRate);
 
-                int nPossibleInserts = arrayLength;
+        // ignore categories so far
+
+        for (Node child : node.getChildren()) {
+
+            double deltaT = node.getHeight() - child.getHeight();
+            double clockRate = siteModel.getRateForCategory(0, child);
+
+            // Draw characters on child sequence
+            int[] childSequence = parentSequence.clone();
+
+            // find site where next insertion could happen, i.e. the next unedited state '0'
+            int insertionIndex = 0;
+            while ((insertionIndex < arrayLength) && (childSequence[insertionIndex] != 0)) {
+                insertionIndex++;
+            }
+
+            if (insertionIndex == arrayLength) {
+                // then sequence is fully edited, no further simulation necessary
+                ;
+            } else {
+                // sample number of new insertions
+                int nPossibleInserts = arrayLength - insertionIndex;
                 long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
 
-                int insertionIndex = 0;
-
                 // Add potential inserts while there are still possible insertion positions
-                while (nPossibleInserts > 0 && nPotentialInserts > 0){
+                while (nPossibleInserts > 0 && nPotentialInserts > 0) {
 
                     int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
-                    rootSequence[insertionIndex] = newInsertion;
+                    childSequence[insertionIndex] = newInsertion;
 
                     insertionIndex++;
                     nPossibleInserts--;
@@ -146,115 +215,46 @@ public class SimulatedTypeWriterAlignment extends Alignment{
                 }
             }
 
-            //ancestralSeqStr = dataType.encodingToString(parentSequence);
-
-            traverse(root, rootSequence,
-                    transitionProbs,
-                    alignment);
-
-            for (int leafIdx=0; leafIdx<nTaxa; leafIdx++) {
-                String seqString = dataType.encodingToString(alignment[leafIdx]);
-
-                String taxonName;
-                if (tree.getNode(leafIdx).getID() != null)
-                    taxonName = tree.getNode(leafIdx).getID();
-                else
-                    taxonName = "t" + leafIdx;
-
-                sequenceInput.setValue(new Sequence(taxonName, seqString), this);
-            }
-        }
-
-        /**
-         * Traverse a tree, simulating a sequence alignment down it.
-         *
-         * @param node Node of the tree
-         * @param parentSequence Sequence at the parent node in the tree
-         * @param transitionProbs transition probabilities
-         * @param regionAlignment alignment for particular region
-         */
-        private void traverse(Node node,
-                              int[] parentSequence,
-                              double[] transitionProbs,
-                              int[][] regionAlignment) {
-
-
-            // ignore categories so far
-
-            for (Node child : node.getChildren()) {
-
-                double deltaT = node.getHeight() - child.getHeight();
-                double clockRate = siteModel.getRateForCategory(0, child);
-
-                // Draw characters on child sequence
-                int[] childSequence = parentSequence.clone();
-
-                // find site where next insertion could happen, i.e. the next unedited state '0'
-                int insertionIndex = 0;
-                while ((insertionIndex < arrayLength) && (childSequence[insertionIndex] !=0)){
-                    insertionIndex++;
-                }
-
-                if (insertionIndex == arrayLength){
-                    // then sequence is fully edited, no further simulation necessary
-                    ;
-                }else{
-                    // sample number of new insertions
-                    int nPossibleInserts = arrayLength - insertionIndex;
-                    long nPotentialInserts = Randomizer.nextPoisson(deltaT * clockRate);
-
-                    // Add potential inserts while there are still possible insertion positions
-                    while (nPossibleInserts > 0 && nPotentialInserts > 0){
-
-                        int newInsertion = Randomizer.randomChoicePDF(transitionProbs) + 1;
-                        childSequence[insertionIndex] = newInsertion;
-
-                        insertionIndex++;
-                        nPossibleInserts--;
-                        nPotentialInserts--;
-                    }
-                }
-
-                if (child.isLeaf()) {
-                    System.arraycopy(childSequence, 0,
-                            regionAlignment[child.getNr()], 0, childSequence.length);
-                } else {
-                    traverse(child, childSequence,
-                            transitionProbs,
-                            regionAlignment);
-                }
-            }
-        }
-
-        /**
-         * HORRIBLE function to identify data type from given description.
-         */
-        private void grabDataType() {
-            if (userDataTypeInput.get() != null) {
-                dataType = userDataTypeInput.get();
+            if (child.isLeaf()) {
+                System.arraycopy(childSequence, 0,
+                        regionAlignment[child.getNr()], 0, childSequence.length);
             } else {
-
-                List<String> dataTypeDescList = new ArrayList<>();
-                List<String> classNames = PackageManager.find(beast.base.evolution.datatype.DataType.class, "beast.evolution.datatype");
-                for (String className : classNames) {
-                    try {
-                        DataType thisDataType = (DataType) BEASTClassLoader.forName(className).newInstance();
-                        if (dataTypeInput.get().equals(thisDataType.getTypeDescription())) {
-                            dataType = thisDataType;
-                            break;
-                        }
-                        dataTypeDescList.add(thisDataType.getTypeDescription());
-                    } catch (ClassNotFoundException
-                            | InstantiationException
-                            | IllegalAccessException e) {
-                    }
-                }
-                if (dataType == null) {
-                    throw new IllegalArgumentException("Data type + '"
-                            + dataTypeInput.get()
-                            + "' cannot be found.  Choose one of "
-                            + Arrays.toString(dataTypeDescList.toArray(new String[0])));
-                }
+                traverse(child, childSequence,
+                        transitionProbs,
+                        regionAlignment);
             }
         }
+    }
+
+    /**
+     * HORRIBLE function to identify data type from given description.
+     */
+    private void grabDataType() {
+        if (userDataTypeInput.get() != null) {
+            dataType = userDataTypeInput.get();
+        } else {
+
+            List<String> dataTypeDescList = new ArrayList<>();
+            List<String> classNames = PackageManager.find(beast.base.evolution.datatype.DataType.class, "beast.evolution.datatype");
+            for (String className : classNames) {
+                try {
+                    DataType thisDataType = (DataType) BEASTClassLoader.forName(className).newInstance();
+                    if (dataTypeInput.get().equals(thisDataType.getTypeDescription())) {
+                        dataType = thisDataType;
+                        break;
+                    }
+                    dataTypeDescList.add(thisDataType.getTypeDescription());
+                } catch (ClassNotFoundException
+                        | InstantiationException
+                        | IllegalAccessException e) {
+                }
+            }
+            if (dataType == null) {
+                throw new IllegalArgumentException("Data type + '"
+                        + dataTypeInput.get()
+                        + "' cannot be found.  Choose one of "
+                        + Arrays.toString(dataTypeDescList.toArray(new String[0])));
+            }
+        }
+    }
 }
