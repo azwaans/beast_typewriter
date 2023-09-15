@@ -6073,8 +6073,8 @@
 
 
     <!-- run MCMC with 10^9 steps -->
-    <run id="mcmc" spec="MCMC" chainLength="1000000000">
-        <state id="state" spec="State" storeEvery="5000">
+    <run id="mcmc" spec="MCMC" chainLength="100000">
+        <state id="state" spec="State" storeEvery="100">
 
             <!--starting tree -->
             <stateNode id="typewriterTree" spec="typewriter.evolution.tree.startingTree" rootHeight="20"
@@ -6267,7 +6267,7 @@
         </operator>
 
         <!-- Loggers -->
-        <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="5000">
+        <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="500">
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
@@ -6280,7 +6280,7 @@
             <log idref="clockRate"/>
         </logger>
 
-        <logger id="tracelogTargetBCs" spec="Logger" fileName="$(filebase).$(seed).targetBCLikelihoods.log" logEvery="5000">
+        <logger id="tracelogTargetBCs" spec="Logger" fileName="$(filebase).$(seed).targetBCLikelihoods.log" logEvery="500">
             <log idref="treeLikelihood.1"/>
             <log idref="treeLikelihood.2"/>
             <log idref="treeLikelihood.3"/>
@@ -6302,7 +6302,7 @@
             <log idref="prior"/>
         </logger>
 
-        <logger id="treelog.t:alignment" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="5000" mode="tree">
+        <logger id="treelog.t:alignment" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="500" mode="tree">
             <log idref="typewriterTree" printMetaData="true"/>
         </logger>
 

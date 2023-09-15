@@ -10,6 +10,7 @@ import beast.base.inference.parameter.RealParameter;
 import beast.base.util.Randomizer;
 import feast.fileio.AlignmentFromNexus;
 import org.junit.Test;
+
 import static junit.framework.Assert.assertEquals;
 
 import typewriter.evolution.simulation.SimulatedTypeWriterAlignment;
@@ -19,7 +20,7 @@ public class SimulatedAlignmentTest {
 
     // set up
     @Test
-    public void testSimulationOnCherry(){
+    public void testSimulationOnCherry() {
 
         Integer sequenceLength = 1;
         String outputFileName = "test/simAl.nexus";
@@ -41,7 +42,7 @@ public class SimulatedAlignmentTest {
         //site model
         SiteModel siteM = new SiteModel();
         RealParameter mutationRate = new RealParameter("10");
-        siteM.initByName( "gammaCategoryCount", 0,
+        siteM.initByName("gammaCategoryCount", 0,
                 "substModel", submodel, "mutationRate", mutationRate);
 
         DataType integerData = new IntegerData();
@@ -52,11 +53,11 @@ public class SimulatedAlignmentTest {
         simAlignment.initByName("tree", tree,
                 "siteModel", siteM,
                 "sequenceLength", sequenceLength,
-                "nrOfInsertionsPerTarget", 100,
+                "arrayLength", 100,
                 "numberOfTargets", 1,
                 "outputFileName", outputFileName,
                 "userDataType", integerData
-                );
+        );
 
         AlignmentFromNexus expectedAlignment = new AlignmentFromNexus();
         expectedAlignment.initByName("fileName",

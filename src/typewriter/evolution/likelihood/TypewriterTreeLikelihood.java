@@ -5,37 +5,25 @@ import java.util.*;
 
 import beast.base.core.Description;
 import beast.base.evolution.likelihood.GenericTreeLikelihood;
-import beast.base.inference.Distribution;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
 import beast.base.inference.State;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
-import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.branchratemodel.BranchRateModel;
 import beast.base.evolution.branchratemodel.StrictClockModel;
 import beast.base.evolution.sitemodel.SiteModel;
-import beast.base.evolution.sitemodel.SiteModelInterface;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
 import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
-
-import static java.lang.Math.log1p;
+import static typewriter.util.LogSum.logSum;
 
 @Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
         "a beast tree and a branch rate model. This is a version of the Typewriter likelihood using caching without a likelihoodCore implementation ")
 
 public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
-
-    //final public Input<Alignment> dataInput = new Input<>("data", "sequence data for the beast.tree", Validate.REQUIRED);
-
-    //final public Input<TreeInterface> treeInput = new Input<>("tree", "phylogenetic beast.tree with sequence data in the leafs", Validate.REQUIRED);
-
-    //final public Input<SiteModelInterface> siteModelInput = new Input<>("siteModel", "site model for leafs in the beast.tree", Validate.REQUIRED);
-
-    //final public Input<BranchRateModel.Base> branchRateModelInput = new Input<>("branchRateModel","A model describing the rates on the branches of the beast.tree.");
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
@@ -72,11 +60,11 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     protected double[] m_branchLengths;
     protected double[] storedBranchLengths;
 
-    //to be able to have current/stored states in an analog way to the partials array, ancestral states are we get/add
+    //to be able to have current/stored states in an analog way to the partials array, ancestral states are accessed/added
     //states with key : (NodeNr + 1) + (current ? 0:1) * (NodeNr+1)
-    public Hashtable<Integer,List<List<Integer>>> ancestralStates ;
-    public double[][][] partialLikelihoods ;
-    public double[] categoryLogLikelihoods ;
+    public Hashtable<Integer, List<List<Integer>>> ancestralStates;
+    public double[][][] partialLikelihoods;
+    public double[] categoryLogLikelihoods;
     protected double[][] scalingFactors;
     protected boolean useScaling = false;
 
@@ -94,27 +82,25 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     public void initAndValidate() {
 
         arrayLength = arrayLengthInput.get().getValue();
-        if(arrayLength < 1 || (dataInput.get().getSiteCount() != arrayLength)) {
+        if (arrayLength < 1 || (dataInput.get().getSiteCount() != arrayLength)) {
             throw new IllegalArgumentException(String.format(
                     "Invalid array length: Ensure that length >= 1 and matches alignment "));
-
-
         }
         nodeCount = treeInput.get().getNodeCount();
-        if(nodeCount <=2) {
+        if (nodeCount <= 2) {
             throw new IllegalArgumentException(String.format(
                     "Invalid tree input: single node/branch. Ensure that #nodes>2 "));
         }
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
-        substitutionModel = (TypewriterSubstitutionModel)  m_siteModel.substModelInput.get();
+        substitutionModel = (TypewriterSubstitutionModel) m_siteModel.substModelInput.get();
 
         m_branchLengths = new double[nodeCount];
         storedBranchLengths = new double[nodeCount];
 
         //TODO check that state count from alignment (i.e. data type) and substitution model are the same
-        ancestralStates = new Hashtable<>() ;
+        ancestralStates = new Hashtable<>();
         partialLikelihoods = new double[2][nodeCount][];
 
         currentPartialsIndex = new int[nodeCount];
@@ -137,34 +123,41 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
             }
         }
 
-        if(useScalingInput.get()){
+        if (useScalingInput.get()) {
             useScaling = true;
             scalingFactors = new double[2][nodeCount];
         }
 
-        //initialize has dirt flag (this is updated by requires recalcuations):
+
         hasDirt = Tree.IS_FILTHY;
 
-        for (int i=0; i< treeInput.get().getLeafNodeCount(); i++) {
+        for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
             initLeafAncestors(i);
         }
 
-        for (int i=0; i< treeInput.get().getLeafNodeCount(); i++) {
+        for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
             initLeafPartials(i);
         }
 
     }
 
-    public SubstitutionModel getSubstitutionModel() {return substitutionModel;}
+    public SubstitutionModel getSubstitutionModel() {
+        return substitutionModel;
+    }
 
     @Override
-    public List<String> getArguments() {return null;}
+    public List<String> getArguments() {
+        return null;
+    }
 
     @Override
-    public List<String> getConditions() {return null;}
+    public List<String> getConditions() {
+        return null;
+    }
 
     @Override
-    public void sample(State state, Random random) {}
+    public void sample(State state, Random random) {
+    }
 
     @Override
     public double calculateLogP() {
@@ -178,7 +171,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
         for (int i = 0; i < m_siteModel.getCategoryCount(); i++) {
             //adjust clock rate for the given category
-            traverse(tree.getRoot(),i);
+            traverse(tree.getRoot(), i);
 
             if (originTime == 0.0) {
                 //sum of all partial likelihoods at the root
@@ -186,47 +179,13 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
                 categoryLogLikelihoods[i] = Math.log(Arrays.stream(partialLikelihoods[currentPartialsIndex[rootNr]][rootNr]).sum()) + getLogScalingFactor();
             } else {
                 //the tree log likelihood is the log(p) of unedited state at the origin
-                categoryLogLikelihoods[i] = Math.log(calculateOriginPartial(tree.getRoot(),i)) + getLogScalingFactor();
+                categoryLogLikelihoods[i] = Math.log(calculateOriginPartial(tree.getRoot(), i)) + getLogScalingFactor();
 
             }
         }
-        logP =  logSum(categoryLogLikelihoods, categoryLogLikelihoods.length) - Math.log(m_siteModel.getCategoryCount());
+        logP = logSum(categoryLogLikelihoods, categoryLogLikelihoods.length) - Math.log(m_siteModel.getCategoryCount());
         return logP;
     }
-
-    /**
-     * Calculates the log of the sum of a collection from the collection of log transformed values
-     * without having to exponentiate all elements
-     *
-     * @param la array of log 
-     * @param la size
-     */
-    double logSum(double la[], int numElements)
-    {
-        // Assume index_of_max() finds the maximum element
-        // in the array and returns its index
-        double max = la[0];
-        int index = 0;
-        for (int i = 0; i < la.length; i++)
-        {
-            if (max < la[i])
-            {
-                max = la[i];
-                index = i;
-            }
-        }
-
-        double sum_exp = 0;
-        for (int i = 0; i < numElements; i++) {
-            if (i == index) {
-                continue;
-            }
-            sum_exp += Math.exp(la[i] - la[index]);
-        }
-
-        return la[index] + log1p(sum_exp);
-    }
-
 
     /**
      * Scale the partials at a given node. This uses a scaling suggested by Ziheng Yang in
@@ -251,7 +210,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
         //is node number same as nodeIndex
         for (int k = 0; k < partialLikelihoods[currentPartialsIndex[nodeNumber]][nodeNumber].length; k++) {
 
-            if(partialLikelihoods[currentPartialsIndex[nodeNumber]][nodeNumber][k] > scaleFactor) {
+            if (partialLikelihoods[currentPartialsIndex[nodeNumber]][nodeNumber][k] > scaleFactor) {
                 scaleFactor = partialLikelihoods[currentPartialsIndex[nodeNumber]][nodeNumber][k];
             }
 
@@ -271,28 +230,31 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
     }
 
-
+    /**
+     * Calculate partial likelihoods for a given leaf node, and fill the corresponding partialLikelihood array
+     */
     protected void initLeafPartials(int nodeNr) {
 
-        //create and fill tip partials
-        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr +1)).size());
+        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size());
         this.partialLikelihoods[0][nodeNr] = new double[leafPartialLikelihoods.length];
         this.partialLikelihoods[1][nodeNr] = new double[leafPartialLikelihoods.length];
         System.arraycopy(leafPartialLikelihoods, 0, this.partialLikelihoods[0][nodeNr], 0, leafPartialLikelihoods.length);
 
     }
 
+    /**
+     * Calculate the set of ancestral states for a given leaf node, and fill the corresponding AncestralStates hashmap
+     */
     protected void initLeafAncestors(int nodeNr) {
 
         List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(nodeNr));
-        ancestralStates.put(nodeNr+1, possibleLeafAncestors);
+        ancestralStates.put(nodeNr + 1, possibleLeafAncestors);
 
     }
 
 
     /**
-     * This function implements a postorder traversal of the tree to fill the ancestralStates hashmap and corresponding partialLikelihood array.
-     *
+     * This implements a postorder traversal of the tree to fill the ancestralStates hashmap and corresponding partialLikelihood array.
      */
     protected int traverse(Node node, int categoryId) {
 
@@ -307,7 +269,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
             update |= Tree.IS_DIRTY;
         }
 
-        if(!node.isLeaf()) {
+        if (!node.isLeaf()) {
 
             final Node child1 = node.getLeft();
             final int update1 = traverse(child1, categoryId);
@@ -337,17 +299,21 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
         return update;
     }
 
-
+    /**
+     * Construct a set of possible ancestral states at an internal node by intersection of children sets, updates the
+     * AncestralStates hashmap with the resulting set.
+     */
     public void calculateStates(int nodeNr, int child1Nr, int child2Nr) {
 
-        List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr +1 + currentStatesIndex[child1Nr]*(child1Nr+1));
-        List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr +1 + currentStatesIndex[child2Nr]*(child2Nr+1));
+        List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr + 1 + currentStatesIndex[child1Nr] * (child1Nr + 1));
+        List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr + 1 + currentStatesIndex[child2Nr] * (child2Nr + 1));
 
         List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
+
         // intersection of children ancestral states
         ancSetNode.retainAll(ancSetChild2);
 
-        ancestralStates.put((nodeNr +1) + currentStatesIndex[nodeNr]*(nodeNr+1), ancSetNode);
+        ancestralStates.put((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1), ancSetNode);
     }
 
     public void setNodePartialsForUpdate(int nodeIndex) {
@@ -359,26 +325,24 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     }
 
 
-
     /**
-     * This function calculates partial likelihoods for all possible states at node given its children partials
-     *
-     * @return partial likelihoods for states at node nodeNr
+     * This function calculates partial likelihoods for all possible states at a node given its children partials
+     * and sets the corresponding partial likelihoods, for all possible states at node nodeNr
      */
-    public void calculatePartials(int nodeNr, Node child1, Node child2, int categoryId ) {
+    public void calculatePartials(int nodeNr, Node child1, Node child2, int categoryId) {
 
         //initialize an array for the partials
-        double[] partials = new double[ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr +1)).size()];
+        double[] partials = new double[ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size()];
 
-            for (int stateIndex = 0; stateIndex < ancestralStates.get((nodeNr +1) + currentStatesIndex[nodeNr]*(nodeNr+1)).size(); ++stateIndex) {
-                
-                List<Integer> startState = ancestralStates.get((nodeNr+1) + currentStatesIndex[nodeNr]*(nodeNr+1)).get(stateIndex);
-                
-                double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
-                double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
+        for (int stateIndex = 0; stateIndex < ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size(); ++stateIndex) {
 
-                partials[stateIndex] = child1PartialLikelihoodState * child2PartialLikelihoodState;
-            }
+            List<Integer> startState = ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).get(stateIndex);
+
+            double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
+            double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
+
+            partials[stateIndex] = child1PartialLikelihoodState * child2PartialLikelihoodState;
+        }
 
         partialLikelihoods[currentPartialsIndex[nodeNr]][nodeNr] = partials;
 
@@ -394,7 +358,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     public double calculateOriginPartial(Node rootNode, int categoryId) {
 
         //the start state is the unedited typewriter barcode
-        List<Integer> startState = Arrays.asList(0,0,0,0,0);
+        List<Integer> startState = Arrays.asList(0, 0, 0, 0, 0);
         double partialAtOrigin = calculatePartialLikelihoodState(startState, rootNode, categoryId);
         return partialAtOrigin;
 
@@ -420,19 +384,18 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
             distance = childNode.getLength() * jointBranchRate;
         }
         // calculate partials
-
         if (childNode.isLeaf()) {
 
-            List<Integer> endState = ancestralStates.get(childNode.getNr()+1 + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(0);
+            List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(0);
             statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength);
 
         } else {
 
-            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr()+1 + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).size(); ++endStateIndex) {
+            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).size(); ++endStateIndex) {
 
-                List<Integer> endState = ancestralStates.get(childNode.getNr() +1  + currentStatesIndex[childNode.getNr()]*(childNode.getNr()+1)).get(endStateIndex);
+                List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(endStateIndex);
 
-                // if the end state has non null partial likelihood
+                // if the end state has non-null partial likelihood
                 if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
 
                     statePartialLikelihood = statePartialLikelihood + substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength) *
@@ -441,22 +404,21 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
                 }
             }
         }
-        return statePartialLikelihood ;
+        return statePartialLikelihood;
     }
 
     /**
      * This function initialises an array of partial likelihoods for a leaf node, the partial likelihood is 1 for
      * the observed sequence and 0 for everything else. The size corresponds to the total number of possible ancestral states.
      *
-     *
      * @return array of partial likelihoods at leaf node
      */
-   public double[] initPartialLikelihoodsLeaf(int size) {
+    public double[] initPartialLikelihoodsLeaf(int size) {
 
         double[] leafPartials = new double[size];
         leafPartials[0] = 1;
         return leafPartials;
-   }
+    }
 
     /**
      * This function returns all possible ancestral states given a sequence.
@@ -471,8 +433,8 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
         ancestors.add(sequence);
 
         List<Integer> ancestor = new ArrayList<>(sequence);
-        for(int i = sequence.size()-1; i >= 0; --i) {
-            if(sequence.get(i) != 0) {
+        for (int i = sequence.size() - 1; i >= 0; --i) {
+            if (sequence.get(i) != 0) {
                 ancestor.set(i, 0);
                 ancestors.add(new ArrayList<>(ancestor));
             }
