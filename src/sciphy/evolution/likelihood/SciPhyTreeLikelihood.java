@@ -1,4 +1,4 @@
-package typewriter.evolution.likelihood;
+package sciphy.evolution.likelihood;
 
 
 import java.util.*;
@@ -17,13 +17,13 @@ import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
-import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
-import static typewriter.util.LogSum.logSum;
+import sciphy.evolution.substitutionmodel.SciPhySubstitutionModel;
+import static sciphy.util.LogSum.logSum;
 
-@Description("tree likelihood for a Typewriter alignment given a generic SiteModel, " +
-        "a beast tree and a branch rate model. This is a version of the Typewriter likelihood using caching without a likelihoodCore implementation ")
+@Description("tree likelihood for a SciPhy alignment given a generic SiteModel, " +
+        "a beast tree and a branch rate model. This is a version of the SciPhy likelihood using caching without a likelihoodCore implementation ")
 
-public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
+public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
@@ -32,7 +32,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
     final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
             Validate.OPTIONAL);
 
-    protected TypewriterSubstitutionModel substitutionModel;
+    protected SciPhySubstitutionModel substitutionModel;
     protected BranchRateModel.Base branchRateModel;
     protected SiteModel.Base m_siteModel;
     protected double originTime;
@@ -94,7 +94,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         categoryLogLikelihoods = new double[m_siteModel.getCategoryCount()];
         m_siteModel.setDataType(dataInput.get().getDataType());
-        substitutionModel = (TypewriterSubstitutionModel) m_siteModel.substModelInput.get();
+        substitutionModel = (SciPhySubstitutionModel) m_siteModel.substModelInput.get();
 
         m_branchLengths = new double[nodeCount];
         storedBranchLengths = new double[nodeCount];
@@ -357,7 +357,7 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
     public double calculateOriginPartial(Node rootNode, int categoryId) {
 
-        //the start state is the unedited typewriter barcode
+        //the start state is the unedited sciphy barcode
         List<Integer> startState = Arrays.asList(0, 0, 0, 0, 0);
         double partialAtOrigin = calculatePartialLikelihoodState(startState, rootNode, categoryId);
         return partialAtOrigin;
@@ -422,10 +422,10 @@ public class TypewriterTreeLikelihood extends GenericTreeLikelihood {
 
     /**
      * This function returns all possible ancestral states given a sequence.
-     * Because typewriter sequences record ordered edits, ancestral states are obtained by sequentially removing edits
+     * Because sciphy sequences record ordered edits, ancestral states are obtained by sequentially removing edits
      * along the sequence (from any insert (1 to N)  to 0)
      *
-     * @return a list of possible ancestral typewriter barcode states
+     * @return a list of possible ancestral sciphy barcode states
      */
     public static List<List<Integer>> getPossibleAncestors(List<Integer> sequence) {
 

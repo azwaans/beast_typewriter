@@ -1,4 +1,4 @@
-package typewriter.util;
+package sciphy.util;
 
 import static java.lang.Math.log1p;
 

@@ -1,4 +1,4 @@
-package typewriter;
+package sciphy;
 
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
@@ -9,8 +9,8 @@ import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeParser;
-import typewriter.evolution.likelihood.TypewriterTreeLikelihood;
-import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
+import sciphy.evolution.likelihood.SciPhyTreeLikelihood;
+import sciphy.evolution.substitutionmodel.SciPhySubstitutionModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,10 +20,10 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
-public class TypewriterLikelihoodTest {
+public class SciPhyLikelihoodTest {
 
-    TypewriterTreeLikelihood typewriterLikelihood;
-    TypewriterSubstitutionModel substModel;
+    SciPhyTreeLikelihood sciphyLikelihood;
+    SciPhySubstitutionModel substModel;
     SiteModel siteM;
     StrictClockModel clockModel;
     RealParameter origin;
@@ -33,9 +33,9 @@ public class TypewriterLikelihoodTest {
 
     @Before
     public void setUp() {
-        typewriterLikelihood = new TypewriterTreeLikelihood();
-        substModel = new TypewriterSubstitutionModel();
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        sciphyLikelihood = new SciPhyTreeLikelihood();
+        substModel = new SciPhySubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
         RealParameter stateFrequencies = new RealParameter("1.0 0.0 0.0 ");
         Frequencies frequencies = new Frequencies();
@@ -73,7 +73,7 @@ public class TypewriterLikelihoodTest {
                 "adjustTipHeights", false, "offset", 0);
 
         // this should fail
-        typewriterLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
+        sciphyLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
     }
 
     @Test(expected = RuntimeException.class)
@@ -92,7 +92,7 @@ public class TypewriterLikelihoodTest {
 
 
         // this should fail
-        typewriterLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
+        sciphyLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
     }
 
     @Test(expected = RuntimeException.class)
@@ -114,7 +114,7 @@ public class TypewriterLikelihoodTest {
 
         // this should fail
         RealParameter originNegative = new RealParameter("-1");
-        typewriterLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", originNegative, "arrayLength", arraylength);
+        sciphyLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", originNegative, "arrayLength", arraylength);
 
     }
 
@@ -136,8 +136,8 @@ public class TypewriterLikelihoodTest {
 
         RealParameter originNegative = new RealParameter("4");
         // this should fail
-        typewriterLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", originNegative, "arrayLength", arraylength);
-        double LogPCalc = typewriterLikelihood.calculateLogP();
+        sciphyLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", originNegative, "arrayLength", arraylength);
+        double LogPCalc = sciphyLikelihood.calculateLogP();
 
 
     }
@@ -161,7 +161,7 @@ public class TypewriterLikelihoodTest {
 
         // this should fail
         IntegerParameter arrayNegative = new IntegerParameter("-1");
-        typewriterLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayNegative);
+        sciphyLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayNegative);
 
     }
 
@@ -186,7 +186,7 @@ public class TypewriterLikelihoodTest {
         // this should fail
         IntegerParameter arrayTooLarge = new IntegerParameter("6");
 
-        typewriterLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayTooLarge);
+        sciphyLikelihood.initByName("data", alignment, "tree", tree, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayTooLarge);
 
     }
 
@@ -202,7 +202,7 @@ public class TypewriterLikelihoodTest {
         List<Integer> sequence_a = alignment.getCounts().get(0);
 
         //ancestral sequences
-        List<List<Integer>> ancs_sequence_a = TypewriterTreeLikelihood.getPossibleAncestors(sequence_a);
+        List<List<Integer>> ancs_sequence_a = SciPhyTreeLikelihood.getPossibleAncestors(sequence_a);
 
         //manually create ancestral states
         List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
@@ -230,7 +230,7 @@ public class TypewriterLikelihoodTest {
         List<Integer> sequence_a = alignment.getCounts().get(0);
 
         //ancestral sequences
-        List<List<Integer>> ancs_sequence_a = TypewriterTreeLikelihood.getPossibleAncestors(sequence_a);
+        List<List<Integer>> ancs_sequence_a = SciPhyTreeLikelihood.getPossibleAncestors(sequence_a);
 
         //manually create ancestral states
         List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
@@ -258,10 +258,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter editprobs = new RealParameter("1.0 0 0 0");
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -318,10 +318,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
 
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
         RealParameter editprobs = new RealParameter("1.0 0 0 0");
@@ -394,10 +394,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
 
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
         RealParameter editprobs = new RealParameter("1.0 0 0 0");
@@ -468,10 +468,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
 
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
         RealParameter editprobs = new RealParameter("1.0 0 0 0");
@@ -544,10 +544,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
 
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
         RealParameter editprobs = new RealParameter("1.0 0 0 0");
@@ -622,10 +622,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
 
         RealParameter editprobs = new RealParameter("0.5 0.5");
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
@@ -709,10 +709,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
         RealParameter stateFrequencies = new RealParameter("1.0 0 0 ");
         Frequencies frequencies = new Frequencies();
@@ -786,10 +786,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         RealParameter editprobs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
@@ -860,10 +860,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         RealParameter editprobs = new RealParameter("0.8 0.2");
         Frequencies frequencies = new Frequencies();
@@ -930,10 +930,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
         RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -1006,10 +1006,10 @@ public class TypewriterLikelihoodTest {
                 newick,
                 "adjustTipHeights", false, "offset", 0);
 
-        TypewriterTreeLikelihood likelihood = new TypewriterTreeLikelihood();
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
 
         //create a sub model with values
-        TypewriterSubstitutionModel substitutionModel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
         RealParameter editprobs = new RealParameter("0.8 0.2");
         RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();

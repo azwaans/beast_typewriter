@@ -1,4 +1,4 @@
-package typewriter;
+package sciphy;
 
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.IntegerData;
@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
 
-import typewriter.evolution.simulation.SimulatedTypeWriterAlignment;
-import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
+import sciphy.evolution.simulation.SimulatedSciPhyAlignment;
+import sciphy.evolution.substitutionmodel.SciPhySubstitutionModel;
 
 public class SimulatedAlignmentTest {
 
@@ -32,7 +32,7 @@ public class SimulatedAlignmentTest {
                 "newick", newick,
                 "adjustTipHeights", false);
 
-        TypewriterSubstitutionModel submodel = new TypewriterSubstitutionModel();
+        SciPhySubstitutionModel submodel = new SciPhySubstitutionModel();
         RealParameter insertrates = new RealParameter("0.8 0.2");
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
@@ -49,7 +49,7 @@ public class SimulatedAlignmentTest {
 
         // simulate
         Randomizer.setSeed(1);
-        SimulatedTypeWriterAlignment simAlignment = new SimulatedTypeWriterAlignment();
+        SimulatedSciPhyAlignment simAlignment = new SimulatedSciPhyAlignment();
         simAlignment.initByName("tree", tree,
                 "siteModel", siteM,
                 "sequenceLength", sequenceLength,
@@ -61,7 +61,7 @@ public class SimulatedAlignmentTest {
 
         AlignmentFromNexus expectedAlignment = new AlignmentFromNexus();
         expectedAlignment.initByName("fileName",
-                "test/typewriter/expectedAlignment.nexus",
+                "test/sciphy/expectedAlignment.nexus",
                 "userDataType", integerData);
 
 

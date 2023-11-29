@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.evolution.likelihood:lineageTree.distributions.typewriterTreeLikelihood" required="" version="2.6">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree.coalescent:beast.base.util:beast.base.math:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood:beast.base.evolution.likelihood:lineageTree.distributions.sciphyTreeLikelihood" required="" version="2.6">
 
      dataType has to be set to integer and the value must contain a ',' s.t. the class recognizes it as a comma separated string of integers
-    <data  id="typewriterTest" spec="Alignment" name="alignment" >
+    <data  id="sciphyTest" spec="Alignment" name="alignment" >
         <userDataType spec="beast.base.evolution.datatype.IntegerData"/>
         <sequence id="0" spec="Sequence" taxon="0"  value="1,1,2,11,0"/>
         <sequence id="1" spec="Sequence" taxon="1"  value="3,8,5,0,0"/>
@@ -54,14 +54,14 @@
     />
 
     <taxa id="TaxonSet.0" spec="TaxonSet">
-        <alignment idref="typewriterTest"/>
+        <alignment idref="sciphyTest"/>
     </taxa>
 
     <run id="mcmc" spec="MCMC" chainLength="100000">
         <state id="state" spec="State" storeEvery="1">
 
 
-            <tree id="Tree.t:typewriterTest" spec="beast.base.evolution.tree.Tree" name="stateNode">
+            <tree id="Tree.t:sciphyTest" spec="beast.base.evolution.tree.Tree" name="stateNode">
                 <taxonset idref="TaxonSet.0"/>
             </tree>
 
@@ -70,14 +70,14 @@
                        upper="1.0">
                 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158 0.05263158
             </parameter>
-             <parameter id="clockRate.c:typewriterTest" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
-             <parameter id="freqParameter.s:typewriterTest" spec="parameter.RealParameter" dimension="4" lower="0.0" name="stateNode" upper="1.0">0.25</parameter>
+             <parameter id="clockRate.c:sciphyTest" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+             <parameter id="freqParameter.s:sciphyTest" spec="parameter.RealParameter" dimension="4" lower="0.0" name="stateNode" upper="1.0">0.25</parameter>
              <parameter id="popsize" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="120000000">4000</parameter>
              <parameter id="growthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="10">0.5599133</parameter>
          </state>
 
 
-            <init id="RandomTree.t:typewriterTest" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:typewriterTest" taxa="@typewriterTest" rootHeight="50">
+            <init id="RandomTree.t:sciphyTest" spec="beast.base.evolution.tree.coalescent.RandomTree" estimate="false" initial="@Tree.t:sciphyTest" taxa="@sciphyTest" rootHeight="50">
                 <populationModel id="ConstantPopulation0.t:tree" spec="ConstantPopulation">
                     <parameter id="randomPopSize.t:tree" name="popSize">1.0</parameter>
                 </populationModel>
@@ -92,7 +92,7 @@
 
                 <distribution id="expCoal" spec="beast.base.evolution.tree.coalescent.Coalescent">
                     <populationModel spec="beast.base.evolution.tree.coalescent.ExponentialGrowth" growthRate="@growthRate" popSize="@popsize" />
-                    <treeIntervals spec="beast.base.evolution.tree.TreeIntervals" tree="@Tree.t:typewriterTest"/>
+                    <treeIntervals spec="beast.base.evolution.tree.TreeIntervals" tree="@Tree.t:sciphyTest"/>
                 </distribution>
 
                 <!-- prior distributions on parameters -->
@@ -112,7 +112,7 @@
                     </LogNormal>
                 </prior>
 
-                <prior id="ClockPrior.c:typewriterTest" name="distribution" x="@clockRate.c:typewriterTest">
+                <prior id="ClockPrior.c:sciphyTest" name="distribution" x="@clockRate.c:sciphyTest">
                     <LogNormal id="LogNorm1" name="distr">
                         <parameter id="RealParameter.111" spec="parameter.RealParameter" estimate="false" name="M">-0.5799733</parameter>
                         <parameter id="RealParameter.122" spec="parameter.RealParameter" estimate="false" name="S">0.5</parameter>
@@ -125,31 +125,31 @@
 
             <!-- Tree likelihood -->
             <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
-                <distribution id="treeLikelihood.typewriterTest" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" data="@typewriterTest" tree="@Tree.t:typewriterTest" origin="60" useScaling="true" arrayLength="5">
-                    <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" gammaCategoryCount="2" shape="7.907">
-                        <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
-                        <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
+                <distribution id="treeLikelihood.sciphyTest" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" data="@sciphyTest" tree="@Tree.t:sciphyTest" origin="60" useScaling="true" arrayLength="5">
+                    <siteModel id="SiteModel.s:sciphyTest" spec="SiteModel" gammaCategoryCount="2" shape="7.907">
+                        <parameter id="mutationRate.s:sciphyTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
+                        <parameter id="proportionInvariant.s:sciphyTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+                        <substModel id="submodel.s:sciphyTest" spec="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
-                    <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:typewriterTest"/>
+                    <branchRateModel id="StrictClock.c:sciphyTest" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:sciphyTest"/>
                 </distribution>
             </distribution>
         </distribution>
 
         <!-- tree operators -->
 
-         <operator spec="WilsonBalding" tree="@Tree.t:typewriterTest" weight="30.0"/>
-         <operator spec="Uniform" tree="@Tree.t:typewriterTest"
+         <operator spec="WilsonBalding" tree="@Tree.t:sciphyTest" weight="30.0"/>
+         <operator spec="Uniform" tree="@Tree.t:sciphyTest"
                    weight="30.0"/>
 
         <operator spec="Exchange"
-                  isNarrow="true" tree="@Tree.t:typewriterTest"
+                  isNarrow="true" tree="@Tree.t:sciphyTest"
                   weight="30.0"/>
 
         <!-- clock rate operator -->
-        <operator id="StrictClockRateScaler" spec="ScaleOperator" parameter="@clockRate.c:typewriterTest" scaleFactor="0.75" weight="3.0"/>
+        <operator id="StrictClockRateScaler" spec="ScaleOperator" parameter="@clockRate.c:sciphyTest" scaleFactor="0.75" weight="3.0"/>
 
 
         <!-- phylodynamic operators -->
@@ -161,11 +161,11 @@
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
-            <log idref="treeLikelihood.typewriterTest"/>
-            <log id="treeHeight.t:typewriterTest" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:typewriterTest"/>
+            <log idref="treeLikelihood.sciphyTest"/>
+            <log id="treeHeight.t:sciphyTest" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@Tree.t:sciphyTest"/>
             <log idref="popsize"/>
             <log idref="growthRate"/>
-            <log idref="clockRate.c:typewriterTest"/>
+            <log idref="clockRate.c:sciphyTest"/>
             <log idref="editProbs"/>
         </logger>
 
@@ -176,8 +176,8 @@
             <log idref="prior"/>
         </logger>
 
-        <logger id="treelog.t:typewriterTest" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="100" mode="tree">
-            <log idref="Tree.t:typewriterTest" printMetaData="true"/>
+        <logger id="treelog.t:sciphyTest" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="100" mode="tree">
+            <log idref="Tree.t:sciphyTest" printMetaData="true"/>
         </logger>
 
 

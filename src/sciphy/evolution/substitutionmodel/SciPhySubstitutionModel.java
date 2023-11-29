@@ -1,4 +1,4 @@
-package typewriter.evolution.substitutionmodel;
+package sciphy.evolution.substitutionmodel;
 
 
 import beast.base.core.Description;
@@ -20,7 +20,7 @@ import java.util.List;
 @Description("Calculates transition probabilities sequence transitions from an ancestral node to a child node. " +
         "Assume that the sequences proposed represent valid transition pairs.")
 
-public class TypewriterSubstitutionModel extends SubstitutionModel.Base {
+public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     final public Input<RealParameter> editProbabilitiesInput = new Input<>("editProbabilities",
             "Edit probabilities for the typewriter process", Input.Validate.REQUIRED);
 

@@ -6077,7 +6077,7 @@
         <state id="state" spec="State" storeEvery="100">
 
             <!--starting tree -->
-            <stateNode id="typewriterTree" spec="typewriter.evolution.tree.startingTree" rootHeight="20"
+            <stateNode id="sciphyTree" spec="sciphy.evolution.tree.startingTree" rootHeight="20"
                        taxa="@data_ATGGTAAG" scarringHeight="20"
                        scarringDuration="5" sequencesAreClustered="false">
                 <trait idref="dateTrait.t:alignment"/>
@@ -6137,7 +6137,7 @@
                 <distribution id="birthDeathMigration.t:alignment" spec="bdsky.evolution.speciation.BirthDeathSkylineModel"
                               birthRate="@birthRate" deathRate="@deathRate" samplingRate="@samplingRate"
                               contemp="true" origin="@origin" rho="@samplingProportion"
-                              tree="@typewriterTree" conditionOnSurvival="true">
+                              tree="@sciphyTree" conditionOnSurvival="true">
                 </distribution>
 
                 <!-- priors on phylogenetic parameters -->
@@ -6186,51 +6186,51 @@
                 </prior>
             </distribution>
 
-            <!-- Typewriter tree likelihood -->
+            <!-- SciPhy tree likelihood -->
             <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
                 <!-- Alignment 1 -->
-                <distribution id="treeLikelihood.1" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" data="@data_ATGGTAAG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
-                    <siteModel id="SiteModel.s:typewriterTest" spec="SiteModel" >
-                        <parameter id="mutationRate.s:typewriterTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
-                        <parameter id="proportionInvariant.s:typewriterTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                        <substModel id="submodel.s:typewriterTest" spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" editProbabilities="@editProbs">
+                <distribution id="treeLikelihood.1" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" data="@data_ATGGTAAG" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
+                    <siteModel id="SiteModel.s:sciphyTest" spec="SiteModel" >
+                        <parameter id="mutationRate.s:sciphyTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
+                        <parameter id="proportionInvariant.s:sciphyTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+                        <substModel id="submodel.s:sciphyTest" spec="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel" editProbabilities="@editProbs">
                             <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" estimate="false"/>
                         </substModel>
                     </siteModel>
-                    <branchRateModel id="StrictClock.c:typewriterTest" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate"/>
+                    <branchRateModel id="StrictClock.c:sciphyTest" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate"/>
                     <!-- Alignment 2 -->
                 </distribution>
-                <distribution id="treeLikelihood.2" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_ATTTATAT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.2" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_ATTTATAT" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 3 -->
-                <distribution id="treeLikelihood.3" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_ATTTGGTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.3" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_ATTTGGTT" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 4 -->
-                <distribution id="treeLikelihood.4" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_GCAGGGTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.4" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_GCAGGGTG" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 5 -->
-                <distribution id="treeLikelihood.5" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_GTAAAGAT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.5" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_GTAAAGAT" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 6 -->
-                <distribution id="treeLikelihood.6" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TAGATTTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.6" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TAGATTTT" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 7 -->
-                <distribution id="treeLikelihood.7" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGCGATTT" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.7" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TGCGATTT" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 8 -->
-                <distribution id="treeLikelihood.8" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGGACGAC" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
+                <distribution id="treeLikelihood.8" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TGGACGAC" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="4">
                 </distribution>
                 <!-- Alignment 9 -->
-                <distribution id="treeLikelihood.9" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TGGTTTTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
+                <distribution id="treeLikelihood.9" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TGGTTTTG" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="4">
                 </distribution>
                 <!-- Alignment 10 -->
-                <distribution id="treeLikelihood.10" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTAGATTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.10" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TTAGATTG" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 11 -->
-                <distribution id="treeLikelihood.11" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTGAGGTG" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="5">
+                <distribution id="treeLikelihood.11" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TTGAGGTG" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="5">
                 </distribution>
                 <!-- Alignment 12 -->
-                <distribution id="treeLikelihood.12" spec="typewriter.evolution.likelihood.TypewriterTreeLikelihood" siteModel="@SiteModel.s:typewriterTest" branchRateModel="@StrictClock.c:typewriterTest" data="@data_TTTCGTGA" tree="@typewriterTree" origin="@origin" useScaling="true" arrayLength="4">
+                <distribution id="treeLikelihood.12" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" siteModel="@SiteModel.s:sciphyTest" branchRateModel="@StrictClock.c:sciphyTest" data="@data_TTTCGTGA" tree="@sciphyTree" origin="@origin" useScaling="true" arrayLength="4">
                 </distribution>
             </distribution>
         </distribution>
@@ -6245,15 +6245,15 @@
                   parameter="@clockRate" scaleFactor="0.8" weight="3.0"/>
 
         <!-- tree operators -->
-        <operator spec="ScaleOperator" tree="@typewriterTree" weight="10.0"/>
-        <operator spec="WilsonBalding" tree="@typewriterTree" weight="10.0"/>
-        <operator spec="Uniform" tree="@typewriterTree"
+        <operator spec="ScaleOperator" tree="@sciphyTree" weight="10.0"/>
+        <operator spec="WilsonBalding" tree="@sciphyTree" weight="10.0"/>
+        <operator spec="Uniform" tree="@sciphyTree"
                   weight="10.0"/>
 
         <operator spec="Exchange"
-                  isNarrow="true" tree="@typewriterTree"
+                  isNarrow="true" tree="@sciphyTree"
                   weight="10.0"/>
-        <operator spec="SubtreeSlide" tree="@typewriterTree" weight="10.0"/>
+        <operator spec="SubtreeSlide" tree="@sciphyTree" weight="10.0"/>
 
 
         <!-- Phylodynamic operators -->
@@ -6271,8 +6271,8 @@
             <log idref="posterior"/>
             <log idref="likelihood"/>
             <log idref="prior"/>
-            <log id="treeHeight.t:alignment" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@typewriterTree"/>
-            <log id="treeLength.t:alignment" spec="beast.base.evolution.tree.TreeStatLogger" logHeigth="true" tree="@typewriterTree"/>
+            <log id="treeHeight.t:alignment" spec="beast.base.evolution.tree.TreeHeightLogger" tree="@sciphyTree"/>
+            <log id="treeLength.t:alignment" spec="beast.base.evolution.tree.TreeStatLogger" logHeigth="true" tree="@sciphyTree"/>
             <log idref="editProbs"/>
             <log idref="birthRate"/>
             <log idref="samplingProportion"/>
@@ -6303,7 +6303,7 @@
         </logger>
 
         <logger id="treelog.t:alignment" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="500" mode="tree">
-            <log idref="typewriterTree" printMetaData="true"/>
+            <log idref="sciphyTree" printMetaData="true"/>
         </logger>
 
 

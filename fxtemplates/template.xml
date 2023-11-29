@@ -31,7 +31,7 @@
 	            </log>
             </logger>
 
-			<distribution id="TypewriterTreeLikelihood.$(n)" spec='typewriter.evolution.likelihood.TypewriterTreeLikelihood' tree='@Tree.t:$(n)'
+			<distribution id="TypewriterTreeLikelihood.$(n)" spec='typewriter.evolution.likelihood.SciPhyTreeLikelihood' tree='@Tree.t:$(n)'
 			arrayLength="5" useScaling="true">
 				<data spec="beast.base.evolution.alignment.Alignment" id='$(n)'>
 					<userDataType spec='beast.base.evolution.datatype.IntegerData' id='integerDataType.$(n)' />

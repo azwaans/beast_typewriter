@@ -1,4 +1,4 @@
-package typewriter.evolution.simulation;
+package sciphy.evolution.simulation;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -17,7 +17,7 @@ import beast.base.util.Randomizer;
 import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
-import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
+import sciphy.evolution.substitutionmodel.SciPhySubstitutionModel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -27,7 +27,7 @@ import java.util.List;
 
 
 @Description("A more flexible alignment simulator adapted from Tim Vaughan's feast implementation")
-public class SimulatedTypeWriterAlignment extends Alignment {
+public class SimulatedSciPhyAlignment extends Alignment {
 
     public Input<Tree> treeInput = new Input<>(
             "tree",
@@ -68,7 +68,7 @@ public class SimulatedTypeWriterAlignment extends Alignment {
 
     private String ancestralSeqStr;
 
-    public SimulatedTypeWriterAlignment() {
+    public SimulatedSciPhyAlignment() {
         sequenceInput.setRule(Input.Validate.OPTIONAL);
     }
 
@@ -113,7 +113,7 @@ public class SimulatedTypeWriterAlignment extends Alignment {
     private void simulate() {
         int nTaxa = tree.getLeafNodeCount();
 
-        TypewriterSubstitutionModel substModel = (TypewriterSubstitutionModel) siteModel.getSubstitutionModel();
+        SciPhySubstitutionModel substModel = (SciPhySubstitutionModel) siteModel.getSubstitutionModel();
 
         double[] transitionProbs = substModel.getInsertProbabilities();
 

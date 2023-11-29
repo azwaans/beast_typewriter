@@ -1,14 +1,14 @@
-package typewriter.evolution.datatype;
+package sciphy.evolution.datatype;
 
 import beast.base.core.Description;
 import beast.base.evolution.datatype.DataType.Base;
 
-@Description("Datatype for Typewriter Data")
-public class TypewriterData extends Base {
+@Description("Datatype for Sciphy Data")
+public class SciPhyData extends Base {
 
-    public TypewriterData() {
+    public SciPhyData() {
         stateCount = 14;
-        //for now, we use a integer representation of a Typewriter sequence.
+        //for now, we use a integer representation of a Sciphy sequence.
         //todo change this mapping to actual nucleotide insert
         codeLength = 2; // with length 3 nucleotide inserts input: codeLength = 3
         codeMap = "0001020304050607080910111213" ; // with length 3 nucleotide inserts input codeMap = ATGCCTTAGTT etc
@@ -24,7 +24,7 @@ public class TypewriterData extends Base {
 
     @Override
     public String getTypeDescription() {
-        return "TypewriterData";
+        return "SciphyData";
     }
     
     @Override

@@ -1,11 +1,11 @@
-package typewriter;
+package sciphy;
 
 import beast.base.core.Description;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.substitutionmodel.Frequencies;
-import typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel;
+import sciphy.evolution.substitutionmodel.SciPhySubstitutionModel;
 import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,15 +16,15 @@ import static junit.framework.Assert.assertEquals;
 
 
 @Description("Test substitution model")
-public class TypewriterSubstModelTest {
+public class SciPhySubstModelTest {
 
     // test that inputs are handled as expected
 
-    TypewriterSubstitutionModel substModel;
+    SciPhySubstitutionModel substModel;
 
     @Before
     public void setUp(){
-        substModel = new TypewriterSubstitutionModel();
+        substModel = new SciPhySubstitutionModel();
     }
 
     //----------------------------------------------------------------------------------//

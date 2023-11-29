@@ -1,4 +1,4 @@
-package typewriter.evolution.tree;
+package sciphy.evolution.tree;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
