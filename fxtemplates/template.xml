@@ -3,7 +3,7 @@
 
 
 <mergewith point='aux-partitions-panels'>
-		<alignmentProvider id="Add Typewriter Data" spec='beastfx.app.inputeditor.BeautiAlignmentProvider'
+		<alignmentProvider id="Add SciPhy Data" spec='beastfx.app.inputeditor.BeautiAlignmentProvider'
                            template='@MKTrait_'/>
 
         <subtemplate id='MKTrait_' class='beast.base.evolution.alignment.Alignment' mainid='$(n)'
@@ -31,7 +31,7 @@
 	            </log>
             </logger>
 
-			<distribution id="TypewriterTreeLikelihood.$(n)" spec='typewriter.evolution.likelihood.SciPhyTreeLikelihood' tree='@Tree.t:$(n)'
+			<distribution id="SciPhyTreeLikelihood.$(n)" spec='sciphy.evolution.likelihood.SciPhyTreeLikelihood' tree='@Tree.t:$(n)'
 			arrayLength="5" useScaling="true">
 				<data spec="beast.base.evolution.alignment.Alignment" id='$(n)'>
 					<userDataType spec='beast.base.evolution.datatype.IntegerData' id='integerDataType.$(n)' />
@@ -39,8 +39,8 @@
 				<siteModel spec='SiteModel' id="SiteModel.s:$(n)" gammaCategoryCount='0'>
 				        <mutationRate        spec='parameter.RealParameter' id='mutationRate.s:$(n)' value='1.0' estimate='false'/>
 				        <shape               spec='parameter.RealParameter' id='gammaShape.s:$(n)' value='1.0' estimate='false'/>
-                    <!-- Typewriter subst model -->
-					<substModel spec="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel" id="TypewriterSubstmodel.s:$(n)">
+                    <!-- SciPhy subst model -->
+					<substModel spec="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel" id="SciPhySubstmodel.s:$(n)">
 					    <parameter id="editProbabilities.s:$(n)" name="editProbabilities" value="
 					    0.1 0.1 0.1 0.1 0.1
 					    0.1 0.1 0.1 0.1 0.025
@@ -108,7 +108,7 @@
             </upDownOperator>
 
 ]]>
-            <connect srcID='TypewriterTreeLikelihood.$(n)'         targetID='likelihood' inputName='distribution' if="isInitializing"/>
+            <connect srcID='SciPhyTreeLikelihood.$(n)'         targetID='likelihood' inputName='distribution' if="isInitializing"/>
             <connect srcID='YuleModel.t:$(n)'               targetID='prior' inputName='distribution' if="isInitializing"/>
             <connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
 
@@ -147,7 +147,7 @@
             <connect if="inposterior(YuleModel.t:$(n)) and Tree.t:$(n)/estimate=true" inputName="operator" srcID="YuleModelWide.t:$(n)" targetID="mcmc">Wide exchange performs global rearrangement of tree t:$(n)</connect>
             <connect if="inposterior(YuleModel.t:$(n)) and Tree.t:$(n)/estimate=true" inputName="operator" srcID="YuleModelWilsonBalding.t:$(n)" targetID="mcmc">Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
 
-            <connect srcID='TypewriterTreeLikelihood.$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(TypewriterTreeLikelihood.$(n))'/>
+            <connect srcID='SciPhyTreeLikelihood.$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(SciPhyTreeLikelihood.$(n))'/>
             <connect srcID='TreeHeight.t:$(n)'                targetID='tracelog' inputName='log' if='inposterior(Tree.t:$(n))'/>
             <connect srcID='editProbabilities.s:$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
@@ -167,11 +167,11 @@
 <mergewith point='substModelTemplates'>
 
     <!-- LewisMK substitution model -->
-    <subtemplate id='TypewriterSubstitutionModel' class='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel'
-                 mainid='TypewriterSubstmodel.s:$(n)'
-                 suppressInputs="typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel.frequencies">
+    <subtemplate id='SciPhySubstitutionModel' class='sciphy.evolution.substitutionmodel.SciPhySubstitutionModel'
+                 mainid='SciPhySubstmodel.s:$(n)'
+                 suppressInputs="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel.frequencies">
         <![CDATA[
-    <plugin spec='typewriter.evolution.substitutionmodel.TypewriterSubstitutionModel' id='TypewriterSubstmodel.s:$(n)'/>
+    <plugin spec='sciphy.evolution.substitutionmodel.SciPhySubstitutionModel' id='SciPhySubstmodel.s:$(n)'/>
 ]]>
     </subtemplate>
 </mergewith>
