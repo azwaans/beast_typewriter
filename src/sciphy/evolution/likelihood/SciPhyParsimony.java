@@ -187,7 +187,6 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
             }
         }
         logP = Arrays.stream(categoryLogLikelihoods).sum();
-        Log.info.println("WE ARE THERE");
         return logP;
     }
 
@@ -398,7 +397,6 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
 
         //the start state is the unedited sciphy barcode
         List<Integer> startState = Arrays.asList(0, 0, 0, 0, 0);
-        Log.info.println("WE are doing the origin partial");
         double partialAtOrigin = calculatePartialLikelihoodState(startState, rootNode, categoryId);
 
         return partialAtOrigin;
@@ -413,29 +411,18 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
      */
     public double calculatePartialLikelihoodState(List<Integer> startState, Node childNode, int categoryId) {
 
-        Log.info.println("start");
-        Log.info.println(startState);
-
-
-
-
         double statePartialLikelihood = 0;
         // calculate partials
         if (childNode.isLeaf()) {
-            Log.info.println("LEAF");
 
             List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(0);
             statePartialLikelihood += getSequenceParsimonyTransition(startState, endState, this.arrayLength);
-            Log.info.println("end");
-            Log.info.println(endState);
         } else {
-            Log.info.println("NOT A LEAF");
 
             for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).size(); ++endStateIndex) {
 
                 List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(endStateIndex);
-                Log.info.println("end");
-                Log.info.println(endState);
+
                 // if the end state has non-null partial likelihood
                 //if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
 
@@ -444,8 +431,6 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
                // }
             }
         }
-        Log.info.println("statePartialLikelihood");
-        Log.info.println(statePartialLikelihood);
         return statePartialLikelihood;
     }
 

@@ -7,6 +7,7 @@
         <provider classname="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel"/>
         <provider classname="sciphy.evolution.tree.startingTree"/>
         <provider classname="sciphy.evolution.likelihood.SciPhyTreeLikelihood"/>
+        <provider classname="sciphy.evolution.likelihood.SciPhyParsimony"/>
         <provider classname="sciphy.evolution.simulation.SimulatedSciPhyAlignment"/>
 
 
