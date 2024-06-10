@@ -289,16 +289,16 @@ public class SciPhyLikelihoodTest {
         assertEquals(3, statesDictionary.size());
 
         //1st leaf
-        assertEquals(statesDictionary.get(1).size(), 1);
-        assertTrue(statesDictionary.get(1).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
 
         //2nd leaf
-        assertEquals(statesDictionary.get(2).size(), 1);
-        assertTrue(statesDictionary.get(2).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
 
         //root node
-        assertEquals(statesDictionary.get(6).size(), 1);
-        assertTrue(statesDictionary.get(6).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
 
     }
 
@@ -356,23 +356,23 @@ public class SciPhyLikelihoodTest {
         assertEquals(3, statesDictionary.size());
 
         //1st leaf
-        assertEquals(statesDictionary.get(1).size(), 4);
-        assertTrue(statesDictionary.get(1).contains(allele123));
-        assertTrue(statesDictionary.get(1).contains(allele12));
-        assertTrue(statesDictionary.get(1).contains(allele1));
-        assertTrue(statesDictionary.get(1).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 4);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele123));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele12));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
 
         //2nd leaf
-        assertEquals(statesDictionary.get(2).size(), 3);
-        assertTrue(statesDictionary.get(2).contains(allele12));
-        assertTrue(statesDictionary.get(2).contains(allele1));
-        assertTrue(statesDictionary.get(2).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele12));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
 
         //root node
-        assertEquals(statesDictionary.get(6).size(), 3);
-        assertTrue(statesDictionary.get(6).contains(allele12));
-        assertTrue(statesDictionary.get(6).contains(allele1));
-        assertTrue(statesDictionary.get(6).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele12));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
 
 
     }
@@ -433,20 +433,20 @@ public class SciPhyLikelihoodTest {
         assertEquals(3, statesDictionary.size());
 
         //1st leaf
-        assertEquals(statesDictionary.get(1).size(), 3);
-        assertTrue(statesDictionary.get(1).contains(allele12));
-        assertTrue(statesDictionary.get(1).contains(allele1));
-        assertTrue(statesDictionary.get(1).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele12));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
 
         //2nd leaf
-        assertEquals(statesDictionary.get(2).size(), 3);
-        assertTrue(statesDictionary.get(2).contains(allele21));
-        assertTrue(statesDictionary.get(2).contains(allele2));
-        assertTrue(statesDictionary.get(2).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele21));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele2));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
 
         //root node
-        assertEquals(statesDictionary.get(6).size(), 1);
-        assertTrue(statesDictionary.get(6).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
 
 
     }
@@ -508,21 +508,21 @@ public class SciPhyLikelihoodTest {
         assertEquals(3, statesDictionary.size());
 
         //1st leaf
-        assertEquals(statesDictionary.get(1).size(), 3);
-        assertTrue(statesDictionary.get(1).contains(allele12));
-        assertTrue(statesDictionary.get(1).contains(allele1));
-        assertTrue(statesDictionary.get(1).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele12));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
 
         //2nd leaf
-        assertEquals(statesDictionary.get(2).size(), 4);
-        assertTrue(statesDictionary.get(2).contains(allele211));
-        assertTrue(statesDictionary.get(2).contains(allele21));
-        assertTrue(statesDictionary.get(2).contains(allele2));
-        assertTrue(statesDictionary.get(2).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 4);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele211));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele21));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele2));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
 
         //root node
-        assertEquals(statesDictionary.get(6).size(), 1);
-        assertTrue(statesDictionary.get(6).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
 
 
     }
@@ -583,20 +583,20 @@ public class SciPhyLikelihoodTest {
         assertEquals(3, statesDictionary.size());
 
         //1st leaf
-        assertEquals(statesDictionary.get(1).size(), 2);
-        assertTrue(statesDictionary.get(1).contains(allele1));
-        assertTrue(statesDictionary.get(1).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 2);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
 
 
         //2nd leaf
-        assertEquals(statesDictionary.get(2).size(), 3);
-        assertTrue(statesDictionary.get(2).contains(allele31));
-        assertTrue(statesDictionary.get(2).contains(allele3));
-        assertTrue(statesDictionary.get(2).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele31));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele3));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
 
         //root node
-        assertEquals(statesDictionary.get(6).size(), 1);
-        assertTrue(statesDictionary.get(6).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
 
 
     }
@@ -661,31 +661,31 @@ public class SciPhyLikelihoodTest {
 
         //check the ancestral dictionaries
         //todo find a way to extract node numbers in a way that we know their position in the tree
-        assertEquals(statesDictionary.get(1).size(), 3);
-        assertTrue(statesDictionary.get(1).contains(allele12));
-        assertTrue(statesDictionary.get(1).contains(allele1));
-        assertTrue(statesDictionary.get(1).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele12));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
 
         //2nd leaf
-        assertEquals(statesDictionary.get(2).size(), 3);
-        assertTrue(statesDictionary.get(2).contains(allele11));
-        assertTrue(statesDictionary.get(2).contains(allele1));
-        assertTrue(statesDictionary.get(2).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele11));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
 
         // node c
-        assertEquals(statesDictionary.get(3).size(), 3);
-        assertTrue(statesDictionary.get(3).contains(allele21));
-        assertTrue(statesDictionary.get(3).contains(allele2));
-        assertTrue(statesDictionary.get(3).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 3);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele21));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele2));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
 
         //internal node between a and b
-        assertEquals(statesDictionary.get(8).size(), 2);
-        assertTrue(statesDictionary.get(8).contains(allele1));
-        assertTrue(statesDictionary.get(8).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(3)).size(), 2);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(3)).contains(allele1));
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(3)).contains(allele0));
 
         //root node a/b/c
-        assertEquals(statesDictionary.get(10).size(), 1);
-        assertTrue(statesDictionary.get(10).contains(allele0));
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(4)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(4)).contains(allele0));
 
 
     }
