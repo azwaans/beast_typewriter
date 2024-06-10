@@ -58,7 +58,7 @@
     </taxa>
 
     <run id="mcmc" spec="MCMC" chainLength="100000">
-        <state id="state" spec="State" storeEvery="1">
+        <state id="state" spec="State" storeEvery="100">
 
 
             <tree id="Tree.t:sciphyTest" spec="beast.base.evolution.tree.Tree" name="stateNode">
@@ -126,7 +126,7 @@
             <!-- Tree likelihood -->
             <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
                 <distribution id="treeLikelihood.sciphyTest" spec="sciphy.evolution.likelihood.SciPhyTreeLikelihood" data="@sciphyTest" tree="@Tree.t:sciphyTest" origin="60" useScaling="true" arrayLength="5">
-                    <siteModel id="SiteModel.s:sciphyTest" spec="SiteModel" gammaCategoryCount="2" shape="7.907">
+                    <siteModel id="SiteModel.s:sciphyTest" spec="SiteModel">
                         <parameter id="mutationRate.s:sciphyTest" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
                         <parameter id="proportionInvariant.s:sciphyTest" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
                         <substModel id="submodel.s:sciphyTest" spec="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel" editProbabilities="@editProbs">
@@ -137,6 +137,8 @@
                 </distribution>
             </distribution>
         </distribution>
+
+
 
         <!-- tree operators -->
 
