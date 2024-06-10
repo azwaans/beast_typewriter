@@ -4,6 +4,7 @@ package sciphy.evolution.likelihood;
 import java.util.*;
 
 import beast.base.core.Description;
+import beast.base.core.Log;
 import beast.base.evolution.likelihood.GenericTreeLikelihood;
 import beast.base.core.Input;
 import beast.base.core.Input.Validate;
@@ -61,7 +62,7 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
     protected double[] storedBranchLengths;
 
     //to be able to have current/stored states in an analog way to the partials array, ancestral states are accessed/added
-    //states with key : (NodeNr + 1) + (current ? 0:1) * (NodeNr+1)
+    //states with key being the hashcode of: nodeIndex + currentStatesIndex[nodeIndex] + nodeIndex
     public Hashtable<Integer, List<List<Integer>>> ancestralStates;
     public double[][][] partialLikelihoods;
     public double[] categoryLogLikelihoods;
@@ -80,7 +81,6 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
     @Override
     public void initAndValidate() {
-
         arrayLength = arrayLengthInput.get().getValue();
         if (arrayLength < 1 || (dataInput.get().getSiteCount() != arrayLength)) {
             throw new IllegalArgumentException(String.format(
@@ -235,12 +235,21 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
      */
     protected void initLeafPartials(int nodeNr) {
 
-        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size());
+        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(makeCachingIndexStates(nodeNr)).size());
         this.partialLikelihoods[0][nodeNr] = new double[leafPartialLikelihoods.length];
         this.partialLikelihoods[1][nodeNr] = new double[leafPartialLikelihoods.length];
         System.arraycopy(leafPartialLikelihoods, 0, this.partialLikelihoods[0][nodeNr], 0, leafPartialLikelihoods.length);
 
     }
+
+
+    public int makeCachingIndexStates(int nodeIndex) {
+        int node = nodeIndex + 1;
+        String forHashing = node + "" +  currentStatesIndex[nodeIndex] + ""+ node;
+        return forHashing.hashCode();
+
+    }
+
 
     /**
      * Calculate the set of ancestral states for a given leaf node, and fill the corresponding AncestralStates hashmap
@@ -248,7 +257,7 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
     protected void initLeafAncestors(int nodeNr) {
 
         List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(nodeNr));
-        ancestralStates.put(nodeNr + 1, possibleLeafAncestors);
+        ancestralStates.put(makeCachingIndexStates(nodeNr), possibleLeafAncestors);
 
     }
 
@@ -305,15 +314,15 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
      */
     public void calculateStates(int nodeNr, int child1Nr, int child2Nr) {
 
-        List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr + 1 + currentStatesIndex[child1Nr] * (child1Nr + 1));
-        List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr + 1 + currentStatesIndex[child2Nr] * (child2Nr + 1));
+        List<List<Integer>> ancSetChild1 = ancestralStates.get(makeCachingIndexStates(child1Nr));
+        List<List<Integer>> ancSetChild2 = ancestralStates.get(makeCachingIndexStates(child2Nr));
 
         List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
 
         // intersection of children ancestral states
         ancSetNode.retainAll(ancSetChild2);
 
-        ancestralStates.put((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1), ancSetNode);
+        ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
     }
 
     public void setNodePartialsForUpdate(int nodeIndex) {
@@ -332,11 +341,11 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
     public void calculatePartials(int nodeNr, Node child1, Node child2, int categoryId) {
 
         //initialize an array for the partials
-        double[] partials = new double[ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size()];
+        double[] partials = new double[ancestralStates.get(makeCachingIndexStates(nodeNr)).size()];
 
-        for (int stateIndex = 0; stateIndex < ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size(); ++stateIndex) {
+        for (int stateIndex = 0; stateIndex < ancestralStates.get(makeCachingIndexStates(nodeNr)).size(); ++stateIndex) {
 
-            List<Integer> startState = ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).get(stateIndex);
+            List<Integer> startState = ancestralStates.get(makeCachingIndexStates(nodeNr)).get(stateIndex);
 
             double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
             double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
@@ -386,14 +395,14 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
         // calculate partials
         if (childNode.isLeaf()) {
 
-            List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(0);
+            List<Integer> endState = ancestralStates.get(makeCachingIndexStates(childNode.getNr())).get(0);
             statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength);
 
         } else {
 
-            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).size(); ++endStateIndex) {
+            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(makeCachingIndexStates(childNode.getNr())).size(); ++endStateIndex) {
 
-                List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(endStateIndex);
+                List<Integer> endState = ancestralStates.get(makeCachingIndexStates(childNode.getNr())).get(endStateIndex);
 
                 // if the end state has non-null partial likelihood
                 if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
