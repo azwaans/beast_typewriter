@@ -238,7 +238,7 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
      */
     protected void initLeafPartials(int nodeNr) {
 
-        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size());
+        double[] leafPartialLikelihoods = initPartialLikelihoodsLeaf(ancestralStates.get(makeCachingIndexStates(nodeNr)).size());
         this.partialLikelihoods[0][nodeNr] = new double[leafPartialLikelihoods.length];
         this.partialLikelihoods[1][nodeNr] = new double[leafPartialLikelihoods.length];
         System.arraycopy(leafPartialLikelihoods, 0, this.partialLikelihoods[0][nodeNr], 0, leafPartialLikelihoods.length);
@@ -251,7 +251,7 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
     protected void initLeafAncestors(int nodeNr) {
 
         List<List<Integer>> possibleLeafAncestors = getPossibleAncestors(dataInput.get().getCounts().get(nodeNr));
-        ancestralStates.put(nodeNr + 1, possibleLeafAncestors);
+        ancestralStates.put(makeCachingIndexStates(nodeNr), possibleLeafAncestors);
 
     }
 
@@ -308,8 +308,8 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
      */
     public void calculateStates(int nodeNr, int child1Nr, int child2Nr) {
 
-        List<List<Integer>> ancSetChild1 = ancestralStates.get(child1Nr + 1 + currentStatesIndex[child1Nr] * (child1Nr + 1));
-        List<List<Integer>> ancSetChild2 = ancestralStates.get(child2Nr + 1 + currentStatesIndex[child2Nr] * (child2Nr + 1));
+        List<List<Integer>> ancSetChild1 = ancestralStates.get(makeCachingIndexStates(child1Nr));
+        List<List<Integer>> ancSetChild2 = ancestralStates.get(makeCachingIndexStates(child2Nr));
 
         List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
 
@@ -321,7 +321,7 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
             List<Integer> startState = Arrays.asList(0, 0, 0, 0, 0);
             List<List<Integer>> parsimonySetNode = new ArrayList<>();
             parsimonySetNode.add(startState);
-            ancestralStates.put((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1), parsimonySetNode);
+            ancestralStates.put(makeCachingIndexStates(nodeNr), parsimonySetNode);
         }
         else {
             int indexLongest = 0;
@@ -350,7 +350,7 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
             parsimonySetNode.add(ancSetNode.get(indexLongest));
 
 
-            ancestralStates.put((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1), parsimonySetNode);
+            ancestralStates.put(makeCachingIndexStates(nodeNr), parsimonySetNode);
         }
     }
 
@@ -362,6 +362,13 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
         currentStatesIndex[nodeIndex] = 1 - currentStatesIndex[nodeIndex];
     }
 
+    public int makeCachingIndexStates(int nodeIndex) {
+        int node = nodeIndex + 1;
+        String forHashing = node + "" +  currentStatesIndex[nodeIndex] + ""+ node;
+        return forHashing.hashCode();
+
+    }
+
 
     /**
      * This function calculates partial likelihoods for all possible states at a node given its children partials
@@ -370,11 +377,11 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
     public void calculatePartialsParsimony(int nodeNr, Node child1, Node child2, int categoryId) {
 
         //initialize an array for the partials
-        double[] partials = new double[ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size()];
+        double[] partials = new double[ancestralStates.get(makeCachingIndexStates(nodeNr)).size()];
 
-        for (int stateIndex = 0; stateIndex < ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).size(); ++stateIndex) {
+        for (int stateIndex = 0; stateIndex < ancestralStates.get(makeCachingIndexStates(nodeNr)).size(); ++stateIndex) {
 
-            List<Integer> startState = ancestralStates.get((nodeNr + 1) + currentStatesIndex[nodeNr] * (nodeNr + 1)).get(stateIndex);
+            List<Integer> startState = ancestralStates.get(makeCachingIndexStates(nodeNr)).get(stateIndex);
 
             double child1PartialLikelihoodState = calculatePartialLikelihoodState(startState, child1, categoryId);
             double child2PartialLikelihoodState = calculatePartialLikelihoodState(startState, child2, categoryId);
@@ -415,13 +422,13 @@ public class SciPhyParsimony extends GenericTreeLikelihood {
         // calculate partials
         if (childNode.isLeaf()) {
 
-            List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(0);
+            List<Integer> endState = ancestralStates.get(makeCachingIndexStates(childNode.getNr())).get(0);
             statePartialLikelihood += getSequenceParsimonyTransition(startState, endState, this.arrayLength);
         } else {
 
-            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).size(); ++endStateIndex) {
+            for (int endStateIndex = 0; endStateIndex < ancestralStates.get(makeCachingIndexStates(childNode.getNr())).size(); ++endStateIndex) {
 
-                List<Integer> endState = ancestralStates.get(childNode.getNr() + 1 + currentStatesIndex[childNode.getNr()] * (childNode.getNr() + 1)).get(endStateIndex);
+                List<Integer> endState = ancestralStates.get(makeCachingIndexStates(childNode.getNr())).get(endStateIndex);
 
                 // if the end state has non-null partial likelihood
                 //if (partialLikelihoods[currentPartialsIndex[childNode.getNr()]][childNode.getNr()][endStateIndex] != 0.0) {
