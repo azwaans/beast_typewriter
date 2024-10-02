@@ -3,13 +3,21 @@
     <depends on='BEAST.app' atleast='2.7.0'/>
     <depends on="feast" atleast="10.0.0"/>
 
+    <service type="beast.base.evolution.datatype.DataType">
+        <provider classname="sciphy.evolution.datatype.SciPhyData"/>
+    </service>
     <service type="beast.base.core.BEASTInterface">
+        <provider classname="sciphy.evolution.datatype.SciPhyData"/>
         <provider classname="sciphy.evolution.substitutionmodel.SciPhySubstitutionModel"/>
         <provider classname="sciphy.evolution.tree.startingTree"/>
         <provider classname="sciphy.evolution.likelihood.SciPhyTreeLikelihood"/>
         <provider classname="sciphy.evolution.simulation.SimulatedSciPhyAlignment"/>
+        <provider classname="sciphy.util.NexusParser"/>
+        <provider classname="sciphy.util.NexusImporter"/>
+    </service>
 
-
+    <service type="beastfx.app.inputeditor.AlignmentImporter">
+        <provider classname="sciphy.util.NexusImporter"/>
     </service>
 
 </package>
