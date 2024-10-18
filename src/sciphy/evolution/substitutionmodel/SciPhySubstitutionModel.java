@@ -5,6 +5,7 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.StandardData;
+import beast.base.evolution.datatype.IntegerData;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.substitutionmodel.EigenDecomposition;
@@ -208,7 +209,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        if (dataType instanceof StandardData || dataType instanceof Binary) {
+        if (dataType instanceof StandardData || dataType instanceof Binary || dataType instanceof IntegerData) {
             return true;
         }
         return false;
