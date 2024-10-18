@@ -152,7 +152,7 @@
              <!-- tree and its properties -->
             <taxonset id='TaxonSet.$(n)' spec='beast.base.evolution.alignment.TaxonSet' alignment='@$(n)' />
             <plugin spec='sciphy.evolution.tree.startingTree' id='Tree.t:$(n)' taxonset='@TaxonSet.$(n)'
-            taxa="@$(n)" scarringHeight="20" rootHeight="24"
+            taxa="@$(n)" scarringHeight="20" rootHeight="23"
                        scarringDuration="5" sequencesAreClustered="false"/>
 
 <!--            <plugin spec='sciphy.evolution.tree.startingTree' id='StartingTree.t:$(n)' estimate='false' taxonset='@TaxonSet.$(n)' initial='@Tree.t:$(n)'-->
