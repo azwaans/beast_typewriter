@@ -35,17 +35,9 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     public void initAndValidate() {
 
         super.initAndValidate();
-        //Here, nrOfStates represents the number of possible edits at each position of the TargetBCs + the unedited state
-        nrOfStates = frequencies.getFreqs().length;
-
-        // Get edit frequencies and check correct input
+        // Get edit probabilities and check correct input
         editProbabilities = editProbabilitiesInput.get();
         editProbs = editProbabilities.getDoubleValues();
-
-        if (nrOfStates != (editProbs.length + 1)){
-            throw new RuntimeException(String.format("The edit probability vector has to be one element " +
-                    "shorter than the vector of the possible state frequencies!"));
-        }
 
         double insertProbabilitiesSum = Arrays.stream(editProbs).sum();
         if (Math.abs(insertProbabilitiesSum - 1.0) > 1e-6) {
