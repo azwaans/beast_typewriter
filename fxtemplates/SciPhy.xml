@@ -194,7 +194,7 @@
 				<branchRateModel id="StrictClock.c:$(n)" spec="beast.base.evolution.branchratemodel.StrictClockModel">
 					<parameter id="clockRate.c:$(n)" name="clock.rate" value="1.0" estimate='true'/>
 				</branchRateModel>
-				<parameter name='origin' id='origin.t:$(n)' value='24.0' estimate='true'/>
+				<parameter name='origin' id='experimentLength.$(n)' value='24.0' estimate='true'/>
 			</distribution>
 
             <!-- default tree prior -->
@@ -221,7 +221,7 @@
             <prior id='YuleBirthRatePrior.t:$(n)' x='@birthRate.t:$(n)'>
                 <distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='Infinity'/>
             </prior>
-            <prior id="OriginPrior.t:$(n)" x="@origin.t:$(n)">
+            <prior id="OriginPrior.t:$(n)" x="@experimentLength.$(n)">
                 <distr spec="beast.base.inference.distribution.Uniform" lower='0' upper='Infinity'/>
             </prior>
             <prior id='GammaShapePrior.s:$(n)' x='@gammaShape.s:$(n)'>
@@ -229,7 +229,7 @@
             </prior>
 
             <operator id='mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
-            <operator id='originScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@origin.t:$(n)"/>
+            <operator id='originScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@experimentLength.$(n)"/>
             <operator id='editProbabilitiesScaler.s:$(n)' spec='DeltaExchangeOperator' weight="4" parameter="@editProbabilities.s:$(n)" delta="0.1"/>
             <operator id='gammaShapeScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@gammaShape.s:$(n)"/>
 
@@ -271,7 +271,7 @@
             <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
             <connect srcID='clockRate.c:$(n)'                 targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
             <connect srcID='birthRate.t:$(n)'                 targetID='state' inputName='stateNode' if='inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and birthRate.t:$(n)/estimate=true'/>
-            <connect srcID='origin.t:$(n)'                    targetID='state' inputName='stateNode' if='inlikelihood(origin.t:$(n)) and origin.t:$(n)/estimate=true'/>
+            <connect srcID='experimentLength.$(n)'                    targetID='state' inputName='stateNode' if='inlikelihood(experimentLength.$(n)) and experimentLength.$(n)/estimate=true'/>
 
             <connect srcID='editProbabilitiesScaler.s:$(n)'   targetID='mcmc' inputName='operator' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'>Changes the edit probabilities for partition s:$(n)</connect>
             <connect srcID='mutationRateScaler.s:$(n)'        targetID='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
@@ -304,7 +304,7 @@
 
             <connect srcID='GammaShapePrior.s:$(n)'           targetID='prior' inputName='distribution' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Prior on gamma shape for partition s:$(n)</connect>
             <connect srcID='YuleBirthRatePrior.t:$(n)'        targetID='prior' inputName='distribution' if='inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and birthRate.t:$(n)/estimate=true'>Prior on Yule birth rate for partition s:$(n)</connect>
-            <connect srcID="OriginPrior.t:$(n)"               targetID="prior" inputName="distribution" if="inlikelihood(origin.t:$(n)) and origin.t:$(n)/estimate=true"/>
+            <connect srcID="OriginPrior.t:$(n)"               targetID="prior" inputName="distribution" if="inlikelihood(experimentLength.$(n)) and experimentLength.$(n)/estimate=true"/>
             <mergepoint id='aux-partitiontemplate'/>
         </partitiontemplate>
 
