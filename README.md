@@ -5,7 +5,7 @@ SciPhy (Sequential Cas-9 Insertion based Phylogenetics) is a [BEAST 2](http://ww
 - DNA Typewriter lineage tracing constructs, as described [here](https://doi.org/10.1038/s41586-022-04922-8).
 - peCHYRON, as described [here](https://doi.org/10.1101/2021.11.05.467507).
 
-The preprint describing the model SciPhy and its applications can be found [here](https://doi.org/10.1101/2024.10.01.615771).
+The preprint describing the model behind SciPhy and its applications can be found [here](https://doi.org/10.1101/2024.10.01.615771).
 
 License
 -------
