@@ -7,6 +7,18 @@ SciPhy (Sequential Cas-9 Insertion based Phylogenetics) is a [BEAST 2](http://ww
 
 The preprint describing the model behind SciPhy and its applications can be found [here](https://doi.org/10.1101/2024.10.01.615771).
 
+Installation
+-------
+SciPhy requires an installation of BEAST 2.7 which can be obtained from https://www.beast2.org/. SciPhy can then be installed using BEAUti with the following instructions: 
+
+- Open BEAUti.
+- In the `File` menu, select `Manage Packages`.
+- Click the `Package repositories` button at the bottom of the dialog box.
+- Click on`Add URL` and enter the following URL:
+https://raw.githubusercontent.com/azwaans/SciPhy/refs/heads/master/package.xml. Close this window.
+- `sciphy` should now appear as a package in the list of available packages. Select it and click the `Install/Upgrade` button. 
+- SciPhy should now be available for use in BEAST 2 and Beauti. Close and restart Beauti to start generating an xml. 
+
 License
 -------
 
