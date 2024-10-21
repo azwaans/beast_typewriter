@@ -19,6 +19,20 @@ https://raw.githubusercontent.com/azwaans/SciPhy/refs/heads/master/package.xml. 
 - `sciphy` should now appear as a package in the list of available packages. Select it and click the `Install/Upgrade` button. 
 - SciPhy should now be available for use in BEAST 2 and Beauti. Close and restart Beauti to start generating an xml. 
 
+Running Sciphy on your data
+-------
+
+Start from a csv file, where the rows are cells, the columns are the consequtive sites in the barcode, and the entries denote the edits as integers. Then use the `write_nexus.R` script under `scripts/` to generate a `[your_filename].sciphy` file that can be read by BEAUTI. 
+
+Open Beauti, click on File -> Template -> Sciphy to open the Sciphy template. Then, click on the "plus" button in the bottom left corner and read your `[your_filename].sciphy` into BEAUTI. Now, you can specify your preferred Site Model, Clock Model etc. For general information on setting up a Bayesian phylogenetic analysis, refer to the [BEAST tutorials](https://taming-the-beast.org/).
+
+You can find an exemplary xml file in `examples/example.xml` file, that is based on the `scripts/example_data.csv`.
+
+To run the analysis from the command line, run the following command:
+`beast -seed 1 -overwrite example.xml`
+
+You can also run the analysis using the GUI. To do that, open BEAST. When asked for the input file, choose your xml and hit the "Run" button.
+
 License
 -------
 
