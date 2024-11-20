@@ -68,45 +68,63 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
         List<Integer> startState = new ArrayList(startSequence);
         List<Integer> endState = new ArrayList(endSequence);
 
-        //create an unedited state to subtract from sequences to get only edited sites
-        List<Integer> zero = Arrays.asList(0);
+        // the missing state is encoded as an array of -1.
+        List<Integer> missingState=new ArrayList<Integer>(){{
+            add(-1);
+            add(-1);
+            add(-1);
+            add(-1);
+            add(-1);
+        }};
+        if(endState.equals(missingState)) {
 
-        //removing all unedited sites from each sequence
-        startState.removeAll(zero);
-        endState.removeAll(zero);
-
-        //if endState is less edited than the start state, violates ordering
-        if(startState.size() > endState.size() ){
-            return 0.0;
+            //the transition probability from any valid starting state to a missing state is 1
+            return 1.0;
         }
 
-        //subtracting start sequence from end sequence: edits introduced
-        // if start state has identical elements to end state remove
-        startState.forEach(endState::remove);
-        List<Integer> newInserts = endState;
+        else {
 
-        //available positions are targetBClength length - number of edited positions
-        int nrOfPossibleInserts = arrayLength - startState.size();
+            //create an unedited state to subtract from sequences to get only edited sites
+            List<Integer> zero = Arrays.asList(0);
 
-        //initialise the poisson distribution with mean rate * distance
-        org.apache.commons.math.distribution.PoissonDistribution poissonDistribution = new PoissonDistributionImpl(distance);
+            //removing all unedited sites from each sequence
+            startState.removeAll(zero);
+            endState.removeAll(zero);
 
-        //calculate the transition probability for the case where all available positions are edited in
-        // This is the absorbing state in the poisson process
-        // P(max) = 1- sum(P(n)) * probability of this insert combination
-        if(newInserts.size() == nrOfPossibleInserts ) {
+            //if endState is less edited than the start state, violates ordering
+            if (startState.size() > endState.size()) {
+                return 0.0;
+            }
 
-            return calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
-        }
-        //calculate the transition probability for the case where a #edits < available positions
-        //this is a regular draw from the poisson process * probability of this insert combination
-        else if (newInserts.size() < nrOfPossibleInserts){
+            //subtracting start sequence from end sequence: edits introduced
+            // if start state has identical elements to end state remove
+            startState.forEach(endState::remove);
+            List<Integer> newInserts = endState;
 
-            return poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
+            //available positions are targetBClength length - number of edited positions
+            int nrOfPossibleInserts = arrayLength - startState.size();
 
-        } else{
+            //initialise the poisson distribution with mean rate * distance
+            org.apache.commons.math.distribution.PoissonDistribution poissonDistribution = new PoissonDistributionImpl(distance);
 
-            throw new RuntimeException("Error! Number of new inserts is larger than nr of possible inserts!");
+            //calculate the transition probability for the case where all available positions are edited in
+            // This is the absorbing state in the poisson process
+            // P(max) = 1- sum(P(n)) * probability of this insert combination
+            if (newInserts.size() == nrOfPossibleInserts) {
+
+                return calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
+            }
+            //calculate the transition probability for the case where a #edits < available positions
+            //this is a regular draw from the poisson process * probability of this insert combination
+            else if (newInserts.size() < nrOfPossibleInserts) {
+
+                return poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
+
+            } else {
+
+                throw new RuntimeException("Error! Number of new inserts is larger than nr of possible inserts!");
+            }
+
         }
     }
 
