@@ -30,6 +30,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
      */
     protected RealParameter editProbabilities;
     double[] editProbs;
+    List<Integer> missingState;
 
     @Override
     public void initAndValidate() {
@@ -38,6 +39,16 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
         // Get edit probabilities and check correct input
         editProbabilities = editProbabilitiesInput.get();
         editProbs = editProbabilities.getDoubleValues();
+
+        // creating the missing state, encoded as an array of -1.
+         missingState = new ArrayList<Integer>(){{
+            add(-1);
+            add(-1);
+            add(-1);
+            add(-1);
+            add(-1);
+        }};
+
 
         double insertProbabilitiesSum = Arrays.stream(editProbs).sum();
         if (Math.abs(insertProbabilitiesSum - 1.0) > 1e-6) {
@@ -68,16 +79,8 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
         List<Integer> startState = new ArrayList(startSequence);
         List<Integer> endState = new ArrayList(endSequence);
 
-        // the missing state is encoded as an array of -1.
-        List<Integer> missingState=new ArrayList<Integer>(){{
-            add(-1);
-            add(-1);
-            add(-1);
-            add(-1);
-            add(-1);
-        }};
-        if(endState.equals(missingState)) {
 
+        if(endState.equals(missingState)) {
             //the transition probability from any valid starting state to a missing state is 1
             return 1.0;
         }
