@@ -327,12 +327,40 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
         List<List<Integer>> ancSetChild1 = ancestralStates.get(makeCachingIndexStates(child1Nr));
         List<List<Integer>> ancSetChild2 = ancestralStates.get(makeCachingIndexStates(child2Nr));
 
-        List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
 
-        // intersection of children ancestral states
-        ancSetNode.retainAll(ancSetChild2);
 
-        ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
+        // create the set of ancestral states for the missing state
+        List<List<Integer>> ancestorsMissing = new ArrayList();
+        ancestorsMissing.add(missingState);
+
+        // both sets are missing states, the intersection is the missing state
+        //todo rearrage these statements
+        if( ancSetChild2.equals(ancestorsMissing) && ancSetChild1.equals(ancestorsMissing) ) {
+            ancestralStates.put(makeCachingIndexStates(nodeNr), ancestorsMissing);
+        }
+        else {
+
+
+            if (ancSetChild1.equals(ancestorsMissing)) {
+                //the intersection is the child2 set
+                List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild2);
+                ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
+            }
+            else if (ancSetChild2.equals(ancestorsMissing)) {
+                //the intersection is the child1 set
+                List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
+                ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
+            }
+            else {
+                //intersection needs to be computed
+                List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
+                ancSetNode.retainAll(ancSetChild2);
+                ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
+            }
+
+        }
+
+
     }
 
     public void setNodePartialsForUpdate(int nodeIndex) {

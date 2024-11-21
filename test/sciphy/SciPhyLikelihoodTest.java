@@ -330,6 +330,128 @@ public class SciPhyLikelihoodTest {
     }
 
     @Test
+    public void testAncestralSetsMissingUneditedAncestors() {
+        // Testing the ancestral state reconstruction for a cherry
+        String newick = "(CHILD1:5,CHILD2:5)";
+        Sequence a = new Sequence("CHILD1", "?,?,?,?,?");
+        Sequence b = new Sequence("CHILD2", "0,0,0,0,0");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
+
+        //test ancestral states sets calculations
+        likelihood.calculateLogP();
+        Hashtable<Integer, List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+
+        //first calculate states dictionary
+        //manually create states:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> alleleWC = Arrays.asList(-1, -1, -1, -1, -1);
+
+        assertEquals(3, statesDictionary.size());
+
+        //1st leaf
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(alleleWC));
+
+        //2nd leaf
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(allele0));
+
+        //root node
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
+
+    }
+
+    @Test
+    public void testAncestralSetsMissingUneditedAncestorsOppositeOrder() {
+        // Testing the ancestral state reconstruction for a cherry
+        String newick = "(CHILD1:5,CHILD2:5)";
+        Sequence a = new Sequence("CHILD1", "0,0,0,0,0");
+        Sequence b = new Sequence("CHILD2", "?,?,?,?,?");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("1.0 0 0 0");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "arrayLength", arrayLength);
+
+        //test ancestral states sets calculations
+        likelihood.calculateLogP();
+        Hashtable<Integer, List<List<Integer>>> statesDictionary = likelihood.ancestralStates;
+
+        //first calculate states dictionary
+        //manually create states:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> alleleWC = Arrays.asList(-1, -1, -1, -1, -1);
+
+        assertEquals(3, statesDictionary.size());
+
+        //1st leaf
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(0)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(0)).contains(allele0));
+
+        //2nd leaf
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(1)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(1)).contains(alleleWC));
+
+        //root node
+        assertEquals(statesDictionary.get(likelihood.makeCachingIndexStates(2)).size(), 1);
+        assertTrue(statesDictionary.get(likelihood.makeCachingIndexStates(2)).contains(allele0));
+
+    }
+
+    @Test
     public void testAncestralSetsEditedSequencesEditedAncestors() {
         // Testing the ancestral state reconstruction for a cherry
         String newick = "(CHILD1:5,CHILD2:5)";
