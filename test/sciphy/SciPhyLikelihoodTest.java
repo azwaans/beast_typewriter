@@ -221,6 +221,32 @@ public class SciPhyLikelihoodTest {
     }
 
     @Test
+    public void testGetPossibleAncestorsMissingState() {
+        Sequence a = new Sequence("cell1", "?,?,?,?,?");
+
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+
+        //internal representation of the sequences for the package:
+        List<Integer> sequence_a = alignment.getCounts().get(0);
+
+        //ancestral sequences
+        List<List<Integer>> ancs_sequence_a = SciPhyTreeLikelihood.getPossibleAncestors(sequence_a);
+
+        //manually create ancestral states
+        List<Integer> alleleWC = Arrays.asList(-1, -1, -1, -1, -1);
+
+        // For a sequence with n sites, there are n_edited_sites + 1 ancestral sequences (all edited position + fully unedited))
+        assertEquals(ancs_sequence_a.size(), 1, 1e-5);
+        //for any sequence, its possible ancestral sequences are itself + removing edits 1 by 1 + unedited
+
+        assertTrue(ancs_sequence_a.contains(alleleWC));
+
+
+    }
+
+    @Test
     public void testGetPossibleAncestorsSetsUnedited() {
         Sequence a = new Sequence("cell1", "0,0,0,0,0");
 

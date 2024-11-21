@@ -26,6 +26,7 @@ import static sciphy.util.LogSum.logSum;
 
 public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
+    private static List<Integer> missingState;
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
     final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC", Validate.REQUIRED);
@@ -130,6 +131,15 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
 
         hasDirt = Tree.IS_FILTHY;
+
+        // creating the missing state, encoded as an array of -1.
+        missingState = new ArrayList<Integer>(){{
+            add(-1);
+            add(-1);
+            add(-1);
+            add(-1);
+            add(-1);
+        }};
 
         for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
             initLeafAncestors(i);
@@ -441,14 +451,21 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
         List<List<Integer>> ancestors = new ArrayList();
         ancestors.add(sequence);
 
-        List<Integer> ancestor = new ArrayList<>(sequence);
-        for (int i = sequence.size() - 1; i >= 0; --i) {
-            if (sequence.get(i) != 0) {
-                ancestor.set(i, 0);
-                ancestors.add(new ArrayList<>(ancestor));
-            }
+        //possible ancestors of a missing state can be any state, we return the missing state itself as a Wild Card
+        if(sequence.equals(missingState)) {
+            return ancestors;
         }
-        return ancestors;
+
+        else {
+            List<Integer> ancestor = new ArrayList<>(sequence);
+            for (int i = sequence.size() - 1; i >= 0; --i) {
+                if (sequence.get(i) != 0) {
+                    ancestor.set(i, 0);
+                    ancestors.add(new ArrayList<>(ancestor));
+                }
+            }
+            return ancestors;
+        }
     }
 
     /**

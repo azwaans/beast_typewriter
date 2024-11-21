@@ -30,7 +30,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
      */
     protected RealParameter editProbabilities;
     double[] editProbs;
-    List<Integer> missingState;
+    public List<Integer> missingState;
 
     @Override
     public void initAndValidate() {
