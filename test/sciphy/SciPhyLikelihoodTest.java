@@ -1,5 +1,6 @@
 package sciphy;
 
+import beast.base.core.Log;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.alignment.Alignment;
@@ -913,7 +914,7 @@ public class SciPhyLikelihoodTest {
 
     }
 
-    //Adding a cell with a missing sequence to the text above should result in the same likelihood!
+
     @Test
     public void TestLikelihoodCherryIdenticalEditsWithAMissing() {
 
@@ -942,7 +943,13 @@ public class SciPhyLikelihoodTest {
         RealParameter stateFrequencies = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
-        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+
+        //missingness parameters
+        RealParameter missRate = new RealParameter("0.5");
+        RealParameter missProbability = new RealParameter("0.5");
+
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies,
+                "missingRate",missRate,"missingProbability",missProbability);
         //site model
         SiteModel siteM = new SiteModel();
         siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
@@ -966,23 +973,144 @@ public class SciPhyLikelihoodTest {
         List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
         List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
         List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        List<Integer> alleleWC = Arrays.asList(-1, -1, -1, -1, -1);
+
         double clockRate = 0.5;
 
-        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate, 5);
-        double partial1000Internal = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate, 5);
-        double partial1200Internal = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate, 5);
+        //internal1 is the node connecting Child1 and Child3
+        double partial12000Internal1Left = substitutionModel.getSequenceTransitionProbabilityTipEdge(allele12, allele12, 1 * clockRate, 5);
+        double partial12000Internal1Right = substitutionModel.getSequenceTransitionProbabilityTipEdge(allele12, alleleWC, 1 * clockRate, 5);
+        Log.info.println("partialLik1200Left" + partial12000Internal1Left);
+        Log.info.println("manual" + ((Math.exp(-0.5*0.5) * Math.exp(-0.5))));
 
-        //root node
-        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5) + partial1000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5) + partial1200Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5);
+        Log.info.println("partialLik1200Right" + partial12000Internal1Right);
+        Log.info.println("manual" + (((1 - Math.exp(-0.5*0.5)) + ( Math.exp(-0.5*0.5) * 0.5))));
 
-        //loglikelihood
-        double LogPExpected = Math.log(partialOrigin);
+        double manualPartial12000Internal1 = ((Math.exp(-0.5*0.5) * Math.exp(-0.5)) * ((1 - Math.exp(-0.5*0.5)) + ( Math.exp(-0.5*0.5) * 0.5)));
+        double partial12000Internal1 = partial12000Internal1Left * partial12000Internal1Right;
+        assertEquals(manualPartial12000Internal1, partial12000Internal1);
 
+        double partial00000Internal1 = substitutionModel.getSequenceTransitionProbabilityTipEdge(allele0, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbabilityTipEdge(allele0, alleleWC, 1 * clockRate, 5);
+        double partial10000Internal1 = substitutionModel.getSequenceTransitionProbabilityTipEdge(allele1, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbabilityTipEdge(allele1, alleleWC, 1 * clockRate, 5);
+
+        double partial00000Internal2 =  (substitutionModel.getSequenceTransitionProbability(allele0, allele12, 4 * clockRate, 5)* partial12000Internal1 +
+                                        substitutionModel.getSequenceTransitionProbability(allele0, allele1, 4 * clockRate, 5)* partial10000Internal1 +
+                                        substitutionModel.getSequenceTransitionProbability(allele0, allele0, 4 * clockRate, 5)* partial00000Internal1) *
+                                        (substitutionModel.getSequenceTransitionProbabilityTipEdge(allele0, allele12, 5 * clockRate, 5));
+
+        double partial10000Internal2 =  (substitutionModel.getSequenceTransitionProbability(allele1, allele12, 4 * clockRate, 5)* partial12000Internal1 +
+                substitutionModel.getSequenceTransitionProbability(allele1, allele1, 4 * clockRate, 5)* partial10000Internal1 +
+                substitutionModel.getSequenceTransitionProbability(allele1, allele0, 4 * clockRate, 5)* partial00000Internal1) *
+                (substitutionModel.getSequenceTransitionProbabilityTipEdge(allele1, allele12, 5 * clockRate, 5));
+
+        double partial12000Internal2 =  (substitutionModel.getSequenceTransitionProbability(allele12, allele12, 4 * clockRate, 5)* partial12000Internal1 +
+                substitutionModel.getSequenceTransitionProbability(allele12, allele1, 4 * clockRate, 5)* partial10000Internal1 +
+                substitutionModel.getSequenceTransitionProbability(allele12, allele0, 4 * clockRate, 5)* partial00000Internal1) *
+                (substitutionModel.getSequenceTransitionProbabilityTipEdge(allele12, allele12, 5 * clockRate, 5));
+
+
+        double partial00000Root =  (substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5)* partial12000Internal2 +
+                substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5)* partial10000Internal2 +
+                substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5)* partial00000Internal2);
+
+        double LogPExpected = Math.log(partial00000Root);
         double LogPCalc = likelihood.calculateLogP();
-        assertEquals(LogPExpected, LogPCalc);
+        assertEquals(LogPExpected,LogPCalc);
 
 
     }
+
+    @Test
+    public void TestLikelihoodCherryIdenticalEditsWith2Missing() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "((CHILD1:1,CHILD3:1)INTERNAL:4,CHILD2:5.0)";
+
+        Sequence a = new Sequence("CHILD1", "?,?,?,?,?");
+        Sequence b = new Sequence("CHILD3", "?,?,?,?,?");
+        Sequence c = new Sequence("CHILD2", "1,2,0,0,0");
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+
+        //missingness parameters
+        RealParameter missRate = new RealParameter("0.5");
+        RealParameter missProbability = new RealParameter("0.5");
+
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies,
+                "missingRate",missRate,"missingProbability",missProbability);
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("6");
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        ///Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        List<Integer> alleleWC = Arrays.asList(-1, -1, -1, -1, -1);
+
+        double clockRate = 0.5;
+
+        //internal1 is the node connecting Child1 and Child3
+        double partialWCInternal1Left = substitutionModel.getSequenceTransitionProbabilityTipEdge(alleleWC, alleleWC, 1 * clockRate, 5);
+        double partialWCInternal1Right = substitutionModel.getSequenceTransitionProbabilityTipEdge(alleleWC, alleleWC, 1 * clockRate, 5);
+
+        double manualPartialWCInternal1 = 1.0;
+        double partialWCInternal1 = partialWCInternal1Left * partialWCInternal1Right;
+        assertEquals(manualPartialWCInternal1, partialWCInternal1);
+
+        double partial00000Internal2 =  (substitutionModel.getSequenceTransitionProbability(allele0, alleleWC, 4 * clockRate, 5)* partialWCInternal1) *
+                (substitutionModel.getSequenceTransitionProbabilityTipEdge(allele0, allele12, 5 * clockRate, 5));
+
+        double partial10000Internal2 =  (substitutionModel.getSequenceTransitionProbability(allele1, alleleWC, 4 * clockRate, 5)* partialWCInternal1) *
+                (substitutionModel.getSequenceTransitionProbabilityTipEdge(allele1, allele12, 5 * clockRate, 5));
+
+        double partial12000Internal2 =  (substitutionModel.getSequenceTransitionProbability(allele12, alleleWC, 4 * clockRate, 5)* partialWCInternal1) *
+                (substitutionModel.getSequenceTransitionProbabilityTipEdge(allele12, allele12, 5 * clockRate, 5));
+
+
+        double partial00000Root =  (substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5)* partial12000Internal2 +
+                substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5)* partial10000Internal2 +
+                substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5)* partial00000Internal2);
+
+        double LogPExpected = Math.log(partial00000Root);
+        double LogPCalc = likelihood.calculateLogP();
+        assertEquals(LogPExpected,LogPCalc);
+
+
+    }
+
 
     @Test
     public void testLikelihoodCherry2Shared1DifferentInsert() {
@@ -1062,6 +1190,89 @@ public class SciPhyLikelihoodTest {
     }
 
     @Test
+    public void testLikelihoodCherry2Shared1DifferentInsertMissing() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 2 tips
+        String newick = "((CHILD1:1,CHILD3:1)INTERNAL:4,CHILD2:5.0)";
+        //Using Origin Time: total height is 6
+
+
+        Sequence a = new Sequence("CHILD1", "1,2,2,0,0");
+        Sequence b = new Sequence("CHILD2", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD3", "?,?,?,?,?");
+
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+        alignment.initByName("sequence", c, "dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("6");
+        IntegerParameter arraylength = new IntegerParameter("5");
+
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arraylength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele122 = Arrays.asList(1, 2, 2, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        double clockRate = 0.5;
+
+        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 5 * clockRate,5) * substitutionModel.getSequenceTransitionProbability(allele0, allele122, 5 * clockRate, 5);
+        double partial1000Internal = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 5 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele1, allele122, 5 * clockRate, 5);
+        double partial1200Internal = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 5 * clockRate,5) * substitutionModel.getSequenceTransitionProbability(allele12, allele122, 5 * clockRate, 5);
+
+        //root node
+        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5) + partial1000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5) + partial1200Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5);
+
+        //loglikelihood
+        double LogPExpected = Math.log(partialOrigin);
+
+
+        double LogPCalc = likelihood.calculateLogP();
+        Log.info.println("Log_lik:" + LogPCalc);
+
+        assertEquals(LogPCalc, LogPExpected);
+
+
+    }
+
+
+    @Test
     public void testLikelihoodCherryNoInsert() {
 
 
@@ -1123,6 +1334,82 @@ public class SciPhyLikelihoodTest {
 
 
         double LogPCalc = likelihood.calculateLogP();
+
+        assertEquals(LogPCalc, LogPExpected);
+
+
+    }
+
+    @Test
+    public void testLikelihoodCherryNoInsertMissing() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 2 tips
+        String newick = "((CHILD1:1,CHILD3:1)INTERNAL:4,CHILD2:5.0)";
+        //Using Origin Time: total height is 6
+
+
+        Sequence a = new Sequence("CHILD1", "0,0,0,0,0");
+        Sequence b = new Sequence("CHILD2", "0,0,0,0,0");
+        Sequence c = new Sequence("CHILD3", "?,?,?,?,?");
+
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "dataType", "integer");
+        alignment.initByName("sequence", b, "dataType", "integer");
+        alignment.initByName("sequence", c, "dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("6");
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        double clockRate = 0.5;
+
+        double partial0000Internal = substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate,5) * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 5 * clockRate,5);
+
+        //root node
+        double partialOrigin = partial0000Internal * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate,5);
+
+        //loglikelihood
+        double LogPExpected = Math.log(partialOrigin);
+
+
+        double LogPCalc = likelihood.calculateLogP();
+        Log.info.println("Log_lik:" + LogPCalc);
 
         assertEquals(LogPCalc, LogPExpected);
 
@@ -1207,6 +1494,168 @@ public class SciPhyLikelihoodTest {
 
 
     @Test
+    public void testLikelihood3LeavesSameLengthInsertsMissing() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "(((CHILD1:0.5,MISS:0.5)INTERNAL1:0.5,CHILD3:1)INTERNAL2:1,CHILD2:2.0)";
+
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD3", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
+        Sequence d = new Sequence("MISS", "?,?,?,?,?");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("4");
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        double clockRate = 0.5;
+
+
+        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5);
+        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5);
+
+        double partial1200Internal1 = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate, 5);
+
+        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5) + partial1200Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate, 5));
+
+        //root node
+        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate, 5);
+
+        //loglikelihood
+        double LogPExpected = Math.log(partialOrigin);
+
+        double LogPCalc = likelihood.calculateLogP();
+        Log.info.println("Log_lik:" + LogPCalc);
+
+        assertEquals(LogPExpected, LogPCalc);
+
+
+    }
+
+    @Test
+    public void testLikelihood3LeavesSameLengthInsertsMissing2() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "(((CHILD1:0.5,MISS:0.5)INTERNAL1:0.5,(CHILD3:0.5,MISS2:0.5)INT3:0.5)INTERNAL2:1,CHILD2:2.0)";
+
+        Sequence a = new Sequence("CHILD1", "1,2,0,0,0");
+        Sequence b = new Sequence("CHILD3", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
+        Sequence d = new Sequence("MISS", "?,?,?,?,?");
+        Sequence e = new Sequence("MISS2", "?,?,?,?,?");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d,"sequence", e, "dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("4");
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        double clockRate = 0.5;
+
+
+        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5);
+        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5);
+
+        double partial1200Internal1 = substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele12, allele12, 1 * clockRate, 5);
+
+        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5) + partial1200Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate, 5));
+
+        //root node
+        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate, 5);
+
+        //loglikelihood
+        double LogPExpected = Math.log(partialOrigin);
+
+        double LogPCalc = likelihood.calculateLogP();
+        Log.info.println("Log_lik:" + LogPCalc);
+
+        assertEquals(LogPExpected, LogPCalc);
+
+
+    }
+
+
+
+
+    @Test
     public void testLikelihood3LeavesSameLengthInsertsAllDifferent() {
 
 
@@ -1219,6 +1668,174 @@ public class SciPhyLikelihoodTest {
         Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "sequence", b, "sequence", c, "dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("4");
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele11 = Arrays.asList(1, 1, 0, 0, 0);
+        List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        double clockRate = 0.5;
+
+        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele0, allele11, 1 * clockRate, 5);
+        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5) * substitutionModel.getSequenceTransitionProbability(allele1, allele11, 1 * clockRate, 5);
+
+        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate, 5));
+
+
+        //root node
+        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate, 5);
+
+        //loglikelihood
+        double LogPExpected = Math.log(partialOrigin);
+
+        double LogPCalc = likelihood.calculateLogP();
+        assertEquals(LogPExpected, LogPCalc);
+
+    }
+
+    @Test
+    public void testLikelihood3LeavesSameLengthInsertsAllDifferentMissing() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "(((MISS:0.5,CHILD1:0.5)INT:0.5,CHILD3:1)INTERNAL:1,CHILD2:2.0)";
+
+        Sequence a = new Sequence("CHILD1", "1,1,0,0,0");
+        Sequence b = new Sequence("CHILD3", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
+        Sequence d = new Sequence("MISS", "?,?,?,?,?");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d,"dataType", "integer");
+
+
+        Tree tree1 = new TreeParser();
+        tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
+                newick,
+                "adjustTipHeights", false, "offset", 0);
+
+        SciPhyTreeLikelihood likelihood = new SciPhyTreeLikelihood();
+
+        //create a sub model with values
+        SciPhySubstitutionModel substitutionModel = new SciPhySubstitutionModel();
+        RealParameter editprobs = new RealParameter("0.8 0.2");
+        RealParameter stateFrequencies = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", stateFrequencies, "estimate", false);
+        substitutionModel.initByName("editProbabilities", editprobs, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        siteM.initByName("gammaCategoryCount", 0, "substModel", substitutionModel);
+
+        //likelihood class
+
+        RealParameter meanRate = new RealParameter("0.5");
+        StrictClockModel clockModel = new StrictClockModel();
+        clockModel.initByName("clock.rate", meanRate);
+        RealParameter origin = new RealParameter("4");
+        IntegerParameter arrayLength = new IntegerParameter("5");
+
+        likelihood.initByName("data", alignment, "tree", tree1, "siteModel", siteM, "branchRateModel", clockModel, "origin", origin, "arrayLength", arrayLength);
+
+
+        //initialise partialLikelihoods
+        likelihood.partialLikelihoods = new double[2][tree1.getNodeCount()][];
+
+        //Manually calc the likelihood for that tree:
+
+        //internal node partials:
+        List<Integer> allele0 = Arrays.asList(0, 0, 0, 0, 0);
+        List<Integer> allele12 = Arrays.asList(1, 2, 0, 0, 0);
+        List<Integer> allele11 = Arrays.asList(1, 1, 0, 0, 0);
+        List<Integer> allele21 = Arrays.asList(2, 1, 0, 0, 0);
+        List<Integer> allele1 = Arrays.asList(1, 0, 0, 0, 0);
+        double clockRate = 0.5;
+
+        double partial0000Internal0 = substitutionModel.getSequenceTransitionProbability(allele0, allele11, 0.5 * clockRate, 5) ;
+        double partial1000Internal0 = substitutionModel.getSequenceTransitionProbability(allele1, allele11, 0.5 * clockRate, 5) ;
+        double partial1100Internal0 = substitutionModel.getSequenceTransitionProbability(allele11, allele11, 0.5 * clockRate, 5);
+
+
+
+        double partial0000Internal1 = substitutionModel.getSequenceTransitionProbability(allele0, allele12, 1 * clockRate, 5) * (
+                partial0000Internal0 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 0.5 * clockRate, 5) +
+                partial1000Internal0 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 0.5 * clockRate, 5) +
+                partial1100Internal0* substitutionModel.getSequenceTransitionProbability(allele0, allele11, 0.5 * clockRate, 5)
+
+        );
+        double partial1000Internal1 = substitutionModel.getSequenceTransitionProbability(allele1, allele12, 1 * clockRate, 5) * (
+                partial1000Internal0 * substitutionModel.getSequenceTransitionProbability(allele1, allele1, 0.5 * clockRate, 5) +
+                partial1100Internal0* substitutionModel.getSequenceTransitionProbability(allele1, allele11, 0.5 * clockRate, 5)) ;
+        double partial0000Internal2 = (partial0000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 1 * clockRate, 5) + partial1000Internal1 * substitutionModel.getSequenceTransitionProbability(allele0, allele1, 1 * clockRate, 5)) * (substitutionModel.getSequenceTransitionProbability(allele0, allele21, 2 * clockRate, 5));
+
+
+        //root node
+        double partialOrigin = partial0000Internal2 * substitutionModel.getSequenceTransitionProbability(allele0, allele0, 2 * clockRate, 5);
+
+        //loglikelihood
+        double LogPExpected = Math.log(partialOrigin);
+
+        double LogPCalc = likelihood.calculateLogP();
+        Log.info.println("Log_lik:" + LogPCalc);
+
+        assertEquals(LogPExpected, LogPCalc);
+
+    }
+
+    @Test
+    public void testLikelihood3LeavesSameLengthInsertsAllDifferentERRORPROPAGATION() {
+
+
+        //Testing the ancestral state reconstruction at internal nodes
+        //tree with 3 tips
+        String newick = "(((MISS:0.5,CHILD1:0.5)INT:0.5,CHILD3:1)INTERNAL:1,CHILD2:2.0)";
+
+        Sequence a = new Sequence("CHILD1", "1,1,0,0,0");
+        Sequence b = new Sequence("CHILD3", "1,2,0,0,0");
+        Sequence c = new Sequence("CHILD2", "2,1,0,0,0");
+        Sequence d = new Sequence("MISS", "?,?,?,?,?");
+
+        Alignment alignment = new Alignment();
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d,"dataType", "integer");
 
 
         Tree tree1 = new TreeParser();

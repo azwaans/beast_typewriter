@@ -25,11 +25,27 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     final public Input<RealParameter> editProbabilitiesInput = new Input<>("editProbabilities",
             "Edit probabilities for the typewriter process", Input.Validate.REQUIRED);
 
+    public Input<RealParameter>  missingRateInput = new Input<>(
+            "missingRate",
+            "Rate at which the barcode goes missing heritably (in reality a scaler from the clock rate)",
+            Input.Validate.OPTIONAL);
+
+    public Input<RealParameter>  missingProbInput = new Input<>(
+            "missingProbability",
+            "Probability that a barcode goes missing at the tips",
+            Input.Validate.OPTIONAL);
+
     /**
      * edit insertion rate  *
      */
     protected RealParameter editProbabilities;
+    protected RealParameter missRate;
+    protected RealParameter missProbability;
     double[] editProbs;
+    double missingRate;
+    double missingProbability;
+
+
     public List<Integer> missingState;
 
     @Override
@@ -39,6 +55,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
         // Get edit probabilities and check correct input
         editProbabilities = editProbabilitiesInput.get();
         editProbs = editProbabilities.getDoubleValues();
+
 
         // creating the missing state, encoded as an array of -1.
          missingState = new ArrayList<Integer>(){{
@@ -64,6 +81,19 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
             }
         }
 
+
+        missingRate = 0.0;
+        if (missingRateInput.get() != null) {
+            missRate = missingRateInput.get();
+            missingRate = missRate.getValue();
+        }
+
+        missingProbability = 0.0;
+        if (missingProbInput.get() != null) {
+            missProbability = missingProbInput.get();
+            missingProbability = missProbability.getValue();
+        }
+
     }
 
 
@@ -81,8 +111,14 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
 
 
         if(endState.equals(missingState)) {
-            //the transition probability from any valid starting state to a missing state is 1
-            return 1.0;
+            if (startState.equals(missingState)) {
+                //the missing state is an absorbing state, once in missing mode, stay in missing.
+                return 1.0;
+            }
+            else{
+                //the probability from any valid starting state to a missing state at an internal node is exponentially distributed
+                return (1 - Math.exp(-missingRate * distance));
+            }
         }
 
         else {
@@ -113,15 +149,97 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
             //calculate the transition probability for the case where all available positions are edited in
             // This is the absorbing state in the poisson process
             // P(max) = 1- sum(P(n)) * probability of this insert combination
+
+            //The probability of going to the absorbing state is P(barcode not going missing AND the absorbing state being reached)
             if (newInserts.size() == nrOfPossibleInserts) {
 
-                return calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
+                return (Math.exp(- missingRate * distance )) * calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
             }
             //calculate the transition probability for the case where a #edits < available positions
             //this is a regular draw from the poisson process * probability of this insert combination
+
+            //The probability of going to this edited state is P(barcode not going missing AND this state being reached)
             else if (newInserts.size() < nrOfPossibleInserts) {
 
-                return poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
+                return (Math.exp(- missingRate * distance )) * poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
+
+            } else {
+
+                throw new RuntimeException("Error! Number of new inserts is larger than nr of possible inserts!");
+            }
+
+        }
+    }
+
+
+    /**
+     * This function calculates the probability of transitioning between 2 sequences states in given evolutionary time (distance)
+     * (with potentially multiple edits having happened)
+     *
+     * @param startSequence  is a sequence state at a parent node
+     * @param endSequence is a sequence state at a child node
+     */
+    public double getSequenceTransitionProbabilityTipEdge(final List<Integer> startSequence, final List<Integer> endSequence, double distance, int arrayLength) {
+
+        List<Integer> startState = new ArrayList(startSequence);
+        List<Integer> endState = new ArrayList(endSequence);
+
+
+        if(endState.equals(missingState)) {
+            //the transition probability from any valid starting state to a missing state is
+            // P(went missing on the branch OR went missing at the tip)
+            // P(went missing on the branch OR (didn't go missing on the branch AND went missing at the tip)
+            if (startState.equals(missingState)) {
+                //the missing state is an absorbing state, once in missing mode, stay in missing.
+                return 1.0;
+            } else {
+                //the probability from any valid starting state to a missing state at an internal node is exponentially distributed
+                return (1 - Math.exp(-missingRate * distance)) + (Math.exp(-missingRate * distance) * missingProbability) ;
+            }
+
+        }
+
+        else {
+
+            //create an unedited state to subtract from sequences to get only edited sites
+            List<Integer> zero = Arrays.asList(0);
+
+            //removing all unedited sites from each sequence
+            startState.removeAll(zero);
+            endState.removeAll(zero);
+
+            //if endState is less edited than the start state, violates ordering
+            if (startState.size() > endState.size()) {
+                return 0.0;
+            }
+
+            //subtracting start sequence from end sequence: edits introduced
+            // if start state has identical elements to end state remove
+            startState.forEach(endState::remove);
+            List<Integer> newInserts = endState;
+
+            //available positions are targetBClength length - number of edited positions
+            int nrOfPossibleInserts = arrayLength - startState.size();
+
+            //initialise the poisson distribution with mean rate * distance
+            org.apache.commons.math.distribution.PoissonDistribution poissonDistribution = new PoissonDistributionImpl(distance);
+
+            //calculate the transition probability for the case where all available positions are edited in
+            // This is the absorbing state in the poisson process
+            // P(max) = 1- sum(P(n)) * probability of this insert combination
+
+            //The probability of going to the absorbing state is P(barcode not going missing AND the absorbing state being reached)
+            if (newInserts.size() == nrOfPossibleInserts) {
+
+                return (Math.exp(- missingRate * distance)) * calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
+            }
+            //calculate the transition probability for the case where a #edits < available positions
+            //this is a regular draw from the poisson process * probability of this insert combination
+
+            //The probability of going to this edited state is P(barcode not going missing AND this state being reached)
+            else if (newInserts.size() < nrOfPossibleInserts) {
+
+                return (Math.exp(- missingRate * distance)) * poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
 
             } else {
 
@@ -186,6 +304,8 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     @Override
     public void store() {
         editProbs = editProbabilities.getDoubleValues();
+        missingProbability = missProbability.getValue();
+        missingRate = missRate.getValue();
         super.store();
     }
 
@@ -195,6 +315,8 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     @Override
     public void restore() {
         editProbs = editProbabilities.getDoubleValues();
+        missingProbability = missProbability.getValue();
+        missingRate = missRate.getValue();
         super.restore();
 
     }
@@ -203,6 +325,8 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     protected boolean requiresRecalculation() {
         // we only get here if something is dirty
         editProbs = editProbabilities.getDoubleValues();
+        missingProbability = missProbability.getValue();
+        missingRate = missRate.getValue();
         return true;
     }
 

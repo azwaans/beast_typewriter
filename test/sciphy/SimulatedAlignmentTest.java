@@ -12,6 +12,7 @@ import beast.base.util.Randomizer;
 import beastfx.app.inputeditor.AlignmentImporter;
 import org.junit.Test;
 import sciphy.evolution.simulation.SimulatedSciPhyAlignment;
+import sciphy.evolution.simulation.SimulatedSciPhyAlignmentHeritableMissingBcodes;
 import sciphy.evolution.substitutionmodel.SciPhySubstitutionModel;
 
 import java.io.File;
@@ -63,6 +64,185 @@ public class SimulatedAlignmentTest {
 
         AlignmentImporter expectedAlignment = new sciphy.util.NexusImporter();
         beast.base.evolution.alignment.Alignment alignment = (Alignment) expectedAlignment.loadFile(new File("test/sciphy/expectedAlignment.sciphy")).get(0);
+
+        assertEquals(alignment.getSequenceAsString("CHILD1"),
+                simAlignment.getSequenceAsString("CHILD1"));
+
+        assertEquals(alignment.getSequenceAsString("CHILD2"),
+                simAlignment.getSequenceAsString("CHILD2"));
+
+    }
+
+    @Test
+    public void testSimulationOnCherryHeritableMissingOnly() {
+
+        Integer sequenceLength = 1;
+        String outputFileName = "test/simAlWithHeritableMissingOnly.sciphy";
+        String newick = "(CHILD1:5,CHILD2:5):0.0";
+
+        Tree tree = new TreeParser();
+        tree.initByName(
+                "IsLabelledNewick", true,
+                "newick", newick,
+                "adjustTipHeights", false);
+
+        SciPhySubstitutionModel submodel = new SciPhySubstitutionModel();
+        RealParameter insertrates = new RealParameter("0.8 0.2");
+        RealParameter freqs = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName("editProbabilities", insertrates, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        RealParameter mutationRate = new RealParameter("10");
+
+
+        siteM.initByName("gammaCategoryCount", 0,
+                "substModel", submodel, "mutationRate", mutationRate);
+
+
+        RealParameter missingRate = new RealParameter("0.03");
+        RealParameter origin = new RealParameter("6.0");
+
+        DataType integerData = new IntegerData();
+
+        // simulate
+        Randomizer.setSeed(2);
+        SimulatedSciPhyAlignmentHeritableMissingBcodes simAlignment = new SimulatedSciPhyAlignmentHeritableMissingBcodes();
+        simAlignment.initByName("tree", tree,
+                "siteModel", siteM,
+                "sequenceLength", sequenceLength,
+                "arrayLength", 100,
+                "numberOfTargets", 1,
+                "outputFileName", outputFileName,
+                "userDataType", integerData,
+                "missingRate",missingRate,
+                "origin",origin
+        );
+
+        AlignmentImporter expectedAlignment = new sciphy.util.NexusImporter();
+        beast.base.evolution.alignment.Alignment alignment = (Alignment) expectedAlignment.loadFile(new File("test/sciphy/expectedAlignmentMissingRates.sciphy")).get(0);
+
+        assertEquals(alignment.getSequenceAsString("CHILD1"),
+                simAlignment.getSequenceAsString("CHILD1"));
+
+        assertEquals(alignment.getSequenceAsString("CHILD2"),
+                simAlignment.getSequenceAsString("CHILD2"));
+
+    }
+
+    @Test
+    public void testSimulationOnCherryTipMissingOnly() {
+
+        Integer sequenceLength = 1;
+        String outputFileName = "test/simAlWithTipMissingOnly.sciphy";
+        String newick = "(CHILD1:5,CHILD2:5):0.0";
+
+        Tree tree = new TreeParser();
+        tree.initByName(
+                "IsLabelledNewick", true,
+                "newick", newick,
+                "adjustTipHeights", false);
+
+        SciPhySubstitutionModel submodel = new SciPhySubstitutionModel();
+        RealParameter insertrates = new RealParameter("0.8 0.2");
+        RealParameter freqs = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName("editProbabilities", insertrates, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        RealParameter mutationRate = new RealParameter("10");
+
+
+        siteM.initByName("gammaCategoryCount", 0,
+                "substModel", submodel, "mutationRate", mutationRate);
+
+
+        RealParameter missingProb = new RealParameter("0.5");
+        RealParameter origin = new RealParameter("6.0");
+
+        DataType integerData = new IntegerData();
+
+        // simulate
+        Randomizer.setSeed(12345);
+        SimulatedSciPhyAlignmentHeritableMissingBcodes simAlignment = new SimulatedSciPhyAlignmentHeritableMissingBcodes();
+        simAlignment.initByName("tree", tree,
+                "siteModel", siteM,
+                "sequenceLength", sequenceLength,
+                "arrayLength", 100,
+                "numberOfTargets", 1,
+                "outputFileName", outputFileName,
+                "userDataType", integerData,
+                "missingProbability",missingProb,
+                "origin",origin
+        );
+
+        AlignmentImporter expectedAlignment = new sciphy.util.NexusImporter();
+        beast.base.evolution.alignment.Alignment alignment = (Alignment) expectedAlignment.loadFile(new File("test/sciphy/expectedAlignmentMissingRates.sciphy")).get(0);
+
+        assertEquals(alignment.getSequenceAsString("CHILD1"),
+                simAlignment.getSequenceAsString("CHILD1"));
+
+        assertEquals(alignment.getSequenceAsString("CHILD2"),
+                simAlignment.getSequenceAsString("CHILD2"));
+
+    }
+
+    @Test
+    public void testSimulationOnCherryBothMissingTypes() {
+
+        Integer sequenceLength = 1;
+        String outputFileName = "test/simAlBothMissingTypes.sciphy";
+        String newick = "(CHILD1:5,CHILD2:5):0.0";
+
+        Tree tree = new TreeParser();
+        tree.initByName(
+                "IsLabelledNewick", true,
+                "newick", newick,
+                "adjustTipHeights", false);
+
+        SciPhySubstitutionModel submodel = new SciPhySubstitutionModel();
+        RealParameter insertrates = new RealParameter("0.8 0.2");
+        RealParameter freqs = new RealParameter("1.0 0 0");
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        submodel.initByName("editProbabilities", insertrates, "frequencies", frequencies);
+
+        //site model
+        SiteModel siteM = new SiteModel();
+        RealParameter mutationRate = new RealParameter("10");
+
+
+        siteM.initByName("gammaCategoryCount", 0,
+                "substModel", submodel, "mutationRate", mutationRate);
+
+
+        RealParameter missingRate = new RealParameter("0.03");
+        RealParameter missingProb = new RealParameter("0.5");
+        RealParameter origin = new RealParameter("6.0");
+
+        DataType integerData = new IntegerData();
+
+        // simulate
+        Randomizer.setSeed(2);
+        SimulatedSciPhyAlignmentHeritableMissingBcodes simAlignment = new SimulatedSciPhyAlignmentHeritableMissingBcodes();
+        simAlignment.initByName("tree", tree,
+                "siteModel", siteM,
+                "sequenceLength", sequenceLength,
+                "arrayLength", 100,
+                "numberOfTargets", 1,
+                "outputFileName", outputFileName,
+                "userDataType", integerData,
+                "missingProbability",missingProb,
+                "missingRate",missingRate,
+                "origin",origin
+        );
+
+        AlignmentImporter expectedAlignment = new sciphy.util.NexusImporter();
+        beast.base.evolution.alignment.Alignment alignment = (Alignment) expectedAlignment.loadFile(new File("test/sciphy/expectedAlignmentMissingRates.sciphy")).get(0);
 
         assertEquals(alignment.getSequenceAsString("CHILD1"),
                 simAlignment.getSequenceAsString("CHILD1"));

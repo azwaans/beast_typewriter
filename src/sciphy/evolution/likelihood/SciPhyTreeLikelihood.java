@@ -434,7 +434,7 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
         if (childNode.isLeaf()) {
 
             List<Integer> endState = ancestralStates.get(makeCachingIndexStates(childNode.getNr())).get(0);
-            statePartialLikelihood += substitutionModel.getSequenceTransitionProbability(startState, endState, distance, this.arrayLength);
+            statePartialLikelihood += substitutionModel.getSequenceTransitionProbabilityTipEdge(startState, endState, distance, this.arrayLength);
 
         } else {
 
