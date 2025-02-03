@@ -12,6 +12,7 @@
         <provider classname="sciphy.evolution.tree.startingTree"/>
         <provider classname="sciphy.evolution.likelihood.SciPhyTreeLikelihood"/>
         <provider classname="sciphy.evolution.simulation.SimulatedSciPhyAlignment"/>
+        <provider classname="sciphy.evolution.simulation.SimulatedSciPhyAlignmentHeritableMissingBcodes"/>
         <provider classname="sciphy.util.NexusParser"/>
         <provider classname="sciphy.util.NexusImporter"/>
     </service>

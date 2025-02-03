@@ -26,7 +26,23 @@ import static sciphy.util.LogSum.logSum;
 
 public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
-    private static List<Integer> missingState;
+    private static List<Integer> missingState = new ArrayList<Integer>(){{
+        add(-1);
+        add(-1);
+        add(-1);
+        add(-1);
+        add(-1);
+    }}; ;
+
+    private static List<Integer> lostState =  new ArrayList<Integer>(){{
+        add(-2);
+        add(-2);
+        add(-2);
+        add(-2);
+        add(-2);
+    }};;
+
+
     final public Input<RealParameter> originTimeInput = new Input<>("origin", "Duration of the experiment");
 
     final public Input<IntegerParameter> arrayLengthInput = new Input<>("arrayLength", "Number of positions in the target BC", Validate.REQUIRED);
@@ -132,14 +148,6 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
         hasDirt = Tree.IS_FILTHY;
 
-        // creating the missing state, encoded as an array of -1.
-        missingState = new ArrayList<Integer>(){{
-            add(-1);
-            add(-1);
-            add(-1);
-            add(-1);
-            add(-1);
-        }};
 
         for (int i = 0; i < treeInput.get().getLeafNodeCount(); i++) {
             initLeafAncestors(i);
@@ -330,23 +338,24 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
 
 
         // create the set of ancestral states for the missing state
-        List<List<Integer>> ancestorsMissing = new ArrayList();
-        ancestorsMissing.add(missingState);
+        List<List<Integer>> ancestorsMissingLost = new ArrayList();
+        ancestorsMissingLost.add(missingState);
+        ancestorsMissingLost.add(lostState);
 
         // both sets are missing states, the intersection is the missing state
         //todo rearrage these statements
-        if( ancSetChild2.equals(ancestorsMissing) && ancSetChild1.equals(ancestorsMissing) ) {
-            ancestralStates.put(makeCachingIndexStates(nodeNr), ancestorsMissing);
+        if( ancSetChild2.equals(ancestorsMissingLost) && ancSetChild1.equals(ancestorsMissingLost) ) {
+            ancestralStates.put(makeCachingIndexStates(nodeNr), ancestorsMissingLost);
         }
         else {
 
 
-            if (ancSetChild1.equals(ancestorsMissing)) {
+            if (ancSetChild1.equals(ancestorsMissingLost)) {
                 //the intersection is the child2 set
                 List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild2);
                 ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
             }
-            else if (ancSetChild2.equals(ancestorsMissing)) {
+            else if (ancSetChild2.equals(ancestorsMissingLost)) {
                 //the intersection is the child1 set
                 List<List<Integer>> ancSetNode = new ArrayList<>(ancSetChild1);
                 ancestralStates.put(makeCachingIndexStates(nodeNr), ancSetNode);
@@ -479,8 +488,10 @@ public class SciPhyTreeLikelihood extends GenericTreeLikelihood {
         List<List<Integer>> ancestors = new ArrayList();
         ancestors.add(sequence);
 
-        //possible ancestors of a missing state can be any state, we return the missing state itself as a Wild Card
+        //possible ancestors of a missing state can be either the Wild-card state (aka, any non-lost state), or the barcode could have already been lost previously
+
         if(sequence.equals(missingState)) {
+            ancestors.add(lostState);
             return ancestors;
         }
 

@@ -103,11 +103,14 @@ public class SimulatedSciPhyAlignmentHeritableMissingBcodes extends Alignment {
         missingRate = 0.0;
         if (missingRateInput.get() != null) {
             missingRate = missingRateInput.get().getValue();
+            Log.info.println("missing rate: " + missingRate);
+
         }
 
         missingProbability = 0.0;
         if (missingProbInput.get() != null) {
             missingProbability = missingProbInput.get().getValue();
+            Log.info.println("missing prob: " + missingProbability);
         }
 
         grabDataType();
@@ -203,6 +206,8 @@ public class SimulatedSciPhyAlignmentHeritableMissingBcodes extends Alignment {
             else
                 taxonName = "t" + leafIdx;
 
+            //note to self: the sequence input seqString is e.g. "5,3,8,0,0"
+            //where is it modified to "taxonNumber:5,3,8,0,0"? (in CharactersBlock class)
             sequenceInput.setValue(new Sequence(taxonName, seqString), this);
         }
     }

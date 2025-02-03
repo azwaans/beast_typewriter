@@ -3,6 +3,7 @@ package sciphy.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
+import beast.base.core.Log;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.StandardData;
 import beast.base.evolution.datatype.IntegerData;
@@ -25,12 +26,12 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
     final public Input<RealParameter> editProbabilitiesInput = new Input<>("editProbabilities",
             "Edit probabilities for the typewriter process", Input.Validate.REQUIRED);
 
-    public Input<RealParameter>  missingRateInput = new Input<>(
+    final public Input<RealParameter>  missingRateInput = new Input<>(
             "missingRate",
             "Rate at which the barcode goes missing heritably (in reality a scaler from the clock rate)",
             Input.Validate.OPTIONAL);
 
-    public Input<RealParameter>  missingProbInput = new Input<>(
+    final public Input<RealParameter>  missingProbInput = new Input<>(
             "missingProbability",
             "Probability that a barcode goes missing at the tips",
             Input.Validate.OPTIONAL);
@@ -47,6 +48,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
 
 
     public List<Integer> missingState;
+    public List<Integer> lostState;
 
     @Override
     public void initAndValidate() {
@@ -64,6 +66,14 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
             add(-1);
             add(-1);
             add(-1);
+        }};
+
+        lostState = new ArrayList<Integer>(){{
+            add(-2);
+            add(-2);
+            add(-2);
+            add(-2);
+            add(-2);
         }};
 
 
@@ -110,18 +120,38 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
         List<Integer> endState = new ArrayList(endSequence);
 
 
-        if(endState.equals(missingState)) {
-            if (startState.equals(missingState)) {
-                //the missing state is an absorbing state, once in missing mode, stay in missing.
+      if(startState.equals(lostState)) {
+        //the loststate is an absorbing state, once there, no way out!
+            if(endState.equals(lostState)) {
                 return 1.0;
             }
-            else{
-                //the probability from any valid starting state to a missing state at an internal node is exponentially distributed
-                return (1 - Math.exp(-missingRate * distance));
+            else {
+                return 0.0;
             }
-        }
+
+      }
+      else  if(startState.equals(missingState)) {
+        //WC state -> lost
+          if(endState.equals(lostState)) {
+              return 1 - Math.exp(-missingRate * distance);
+          }
+          //WC state -> WC state
+          else {
+              return Math.exp(-missingRate * distance);
+          }
+      }
 
         else {
+            //normal starting state:
+            if(endState.equals(missingState)) {
+                //normal -> WC this is the probability of not getting lost * 1.0
+                return Math.exp(-missingRate * distance);
+            }
+
+            if(endState.equals(lostState)) {
+                //normal -> lost this is the probability getting lost
+                return 1.0 - Math.exp(- missingRate * distance );
+            }
 
             //create an unedited state to subtract from sequences to get only edited sites
             List<Integer> zero = Arrays.asList(0);
@@ -185,21 +215,43 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
         List<Integer> endState = new ArrayList(endSequence);
 
 
-        if(endState.equals(missingState)) {
-            //the transition probability from any valid starting state to a missing state is
-            // P(went missing on the branch OR went missing at the tip)
-            // P(went missing on the branch OR (didn't go missing on the branch AND went missing at the tip)
-            if (startState.equals(missingState)) {
-                //the missing state is an absorbing state, once in missing mode, stay in missing.
+        if(startState.equals(lostState)) {
+
+            if(endState.equals(missingState)) {
                 return 1.0;
-            } else {
-                //the probability from any valid starting state to a missing state at an internal node is exponentially distributed
-                return (1 - Math.exp(-missingRate * distance)) + (Math.exp(-missingRate * distance) * missingProbability) ;
+            }
+            else if (endState.equals(lostState)) {
+                return 1.0;
             }
 
         }
 
+        else if(startState.equals(missingState)) {
+
+            if(endState.equals(missingState)) {
+                return (1 - Math.exp(- missingRate * distance )) + ( Math.exp(- missingRate * distance )  * missingProbability) ;
+            }
+
+            else if(endState.equals(lostState)) {
+                //this could be zero
+                return 0.0;
+
+            }
+
+
+        }
+
         else {
+            //normal start state
+            if(endState.equals(missingState)) {
+                return (1 - Math.exp(- missingRate * distance )) + ( Math.exp(- missingRate * distance )  * missingProbability) ;
+            }
+
+             if(endState.equals(lostState)) {
+                //this could be zero
+                return (1 - Math.exp(- missingRate * distance )*(1-missingProbability));
+
+            }
 
             //create an unedited state to subtract from sequences to get only edited sites
             List<Integer> zero = Arrays.asList(0);
@@ -231,7 +283,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
             //The probability of going to the absorbing state is P(barcode not going missing AND the absorbing state being reached)
             if (newInserts.size() == nrOfPossibleInserts) {
 
-                return (Math.exp(- missingRate * distance)) * calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
+                return ((1 - missingProbability) *  Math.exp(- missingRate * distance)) * calculateAbsorbingStateProbability(poissonDistribution, nrOfPossibleInserts) * combinedInsertProbabilities(newInserts);
             }
             //calculate the transition probability for the case where a #edits < available positions
             //this is a regular draw from the poisson process * probability of this insert combination
@@ -239,7 +291,7 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
             //The probability of going to this edited state is P(barcode not going missing AND this state being reached)
             else if (newInserts.size() < nrOfPossibleInserts) {
 
-                return (Math.exp(- missingRate * distance)) * poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
+                return ((1 - missingProbability) * Math.exp(- missingRate * distance)) * poissonDistribution.probability(newInserts.size()) * combinedInsertProbabilities(newInserts);
 
             } else {
 
@@ -247,6 +299,8 @@ public class SciPhySubstitutionModel extends SubstitutionModel.Base {
             }
 
         }
+        throw new RuntimeException("Error! a condition is missing somwhoe");
+
     }
 
 

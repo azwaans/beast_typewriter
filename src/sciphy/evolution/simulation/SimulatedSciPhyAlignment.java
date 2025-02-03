@@ -160,7 +160,8 @@ public class SimulatedSciPhyAlignment extends Alignment {
                 taxonName = tree.getNode(leafIdx).getID();
             else
                 taxonName = "t" + leafIdx;
-
+            //note to self: the sequence input seqString is e.g. "5,3,8,0,0"
+            //where is it modified to "taxonNumber:5,3,8,0,0"? (in CharactersBlock class)
             sequenceInput.setValue(new Sequence(taxonName, seqString), this);
         }
     }
