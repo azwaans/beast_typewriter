@@ -14,6 +14,8 @@
         <provider classname="sciphy.evolution.simulation.SimulatedSciPhyAlignment"/>
         <provider classname="sciphy.util.NexusParser"/>
         <provider classname="sciphy.util.NexusImporter"/>
+        <provider classname="sciphy.util.AlignmentFromFile"/>
+        <provider classname="sciphy.util.AlignmentFromNexus"/>
     </service>
 
     <service type="beastfx.app.inputeditor.AlignmentImporter">
